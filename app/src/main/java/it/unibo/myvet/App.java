@@ -1,9 +1,10 @@
-package db_lab;
+package it.unibo.myvet;
 
-import db_lab.data.DAOException;
-import db_lab.data.DAOUtils;
-import db_lab.model.Model;
 import java.sql.SQLException;
+
+import it.unibo.myvet.data.DAOException;
+import it.unibo.myvet.data.DAOUtils;
+import it.unibo.myvet.model.Model;
 
 public final class App {
 

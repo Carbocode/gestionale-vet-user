@@ -1,4 +1,4 @@
-package db_lab.data;
+package it.unibo.myvet.data;
 
 import java.sql.Connection;
 import java.util.HashMap;
@@ -38,9 +38,8 @@ public final class Material {
     @Override
     public String toString() {
         return Printer.stringify(
-            "Material",
-            List.of(Printer.field("code", this.code), Printer.field("description", this.description))
-        );
+                "Material",
+                List.of(Printer.field("code", this.code), Printer.field("description", this.description)));
     }
 
     public final class DAO {

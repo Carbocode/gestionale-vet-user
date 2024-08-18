@@ -1,4 +1,4 @@
-package db_lab.data;
+package it.unibo.myvet.data;
 
 import java.sql.Connection;
 import java.util.Collections;
@@ -30,12 +30,10 @@ public final class Product {
             return false;
         } else if (other instanceof Product) {
             var p = (Product) other;
-            return (
-                p.code == this.code &&
-                p.name.equals(this.name) &&
-                p.description.equals(this.description) &&
-                p.composition.equals(this.composition)
-            );
+            return (p.code == this.code &&
+                    p.name.equals(this.name) &&
+                    p.description.equals(this.description) &&
+                    p.composition.equals(this.composition));
         } else {
             return false;
         }
@@ -49,14 +47,12 @@ public final class Product {
     @Override
     public String toString() {
         return Printer.stringify(
-            "Product",
-            List.of(
-                Printer.field("code", this.code),
-                Printer.field("name", this.name),
-                Printer.field("description", this.description),
-                Printer.field("composition", this.composition)
-            )
-        );
+                "Product",
+                List.of(
+                        Printer.field("code", this.code),
+                        Printer.field("name", this.name),
+                        Printer.field("description", this.description),
+                        Printer.field("composition", this.composition)));
     }
 
     public final class DAO {

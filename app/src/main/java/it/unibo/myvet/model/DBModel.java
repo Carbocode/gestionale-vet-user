@@ -1,11 +1,12 @@
-package db_lab.model;
+package it.unibo.myvet.model;
 
-import db_lab.data.Product;
-import db_lab.data.ProductPreview;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import it.unibo.myvet.data.Product;
+import it.unibo.myvet.data.ProductPreview;
 
 // This is the real model implementation that uses the DAOs we've defined to
 // actually load data from the underlying database.

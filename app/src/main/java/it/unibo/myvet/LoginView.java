@@ -1,8 +1,8 @@
-package db_lab;
+package it.unibo.myvet;
 
 import javax.swing.*;
 
-import db_lab.data.DAOUtils;
+import it.unibo.myvet.data.DAOUtils;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

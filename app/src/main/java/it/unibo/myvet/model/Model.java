@@ -1,10 +1,11 @@
-package db_lab.model;
+package it.unibo.myvet.model;
 
-import db_lab.data.Product;
-import db_lab.data.ProductPreview;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
+
+import it.unibo.myvet.data.Product;
+import it.unibo.myvet.data.ProductPreview;
 
 public interface Model {
     public Optional<Product> find(int productCode);
