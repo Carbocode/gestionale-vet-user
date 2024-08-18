@@ -34,7 +34,8 @@ public final class Tag {
 
     @Override
     public String toString() {
-        return Printer.stringify("Tag", List.of(Printer.field("name", this.name)));
+        //return Printer.stringify("Tag", List.of(Printer.field("name", this.name)));
+        return name;
     }
 
     public final class DAO {
