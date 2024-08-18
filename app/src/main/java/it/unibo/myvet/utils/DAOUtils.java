@@ -1,46 +1,34 @@
 package it.unibo.myvet.utils;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public final class DAOUtils {
 
-    // Establishes a connection to a MySQL daemon running locally at port 3306.
-    //
-    public static Connection localMySQLConnection(String database, String username, String password) {
+    private static final String DRIVER = "jdbc";
+    private static final String DB = "mysql";
+    private static final String DOMAIN = "localhost";
+    private static final String PORT = "3306";
+    private static final String DB_NAME = "myvet";
+    private static final String USER = "root";
+    private static final String PASSWORD = "password";
+
+    private static final String URL = DRIVER + ":" + DB + "://" + DOMAIN + ":" + PORT + "/" + DB_NAME;
+
+    static {
         try {
-            var host = "localhost";
-            var port = "3306";
-            var connectionString = "jdbc:mysql://" + host + ":" + port + "/" + database;
-            return DriverManager.getConnection(connectionString, username, password);
-        } catch (Exception e) {
-            throw new DAOException(e);
+            // Carica il driver JDBC (necessario solo per alcune versioni di JDBC)
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Errore nel caricare il driver JDBC", e);
         }
     }
 
-    // We must always prepare a statement to make sure we do not fall victim to SQL
-    // injection:
-    // https://owasp.org/www-community/attacks/SQL_Injection
-    //
-    // This is a helper that prepares the statement with all the values we give it:
-    //
-    // prepare(connection, MY_QUERY, query_arg1, query_arg2, ...)
-    //
-    public static PreparedStatement prepare(Connection connection, String query, Object... values) throws SQLException {
-        PreparedStatement statement = null;
+    // Factory method per creare un'istanza di DatabaseWrapper
+    public static Database getConnection() {
         try {
-            statement = connection.prepareStatement(query);
-            for (int i = 0; i < values.length; i++) {
-                statement.setObject(i + 1, values[i]);
-            }
-            return statement;
-        } catch (Exception e) {
-            if (statement != null) {
-                statement.close();
-            }
-            throw e;
+            return Database.connect(URL, USER, PASSWORD);
+        } catch (SQLException e) {
+            throw new RuntimeException("Errore durante la connessione al database", e);
         }
     }
 }

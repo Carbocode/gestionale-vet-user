@@ -1,19 +1,19 @@
 package it.unibo.myvet.model;
 
 public class Account {
-    private String cf; // Codice Fiscale, utilizzato come ID
+    private String cf; // Codice Fiscale
     private String password;
-    private String nome;
-    private String cognome;
-    private String telefono;
+    private String firstName;
+    private String lastName;
+    private String phoneNumber;
 
     // Costruttore
-    public Account(String cf, String password, String nome, String cognome, String telefono) {
+    public Account(String cf, String password, String firstName, String lastName, String phoneNumber) {
         this.cf = cf;
         this.password = password;
-        this.nome = nome;
-        this.cognome = cognome;
-        this.telefono = telefono;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
     }
 
     // Getter e Setter
@@ -33,37 +33,38 @@ public class Account {
         this.password = password;
     }
 
-    public String getNome() {
-        return nome;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getCognome() {
-        return cognome;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setCognome(String cognome) {
-        this.cognome = cognome;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
-    public String getTelefono() {
-        return telefono;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     @Override
     public String toString() {
         return "Account{" +
                 "cf='" + cf + '\'' +
-                ", nome='" + nome + '\'' +
-                ", cognome='" + cognome + '\'' +
-                ", telefono='" + telefono + '\'' +
+                ", password='" + password + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
                 '}';
     }
 }

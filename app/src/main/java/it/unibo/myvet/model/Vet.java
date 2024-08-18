@@ -1,31 +1,32 @@
 package it.unibo.myvet.model;
 
 public class Vet extends Account {
-    private int idVeterinario;
+    private int vetId;
 
     // Costruttore
-    public Vet(String cf, String password, String nome, String cognome, String telefono, int idVeterinario) {
-        super(cf, password, nome, cognome, telefono);
-        this.idVeterinario = idVeterinario;
+    public Vet(String cf, String password, String firstName, String lastName, String phoneNumber, int vetId) {
+        super(cf, password, firstName, lastName, phoneNumber);
+        this.vetId = vetId;
     }
 
-    // Getter e Setter
-    public int getIdVeterinario() {
-        return idVeterinario;
+    // Getter e Setter per vetId
+    public int getVetId() {
+        return vetId;
     }
 
-    public void setIdVeterinario(int idVeterinario) {
-        this.idVeterinario = idVeterinario;
+    public void setVetId(int vetId) {
+        this.vetId = vetId;
     }
 
     @Override
     public String toString() {
-        return "Veterinario{" +
-                "idVeterinario=" + idVeterinario +
+        return "Vet{" +
+                "vetId=" + vetId +
                 ", cf='" + getCf() + '\'' +
-                ", nome='" + getNome() + '\'' +
-                ", cognome='" + getCognome() + '\'' +
-                ", telefono='" + getTelefono() + '\'' +
+                ", password='" + getPassword() + '\'' +
+                ", firstName='" + getFirstName() + '\'' +
+                ", lastName='" + getLastName() + '\'' +
+                ", phoneNumber='" + getPhoneNumber() + '\'' +
                 '}';
     }
 }
