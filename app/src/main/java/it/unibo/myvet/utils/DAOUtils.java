@@ -1,4 +1,4 @@
-package it.unibo.myvet.data;
+package it.unibo.myvet.utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

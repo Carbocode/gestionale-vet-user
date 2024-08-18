@@ -2,7 +2,7 @@ package it.unibo.myvet;
 
 import javax.swing.*;
 
-import it.unibo.myvet.data.DAOUtils;
+import it.unibo.myvet.utils.DAOUtils;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

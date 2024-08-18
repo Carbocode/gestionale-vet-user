@@ -2,9 +2,9 @@ package it.unibo.myvet;
 
 import java.sql.SQLException;
 
-import it.unibo.myvet.data.DAOException;
-import it.unibo.myvet.data.DAOUtils;
 import it.unibo.myvet.model.Model;
+import it.unibo.myvet.utils.DAOException;
+import it.unibo.myvet.utils.DAOUtils;
 
 public final class App {
 
