@@ -1,4 +1,4 @@
-package db_lab.data;
+package it.unibo.myvet.utils;
 
 // This is a runtime exception we define to wrap all the exceptions coming from
 // the DAO objects we're going to define.

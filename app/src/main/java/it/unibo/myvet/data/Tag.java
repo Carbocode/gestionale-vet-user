@@ -1,4 +1,4 @@
-package db_lab.data;
+package it.unibo.myvet.data;
 
 import java.sql.Connection;
 import java.util.HashSet;
