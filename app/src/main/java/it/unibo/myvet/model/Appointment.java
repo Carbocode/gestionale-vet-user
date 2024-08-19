@@ -8,27 +8,26 @@ public class Appointment {
     private int vetId;
     private LocalDateTime dateTime; // Cambiato da appointmentDate a dateTime
     private byte[] report; // Questo campo rappresenta il file del referto
-    private String status; // Stato dell'appuntamento
+    private int idStatus; // ID dello stato dell'appuntamento
 
-    // Costruttore
-    public Appointment(int animalId, int vetId, LocalDateTime dateTime, byte[] report,
-            String status) {
+    // Costruttore senza ID dell'appuntamento (per nuovi oggetti)
+    public Appointment(int animalId, int vetId, LocalDateTime dateTime, byte[] report, int idStatus) {
         this.animalId = animalId;
         this.vetId = vetId;
         this.dateTime = dateTime;
         this.report = report;
-        this.status = status;
+        this.idStatus = idStatus;
     }
 
-    // Costruttore
+    // Costruttore con ID dell'appuntamento (per oggetti esistenti)
     public Appointment(int appointmentId, int animalId, int vetId, LocalDateTime dateTime, byte[] report,
-            String status) {
+            int idStatus) {
         this.appointmentId = appointmentId;
         this.animalId = animalId;
         this.vetId = vetId;
         this.dateTime = dateTime;
         this.report = report;
-        this.status = status;
+        this.idStatus = idStatus;
     }
 
     // Getter e Setter
@@ -72,12 +71,12 @@ public class Appointment {
         this.report = report;
     }
 
-    public String getStatus() {
-        return status;
+    public int getIdStatus() {
+        return idStatus;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setIdStatus(int idStatus) {
+        this.idStatus = idStatus;
     }
 
     @Override
@@ -88,7 +87,7 @@ public class Appointment {
                 ", vetId=" + vetId +
                 ", dateTime=" + dateTime +
                 ", report=" + (report != null ? "[binary data]" : "null") +
-                ", status='" + status + '\'' +
+                ", idStatus=" + idStatus +
                 '}';
     }
 }

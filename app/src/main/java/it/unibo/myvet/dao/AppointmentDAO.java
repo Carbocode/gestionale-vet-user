@@ -78,7 +78,7 @@ public class AppointmentDAO {
     }
 
     public void save(Appointment appointment) {
-        String sql = "INSERT INTO Appointments (IDAnimale, IDVeterinario, DataOraAppuntamento, Referto, Stato) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Appointments (IDAnimale, IDVeterinario, DataOraAppuntamento, Referto, IDStato) VALUES (?, ?, ?, ?, ?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql,
@@ -88,7 +88,7 @@ public class AppointmentDAO {
             statement.setInt(2, appointment.getVetId());
             statement.setTimestamp(3, Timestamp.valueOf(appointment.getDateTime()));
             statement.setBytes(4, appointment.getReport()); // Gestione del file come array di byte
-            statement.setString(5, appointment.getStatus()); // Inserisce lo stato
+            statement.setInt(5, appointment.getIdStatus()); // Inserisce l'ID dello stato
             statement.executeUpdate();
 
             // Recupera l'ID generato automaticamente e impostalo sull'oggetto Appointment
@@ -104,7 +104,7 @@ public class AppointmentDAO {
     }
 
     public void update(Appointment appointment) {
-        String sql = "UPDATE Appointments SET IDAnimale = ?, IDVeterinario = ?, DataOraAppuntamento = ?, Referto = ?, Stato = ? WHERE IDAppuntamento = ?";
+        String sql = "UPDATE Appointments SET IDAnimale = ?, IDVeterinario = ?, DataOraAppuntamento = ?, Referto = ?, IDStato = ? WHERE IDAppuntamento = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -113,7 +113,7 @@ public class AppointmentDAO {
             statement.setInt(2, appointment.getVetId());
             statement.setTimestamp(3, Timestamp.valueOf(appointment.getDateTime()));
             statement.setBytes(4, appointment.getReport()); // Gestione del file come array di byte
-            statement.setString(5, appointment.getStatus()); // Aggiorna lo stato
+            statement.setInt(5, appointment.getIdStatus()); // Aggiorna l'ID dello stato
             statement.setInt(6, appointment.getAppointmentId());
             statement.executeUpdate();
 
@@ -142,8 +142,8 @@ public class AppointmentDAO {
         int vetId = resultSet.getInt("IDVeterinario");
         LocalDateTime dateTime = resultSet.getTimestamp("DataOraAppuntamento").toLocalDateTime();
         byte[] report = resultSet.getBytes("Referto");
-        String status = resultSet.getString("Stato"); // Recupera lo stato
+        int idStatus = resultSet.getInt("IDStato"); // Recupera l'ID dello stato
 
-        return new Appointment(appointmentId, animalId, vetId, dateTime, report, status);
+        return new Appointment(appointmentId, animalId, vetId, dateTime, report, idStatus);
     }
 }
