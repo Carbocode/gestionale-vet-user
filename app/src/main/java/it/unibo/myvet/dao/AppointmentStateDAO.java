@@ -6,23 +6,23 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unibo.myvet.model.Specialization;
+import it.unibo.myvet.model.AppointmentState;
 import it.unibo.myvet.utils.DAOUtils;
 import it.unibo.myvet.utils.Database;
 
-public class SpecializationDAO {
+public class AppointmentStateDAO {
 
-    public Specialization findById(Integer specializationId) {
-        Specialization specialization = null;
-        String sql = "SELECT * FROM Specializations WHERE IDSpecializzazione = ?";
+    public AppointmentState findById(int stateId) {
+        AppointmentState state = null;
+        String sql = "SELECT * FROM AppointmentStates WHERE IDStatoAppuntamento = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
-            statement.setInt(1, specializationId);
+            statement.setInt(1, stateId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    specialization = mapToSpecialization(resultSet);
+                    state = mapToAppointmentState(resultSet);
                 }
             }
 
@@ -30,36 +30,36 @@ public class SpecializationDAO {
             e.printStackTrace();
         }
 
-        return specialization;
+        return state;
     }
 
-    public List<Specialization> findAll() {
-        List<Specialization> specializations = new ArrayList<>();
-        String sql = "SELECT * FROM Specializations";
+    public List<AppointmentState> findAll() {
+        List<AppointmentState> states = new ArrayList<>();
+        String sql = "SELECT * FROM AppointmentStates";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql);
                 ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                specializations.add(mapToSpecialization(resultSet));
+                states.add(mapToAppointmentState(resultSet));
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return specializations;
+        return states;
     }
 
-    public void save(Specialization specialization) {
-        String sql = "INSERT INTO Specializations (IDSpecializzazione, Nome) VALUES (?, ?)";
+    public void save(AppointmentState state) {
+        String sql = "INSERT INTO AppointmentStates (IDStatoAppuntamento, NomeStato) VALUES (?, ?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
-            statement.setInt(1, specialization.getSpecializationId());
-            statement.setString(2, specialization.getName());
+            statement.setInt(1, state.getStateId());
+            statement.setString(2, state.getStateName());
             statement.executeUpdate();
 
         } catch (SQLException e) {
@@ -67,14 +67,14 @@ public class SpecializationDAO {
         }
     }
 
-    public void update(Specialization specialization) {
-        String sql = "UPDATE Specializations SET Nome = ? WHERE IDSpecializzazione = ?";
+    public void update(AppointmentState state) {
+        String sql = "UPDATE AppointmentStates SET NomeStato = ? WHERE IDStatoAppuntamento = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
-            statement.setString(1, specialization.getName());
-            statement.setInt(2, specialization.getSpecializationId());
+            statement.setString(1, state.getStateName());
+            statement.setInt(2, state.getStateId());
             statement.executeUpdate();
 
         } catch (SQLException e) {
@@ -82,13 +82,13 @@ public class SpecializationDAO {
         }
     }
 
-    public void delete(Integer specializationId) {
-        String sql = "DELETE FROM Specializations WHERE IDSpecializzazione = ?";
+    public void delete(int stateId) {
+        String sql = "DELETE FROM AppointmentStates WHERE IDStatoAppuntamento = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
-            statement.setInt(1, specializationId);
+            statement.setInt(1, stateId);
             statement.executeUpdate();
 
         } catch (SQLException e) {
@@ -96,11 +96,10 @@ public class SpecializationDAO {
         }
     }
 
-    private Specialization mapToSpecialization(ResultSet resultSet) throws SQLException {
-        int specializationId = resultSet.getInt("IDSpecializzazione");
-        String name = resultSet.getString("Nome");
+    private AppointmentState mapToAppointmentState(ResultSet resultSet) throws SQLException {
+        int stateId = resultSet.getInt("IDStatoAppuntamento");
+        String stateName = resultSet.getString("NomeStato");
 
-        return new Specialization(specializationId, name);
+        return new AppointmentState(stateId, stateName);
     }
-
 }

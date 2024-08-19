@@ -4,29 +4,29 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import it.unibo.myvet.model.Vet;
+import it.unibo.myvet.model.User;
 import it.unibo.myvet.utils.DAOUtils;
 import it.unibo.myvet.utils.Database;
 
-public class VetDAO {
+public class UserDAO {
 
     private final AccountDAO accountDAO = new AccountDAO(); // Utilizzo di AccountDAO
 
-    public Vet findById(int vetId) {
-        Vet vet = null;
-        String sql = "SELECT * FROM Veterinari WHERE IDVeterinario = ?";
+    public User findById(int userId) {
+        User user = null;
+        String sql = "SELECT * FROM Utenti WHERE IDUtente = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
-            statement.setInt(1, vetId);
+            statement.setInt(1, userId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     String cf = resultSet.getString("CF");
                     // Recupera i dettagli dell'account utilizzando l'AccountDAO
-                    Vet tempVet = (Vet) accountDAO.findByCf(cf);
-                    vet = new Vet(tempVet.getCf(), tempVet.getPassword(), tempVet.getFirstName(), tempVet.getLastName(),
-                            tempVet.getPhoneNumber(), vetId);
+                    User tempUser = (User) accountDAO.findByCf(cf);
+                    user = new User(tempUser.getCf(), tempUser.getPassword(), tempUser.getFirstName(),
+                            tempUser.getLastName(), tempUser.getPhoneNumber(), userId);
                 }
             }
 
@@ -34,18 +34,18 @@ public class VetDAO {
             e.printStackTrace();
         }
 
-        return vet;
+        return user;
     }
 
-    public void save(Vet vet) {
-        accountDAO.save(vet); // Salva l'Account prima
-        String sql = "INSERT INTO Veterinari (IDVeterinario, CF) VALUES (?, ?)";
+    public void save(User user) {
+        accountDAO.save(user); // Salva l'Account prima
+        String sql = "INSERT INTO Utenti (IDUtente, CF) VALUES (?, ?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
-            statement.setInt(1, vet.getVetId());
-            statement.setString(2, vet.getCf());
+            statement.setInt(1, user.getUserId());
+            statement.setString(2, user.getCf());
             statement.executeUpdate();
 
         } catch (SQLException e) {
@@ -53,15 +53,15 @@ public class VetDAO {
         }
     }
 
-    public void update(Vet vet) {
-        accountDAO.update(vet); // Aggiorna l'Account prima
-        String sql = "UPDATE Veterinari SET CF = ? WHERE IDVeterinario = ?";
+    public void update(User user) {
+        accountDAO.update(user); // Aggiorna l'Account prima
+        String sql = "UPDATE Utenti SET CF = ? WHERE IDUtente = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
-            statement.setString(1, vet.getCf());
-            statement.setInt(2, vet.getVetId());
+            statement.setString(1, user.getCf());
+            statement.setInt(2, user.getUserId());
             statement.executeUpdate();
 
         } catch (SQLException e) {
@@ -69,16 +69,16 @@ public class VetDAO {
         }
     }
 
-    public void delete(int vetId) {
-        Vet vet = findById(vetId);
-        if (vet != null) {
-            accountDAO.delete(vet.getCf()); // Elimina l'Account prima
-            String sql = "DELETE FROM Veterinari WHERE IDVeterinario = ?";
+    public void delete(int userId) {
+        User user = findById(userId);
+        if (user != null) {
+            accountDAO.delete(user.getCf()); // Elimina l'Account prima
+            String sql = "DELETE FROM Utenti WHERE IDUtente = ?";
 
             try (Database dbWrapper = DAOUtils.getConnection();
                     PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
-                statement.setInt(1, vetId);
+                statement.setInt(1, userId);
                 statement.executeUpdate();
 
             } catch (SQLException e) {

@@ -8,22 +8,21 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unibo.myvet.api.Dao;
 import it.unibo.myvet.model.Shift;
 import it.unibo.myvet.utils.DAOUtils;
 import it.unibo.myvet.utils.Database;
 
-public class ShiftDAO implements Dao<Shift, Integer> {
+public class ShiftDAO {
 
-    @Override
-    public Shift findById(Integer shiftId) {
+    public Shift findById(int vetId, DayOfWeek day) {
         Shift shift = null;
-        String sql = "SELECT * FROM Shifts WHERE IDOrario = ?";
+        String sql = "SELECT * FROM Shifts WHERE IDVeterinario = ? AND Giorno = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
-            statement.setInt(1, shiftId);
+            statement.setInt(1, vetId);
+            statement.setString(2, day.name());
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     shift = mapToShift(resultSet);
@@ -37,7 +36,27 @@ public class ShiftDAO implements Dao<Shift, Integer> {
         return shift;
     }
 
-    @Override
+    public List<Shift> findByVetId(int vetId) {
+        List<Shift> shifts = new ArrayList<>();
+        String sql = "SELECT * FROM Shifts WHERE IDVeterinario = ?";
+
+        try (Database dbWrapper = DAOUtils.getConnection();
+                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
+
+            statement.setInt(1, vetId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    shifts.add(mapToShift(resultSet));
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return shifts;
+    }
+
     public List<Shift> findAll() {
         List<Shift> shifts = new ArrayList<>();
         String sql = "SELECT * FROM Shifts";
@@ -57,37 +76,16 @@ public class ShiftDAO implements Dao<Shift, Integer> {
         return shifts;
     }
 
-    @Override
     public void save(Shift shift) {
-        String sql = "INSERT INTO Shifts (IDOrario, Giorno, OraInizio, OraFine, IDVeterinario) VALUES (?, ?, ?, ?, ?)";
-
-        try (Database dbWrapper = DAOUtils.getConnection();
-                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
-
-            statement.setInt(1, shift.getShiftId());
-            statement.setString(2, shift.getDay().name());
-            statement.setTime(3, java.sql.Time.valueOf(shift.getStartTime()));
-            statement.setTime(4, java.sql.Time.valueOf(shift.getEndTime()));
-            statement.setInt(5, shift.getVetId());
-            statement.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void update(Shift shift) {
-        String sql = "UPDATE Shifts SET Giorno = ?, OraInizio = ?, OraFine = ?, IDVeterinario = ? WHERE IDOrario = ?";
+        String sql = "INSERT INTO Shifts (Giorno, IDVeterinario, OraInizio, OraFine) VALUES (?, ?, ?, ?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
             statement.setString(1, shift.getDay().name());
-            statement.setTime(2, java.sql.Time.valueOf(shift.getStartTime()));
-            statement.setTime(3, java.sql.Time.valueOf(shift.getEndTime()));
-            statement.setInt(4, shift.getVetId());
-            statement.setInt(5, shift.getShiftId());
+            statement.setInt(2, shift.getVetId());
+            statement.setTime(3, java.sql.Time.valueOf(shift.getStartTime()));
+            statement.setTime(4, java.sql.Time.valueOf(shift.getEndTime()));
             statement.executeUpdate();
 
         } catch (SQLException e) {
@@ -95,14 +93,31 @@ public class ShiftDAO implements Dao<Shift, Integer> {
         }
     }
 
-    @Override
-    public void delete(Integer shiftId) {
-        String sql = "DELETE FROM Shifts WHERE IDOrario = ?";
+    public void update(Shift shift) {
+        String sql = "UPDATE Shifts SET OraInizio = ?, OraFine = ? WHERE Giorno = ? AND IDVeterinario = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
-            statement.setInt(1, shiftId);
+            statement.setTime(1, java.sql.Time.valueOf(shift.getStartTime()));
+            statement.setTime(2, java.sql.Time.valueOf(shift.getEndTime()));
+            statement.setString(3, shift.getDay().name());
+            statement.setInt(4, shift.getVetId());
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void delete(int vetId, DayOfWeek day) {
+        String sql = "DELETE FROM Shifts WHERE IDVeterinario = ? AND Giorno = ?";
+
+        try (Database dbWrapper = DAOUtils.getConnection();
+                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
+
+            statement.setInt(1, vetId);
+            statement.setString(2, day.name());
             statement.executeUpdate();
 
         } catch (SQLException e) {
@@ -111,12 +126,12 @@ public class ShiftDAO implements Dao<Shift, Integer> {
     }
 
     private Shift mapToShift(ResultSet resultSet) throws SQLException {
-        int shiftId = resultSet.getInt("IDOrario");
         DayOfWeek day = DayOfWeek.valueOf(resultSet.getString("Giorno"));
+        int vetId = resultSet.getInt("IDVeterinario");
         LocalTime startTime = resultSet.getTime("OraInizio").toLocalTime();
         LocalTime endTime = resultSet.getTime("OraFine").toLocalTime();
-        int vetId = resultSet.getInt("IDVeterinario");
 
-        return new Shift(shiftId, day, startTime, endTime, vetId);
+        return new Shift(day, vetId, startTime, endTime);
     }
+
 }

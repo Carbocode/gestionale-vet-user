@@ -1,13 +1,13 @@
 package it.unibo.myvet.model;
 
 public class Account {
-    private String cf; // Codice Fiscale
+    private String cf;
     private String password;
     private String firstName;
     private String lastName;
     private String phoneNumber;
 
-    // Costruttore
+    // Constructor
     public Account(String cf, String password, String firstName, String lastName, String phoneNumber) {
         this.cf = cf;
         this.password = password;
@@ -16,7 +16,7 @@ public class Account {
         this.phoneNumber = phoneNumber;
     }
 
-    // Getter e Setter
+    // Getter and Setter
     public String getCf() {
         return cf;
     }

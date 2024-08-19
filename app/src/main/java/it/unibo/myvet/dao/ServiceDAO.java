@@ -6,14 +6,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unibo.myvet.api.Dao;
 import it.unibo.myvet.model.Service;
 import it.unibo.myvet.utils.DAOUtils;
 import it.unibo.myvet.utils.Database;
 
-public class ServiceDAO implements Dao<Service, Integer> {
+public class ServiceDAO {
 
-    @Override
     public Service findById(Integer serviceId) {
         Service service = null;
         String sql = "SELECT * FROM Services WHERE IDServizio = ?";
@@ -35,7 +33,6 @@ public class ServiceDAO implements Dao<Service, Integer> {
         return service;
     }
 
-    @Override
     public List<Service> findAll() {
         List<Service> services = new ArrayList<>();
         String sql = "SELECT * FROM Services";
@@ -55,7 +52,6 @@ public class ServiceDAO implements Dao<Service, Integer> {
         return services;
     }
 
-    @Override
     public void save(Service service) {
         String sql = "INSERT INTO Services (IDServizio, Nome) VALUES (?, ?)";
 
@@ -71,7 +67,6 @@ public class ServiceDAO implements Dao<Service, Integer> {
         }
     }
 
-    @Override
     public void update(Service service) {
         String sql = "UPDATE Services SET Nome = ? WHERE IDServizio = ?";
 
@@ -87,7 +82,6 @@ public class ServiceDAO implements Dao<Service, Integer> {
         }
     }
 
-    @Override
     public void delete(Integer serviceId) {
         String sql = "DELETE FROM Services WHERE IDServizio = ?";
 

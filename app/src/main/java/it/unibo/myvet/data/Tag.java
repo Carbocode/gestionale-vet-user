@@ -1,8 +1,6 @@
 package it.unibo.myvet.data;
 
 import java.sql.Connection;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public final class Tag {
@@ -34,7 +32,7 @@ public final class Tag {
 
     @Override
     public String toString() {
-        //return Printer.stringify("Tag", List.of(Printer.field("name", this.name)));
+        // return Printer.stringify("Tag", List.of(Printer.field("name", this.name)));
         return name;
     }
 

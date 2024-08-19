@@ -1,39 +1,37 @@
 package it.unibo.myvet.model;
 
-import java.time.LocalTime;
 import java.time.DayOfWeek;
+import java.time.LocalTime;
 
 public class Shift {
-    private int shiftId;
     private DayOfWeek day;
+    private int vetId;
     private LocalTime startTime;
     private LocalTime endTime;
-    private int vetId; // Reference to Vet
 
-    // Constructor
-    public Shift(int shiftId, DayOfWeek day, LocalTime startTime, LocalTime endTime, int vetId) {
-        this.shiftId = shiftId;
+    // Costruttore
+    public Shift(DayOfWeek day, int vetId, LocalTime startTime, LocalTime endTime) {
         this.day = day;
+        this.vetId = vetId;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.vetId = vetId;
     }
 
-    // Getters and Setters
-    public int getShiftId() {
-        return shiftId;
-    }
-
-    public void setShiftId(int shiftId) {
-        this.shiftId = shiftId;
-    }
-
+    // Getter e Setter
     public DayOfWeek getDay() {
         return day;
     }
 
     public void setDay(DayOfWeek day) {
         this.day = day;
+    }
+
+    public int getVetId() {
+        return vetId;
+    }
+
+    public void setVetId(int vetId) {
+        this.vetId = vetId;
     }
 
     public LocalTime getStartTime() {
@@ -52,22 +50,13 @@ public class Shift {
         this.endTime = endTime;
     }
 
-    public int getVetId() {
-        return vetId;
-    }
-
-    public void setVetId(int vetId) {
-        this.vetId = vetId;
-    }
-
     @Override
     public String toString() {
         return "Shift{" +
-                "shiftId=" + shiftId +
-                ", day=" + day +
+                "day=" + day +
+                ", vetId=" + vetId +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
-                ", vetId=" + vetId +
                 '}';
     }
 }

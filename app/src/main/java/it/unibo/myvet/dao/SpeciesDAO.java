@@ -6,23 +6,23 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unibo.myvet.model.Specialization;
+import it.unibo.myvet.model.Species;
 import it.unibo.myvet.utils.DAOUtils;
 import it.unibo.myvet.utils.Database;
 
-public class SpecializationDAO {
+public class SpeciesDAO {
 
-    public Specialization findById(Integer specializationId) {
-        Specialization specialization = null;
-        String sql = "SELECT * FROM Specializations WHERE IDSpecializzazione = ?";
+    public Species findById(int speciesId) {
+        Species species = null;
+        String sql = "SELECT * FROM Species WHERE IDSpecie = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
-            statement.setInt(1, specializationId);
+            statement.setInt(1, speciesId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    specialization = mapToSpecialization(resultSet);
+                    species = mapToSpecies(resultSet);
                 }
             }
 
@@ -30,36 +30,36 @@ public class SpecializationDAO {
             e.printStackTrace();
         }
 
-        return specialization;
+        return species;
     }
 
-    public List<Specialization> findAll() {
-        List<Specialization> specializations = new ArrayList<>();
-        String sql = "SELECT * FROM Specializations";
+    public List<Species> findAll() {
+        List<Species> speciesList = new ArrayList<>();
+        String sql = "SELECT * FROM Species";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql);
                 ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                specializations.add(mapToSpecialization(resultSet));
+                speciesList.add(mapToSpecies(resultSet));
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return specializations;
+        return speciesList;
     }
 
-    public void save(Specialization specialization) {
-        String sql = "INSERT INTO Specializations (IDSpecializzazione, Nome) VALUES (?, ?)";
+    public void save(Species species) {
+        String sql = "INSERT INTO Species (IDSpecie, NomeSpecie) VALUES (?, ?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
-            statement.setInt(1, specialization.getSpecializationId());
-            statement.setString(2, specialization.getName());
+            statement.setInt(1, species.getSpeciesId());
+            statement.setString(2, species.getSpeciesName());
             statement.executeUpdate();
 
         } catch (SQLException e) {
@@ -67,14 +67,14 @@ public class SpecializationDAO {
         }
     }
 
-    public void update(Specialization specialization) {
-        String sql = "UPDATE Specializations SET Nome = ? WHERE IDSpecializzazione = ?";
+    public void update(Species species) {
+        String sql = "UPDATE Species SET NomeSpecie = ? WHERE IDSpecie = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
-            statement.setString(1, specialization.getName());
-            statement.setInt(2, specialization.getSpecializationId());
+            statement.setString(1, species.getSpeciesName());
+            statement.setInt(2, species.getSpeciesId());
             statement.executeUpdate();
 
         } catch (SQLException e) {
@@ -82,13 +82,13 @@ public class SpecializationDAO {
         }
     }
 
-    public void delete(Integer specializationId) {
-        String sql = "DELETE FROM Specializations WHERE IDSpecializzazione = ?";
+    public void delete(int speciesId) {
+        String sql = "DELETE FROM Species WHERE IDSpecie = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
-            statement.setInt(1, specializationId);
+            statement.setInt(1, speciesId);
             statement.executeUpdate();
 
         } catch (SQLException e) {
@@ -96,11 +96,10 @@ public class SpecializationDAO {
         }
     }
 
-    private Specialization mapToSpecialization(ResultSet resultSet) throws SQLException {
-        int specializationId = resultSet.getInt("IDSpecializzazione");
-        String name = resultSet.getString("Nome");
+    private Species mapToSpecies(ResultSet resultSet) throws SQLException {
+        int speciesId = resultSet.getInt("IDSpecie");
+        String speciesName = resultSet.getString("NomeSpecie");
 
-        return new Specialization(specializationId, name);
+        return new Species(speciesId, speciesName);
     }
-
 }
