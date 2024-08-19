@@ -1,15 +1,14 @@
 package it.unibo.myvet.view;
 
 import javax.swing.*;
+import java.awt.*;
 
-import it.unibo.myvet.utils.DAOUtils;
+import it.unibo.myvet.dao.AccountDAO;
+import it.unibo.myvet.model.Account;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
 
 public class LoginView {
     private JFrame frame;
@@ -19,33 +18,48 @@ public class LoginView {
     public LoginView() {
         frame = new JFrame("Login");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(300, 300);
+        frame.setSize(300, 200);
         frame.setResizable(false);
-        frame.setLayout(null);
+
+        frame.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
         JLabel usernameLabel = new JLabel("CF:");
-        usernameLabel.setBounds(20, 20, 100, 25);
-        frame.add(usernameLabel);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        frame.add(usernameLabel, gbc);
 
         usernameField = new JTextField();
-        usernameField.setBounds(120, 20, 150, 25);
-        frame.add(usernameField);
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        frame.add(usernameField, gbc);
 
         JLabel passwordLabel = new JLabel("Password:");
-        passwordLabel.setBounds(20, 60, 100, 25);
-        frame.add(passwordLabel);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        frame.add(passwordLabel, gbc);
 
         passwordField = new JPasswordField();
-        passwordField.setBounds(120, 60, 150, 25);
-        frame.add(passwordField);
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.gridwidth = 2;
+        frame.add(passwordField, gbc);
 
         JButton loginButton = new JButton("Login");
-        loginButton.setBounds(100, 100, 100, 30);
-        frame.add(loginButton);
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.gridwidth = 1;
+        frame.add(loginButton, gbc);
 
         JButton signupButton = new JButton("Sign Up");
-        signupButton.setBounds(100, 100, 100, 30);
-        frame.add(signupButton);
+        gbc.gridx = 2;
+        gbc.gridy = 2;
+        gbc.gridwidth = 1;
+        frame.add(signupButton, gbc);
 
         loginButton.addActionListener(new ActionListener() {
             @Override
@@ -54,8 +68,8 @@ public class LoginView {
                 String password = new String(passwordField.getPassword());
                 if (authenticate(username, password)) {
                     JOptionPane.showMessageDialog(frame, "Login successful!");
-                    frame.dispose(); 
-                    showMainView();
+                    frame.dispose();
+                    showPrivateView();
                 } else {
                     JOptionPane.showMessageDialog(frame, "Invalid username or password.");
                 }
@@ -70,58 +84,78 @@ public class LoginView {
         });
 
         frame.setVisible(true);
-        
     }
 
     private void showSignupView() {
         JFrame signupFrame = new JFrame("Sign Up");
         signupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         signupFrame.setSize(350, 300);
-        signupFrame.setLayout(null);
+        signupFrame.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
         JLabel cfLabel = new JLabel("Codice Fiscale:");
-        cfLabel.setBounds(20, 20, 100, 25);
-        signupFrame.add(cfLabel);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        signupFrame.add(cfLabel, gbc);
 
         JTextField cfField = new JTextField();
-        cfField.setBounds(130, 20, 180, 25);
-        signupFrame.add(cfField);
-
-        JLabel passwordLabel = new JLabel("Password:");
-        passwordLabel.setBounds(20, 140, 100, 25);
-        signupFrame.add(passwordLabel);
-
-        JPasswordField passwordField = new JPasswordField();
-        passwordField.setBounds(130, 140, 180, 25);
-        signupFrame.add(passwordField);
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        signupFrame.add(cfField, gbc);
 
         JLabel nomeLabel = new JLabel("Nome:");
-        nomeLabel.setBounds(20, 60, 100, 25);
-        signupFrame.add(nomeLabel);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        signupFrame.add(nomeLabel, gbc);
 
         JTextField nomeField = new JTextField();
-        nomeField.setBounds(130, 60, 180, 25);
-        signupFrame.add(nomeField);
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.gridwidth = 2;
+        signupFrame.add(nomeField, gbc);
 
         JLabel cognomeLabel = new JLabel("Cognome:");
-        cognomeLabel.setBounds(20, 100, 100, 25);
-        signupFrame.add(cognomeLabel);
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        signupFrame.add(cognomeLabel, gbc);
 
         JTextField cognomeField = new JTextField();
-        cognomeField.setBounds(130, 100, 180, 25);
-        signupFrame.add(cognomeField);
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        signupFrame.add(cognomeField, gbc);
+
+        JLabel passwordLabel = new JLabel("Password:");
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        signupFrame.add(passwordLabel, gbc);
+
+        JPasswordField passwordField = new JPasswordField();
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        signupFrame.add(passwordField, gbc);
 
         JLabel telefonoLabel = new JLabel("Telefono:");
-        passwordLabel.setBounds(20, 140, 100, 25);
-        signupFrame.add(telefonoLabel);
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        signupFrame.add(telefonoLabel, gbc);
 
         JTextField telefonoField = new JTextField();
-        passwordField.setBounds(130, 140, 180, 25);
-        signupFrame.add(telefonoField);
-       
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        gbc.gridwidth = 2;
+        signupFrame.add(telefonoField, gbc);
+
         JButton submitButton = new JButton("Sign Up");
-        submitButton.setBounds(110, 200, 100, 30);
-        signupFrame.add(submitButton);
+        gbc.gridx = 1;
+        gbc.gridy = 5;
+        gbc.gridwidth = 2;
+        signupFrame.add(submitButton, gbc);
 
         submitButton.addActionListener(new ActionListener() {
             @Override
@@ -131,7 +165,7 @@ public class LoginView {
                 String cognome = cognomeField.getText();
                 String password = new String(passwordField.getPassword());
                 String telefono = telefonoField.getText();
-                if (registerAccount(CF, nome, cognome, password,telefono)) {
+                if (registerAccount(CF, nome, cognome, password, telefono)) {
                     JOptionPane.showMessageDialog(signupFrame, "Registrazione avvenuta con successo!");
                     signupFrame.dispose();
                 } else {
@@ -144,57 +178,31 @@ public class LoginView {
     }
 
     private boolean registerAccount(String CF, String nome, String cognome, String password, String telefono) {
-        boolean isRegistered = false;
-        try (Connection conn = DAOUtils.localMySQLConnection("myvet", "root", "Dajeroma")) {
-            String query = "INSERT INTO account (CF, password, nome, cognome, telefono) VALUES (?, ?, ?, ?, ?)";
-            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setString(1, CF);
-                pstmt.setString(2, password);
-                pstmt.setString(3, nome);
-                pstmt.setString(4, cognome);
-                pstmt.setString(5, telefono);
-                int rowsInserted = pstmt.executeUpdate();
-                if (rowsInserted > 0) {
-                    isRegistered = true;
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return isRegistered;
-    }
-
-    private boolean authenticate(String CF, String password) {
+        AccountDAO acc = new AccountDAO();
         boolean isAuthenticated = false;
-        try (Connection conn = DAOUtils.localMySQLConnection("myvet", "root", "Dajeroma")) {
-            String query = "SELECT * FROM account WHERE CF = ? AND password = ?";
-            try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                pstmt.setString(1, CF);
-                pstmt.setString(2, password);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        isAuthenticated = true;
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        try {
+            acc.save(new Account(CF, password, cognome, password, telefono));
+            isAuthenticated = true;
+        } catch (Exception e) {
         }
         return isAuthenticated;
     }
 
-    private void showMainView() {
-        // Crea e mostra la view principale
-        JFrame mainFrame = new JFrame("Main View");
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setSize(400, 300);
-        JLabel welcomeLabel = new JLabel("Welcome, " + usernameField.getText() + "!");
-        welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        mainFrame.add(welcomeLabel);
-        mainFrame.setVisible(true);
+    private boolean authenticate(String CF, String password) {
+        AccountDAO acc = new AccountDAO();
+        boolean isAuthenticated = false;
+        if (acc.authenticate(CF, password) != null) {
+            isAuthenticated = true;
+        }
+        return isAuthenticated;
     }
 
+    private void showPrivateView() {
+        new PrivateView();
+    }
+    
+    /*
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new LoginView());
-    }
+    } */
 }

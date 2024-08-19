@@ -90,4 +90,21 @@ public class AccountDAO {
 
         return new Account(cf, password, firstName, lastName, phoneNumber);
     }
+
+    public Account authenticate(String CF, String password) {
+        Account account = null;
+        String query = "SELECT * FROM account WHERE CF = ? AND password = ?";
+        try (Database dbWrapper = DAOUtils.getConnection();
+                PreparedStatement statement = dbWrapper.prepareStatement(query)) {
+            statement.setString(1, CF);
+            statement.setString(2, password);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return findByCf(CF);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return account;
+    }
 }
