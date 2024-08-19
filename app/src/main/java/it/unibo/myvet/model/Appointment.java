@@ -8,14 +8,27 @@ public class Appointment {
     private int vetId;
     private LocalDateTime dateTime; // Cambiato da appointmentDate a dateTime
     private byte[] report; // Questo campo rappresenta il file del referto
+    private String status; // Stato dell'appuntamento
 
     // Costruttore
-    public Appointment(int appointmentId, int animalId, int vetId, LocalDateTime dateTime, byte[] report) {
+    public Appointment(int animalId, int vetId, LocalDateTime dateTime, byte[] report,
+            String status) {
+        this.animalId = animalId;
+        this.vetId = vetId;
+        this.dateTime = dateTime;
+        this.report = report;
+        this.status = status;
+    }
+
+    // Costruttore
+    public Appointment(int appointmentId, int animalId, int vetId, LocalDateTime dateTime, byte[] report,
+            String status) {
         this.appointmentId = appointmentId;
         this.animalId = animalId;
         this.vetId = vetId;
         this.dateTime = dateTime;
         this.report = report;
+        this.status = status;
     }
 
     // Getter e Setter
@@ -59,6 +72,14 @@ public class Appointment {
         this.report = report;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "Appointment{" +
@@ -67,6 +88,7 @@ public class Appointment {
                 ", vetId=" + vetId +
                 ", dateTime=" + dateTime +
                 ", report=" + (report != null ? "[binary data]" : "null") +
+                ", status='" + status + '\'' +
                 '}';
     }
 }

@@ -53,14 +53,21 @@ public class ServiceDAO {
     }
 
     public void save(Service service) {
-        String sql = "INSERT INTO Services (IDServizio, Nome) VALUES (?, ?)";
+        String sql = "INSERT INTO Services (Nome) VALUES (?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
-                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
+                PreparedStatement statement = dbWrapper.prepareStatement(sql,
+                        PreparedStatement.RETURN_GENERATED_KEYS)) {
 
-            statement.setInt(1, service.getServiceId());
-            statement.setString(2, service.getName());
+            statement.setString(1, service.getName());
             statement.executeUpdate();
+
+            // Recupera l'ID generato automaticamente e impostalo sull'oggetto Service
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    service.setServiceId(generatedKeys.getInt(1));
+                }
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();

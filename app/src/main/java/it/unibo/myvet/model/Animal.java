@@ -10,6 +10,14 @@ public class Animal {
     private int ownerId; // Riferimento all'utente proprietario
 
     // Costruttore
+    public Animal(String name, String breed, LocalDate birthDate, int ownerId) {
+        this.name = name;
+        this.breed = breed;
+        this.birthDate = birthDate;
+        this.ownerId = ownerId;
+    }
+
+    // Costruttore
     public Animal(int animalId, String name, String breed, LocalDate birthDate, int ownerId) {
         this.animalId = animalId;
         this.name = name;

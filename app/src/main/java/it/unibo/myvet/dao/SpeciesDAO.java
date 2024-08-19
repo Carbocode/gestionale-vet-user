@@ -53,14 +53,21 @@ public class SpeciesDAO {
     }
 
     public void save(Species species) {
-        String sql = "INSERT INTO Species (IDSpecie, NomeSpecie) VALUES (?, ?)";
+        String sql = "INSERT INTO Species (NomeSpecie) VALUES (?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
-                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
+                PreparedStatement statement = dbWrapper.prepareStatement(sql,
+                        PreparedStatement.RETURN_GENERATED_KEYS)) {
 
-            statement.setInt(1, species.getSpeciesId());
-            statement.setString(2, species.getSpeciesName());
+            statement.setString(1, species.getSpeciesName());
             statement.executeUpdate();
+
+            // Recupera l'ID generato automaticamente e impostalo sull'oggetto Species
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    species.setSpeciesId(generatedKeys.getInt(1));
+                }
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();

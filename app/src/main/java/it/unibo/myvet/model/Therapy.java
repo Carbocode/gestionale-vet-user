@@ -10,6 +10,14 @@ public class Therapy {
     private LocalDateTime endDate;
 
     // Costruttore
+    public Therapy(int animalId, String description, LocalDateTime startDate, LocalDateTime endDate) {
+        this.animalId = animalId;
+        this.description = description;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
+    // Costruttore
     public Therapy(int therapyId, int animalId, String description, LocalDateTime startDate, LocalDateTime endDate) {
         this.therapyId = therapyId;
         this.animalId = animalId;

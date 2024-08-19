@@ -4,6 +4,11 @@ public class Vet extends Account {
     private int vetId;
 
     // Costruttore
+    public Vet(String cf, String password, String firstName, String lastName, String phoneNumber) {
+        super(cf, password, firstName, lastName, phoneNumber);
+    }
+
+    // Costruttore
     public Vet(String cf, String password, String firstName, String lastName, String phoneNumber, int vetId) {
         super(cf, password, firstName, lastName, phoneNumber);
         this.vetId = vetId;

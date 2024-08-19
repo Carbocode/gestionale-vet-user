@@ -5,6 +5,11 @@ public class Service {
     private String name;
 
     // Constructor
+    public Service(String name) {
+        this.name = name;
+    }
+
+    // Constructor
     public Service(int serviceId, String name) {
         this.serviceId = serviceId;
         this.name = name;

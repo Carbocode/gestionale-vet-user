@@ -5,6 +5,11 @@ public class AppointmentState {
     private String stateName;
 
     // Costruttore
+    public AppointmentState(String stateName) {
+        this.stateName = stateName;
+    }
+
+    // Costruttore
     public AppointmentState(int stateId, String stateName) {
         this.stateId = stateId;
         this.stateName = stateName;

@@ -4,6 +4,11 @@ public class User extends Account {
     private int userId;
 
     // Costruttore
+    public User(String cf, String password, String firstName, String lastName, String phoneNumber) {
+        super(cf, password, firstName, lastName, phoneNumber);
+    }
+
+    // Costruttore
     public User(String cf, String password, String firstName, String lastName, String phoneNumber, int userId) {
         super(cf, password, firstName, lastName, phoneNumber);
         this.userId = userId;

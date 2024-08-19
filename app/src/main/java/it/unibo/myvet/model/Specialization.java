@@ -5,6 +5,11 @@ public class Specialization {
     private String name;
 
     // Constructor
+    public Specialization(String name) {
+        this.name = name;
+    }
+
+    // Constructor
     public Specialization(int specializationId, String name) {
         this.specializationId = specializationId;
         this.name = name;

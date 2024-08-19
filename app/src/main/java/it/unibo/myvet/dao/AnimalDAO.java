@@ -56,17 +56,24 @@ public class AnimalDAO {
     }
 
     public void save(Animal animal) {
-        String sql = "INSERT INTO Animals (IDAnimale, Nome, Razza, DataNascita, IDUtente) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Animals (Nome, Razza, DataNascita, IDUtente) VALUES (?, ?, ?, ?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
-                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
+                PreparedStatement statement = dbWrapper.prepareStatement(sql,
+                        PreparedStatement.RETURN_GENERATED_KEYS)) {
 
-            statement.setInt(1, animal.getAnimalId());
-            statement.setString(2, animal.getName());
-            statement.setString(3, animal.getBreed());
-            statement.setDate(4, Date.valueOf(animal.getBirthDate()));
-            statement.setInt(5, animal.getOwnerId());
+            statement.setString(1, animal.getName());
+            statement.setString(2, animal.getBreed());
+            statement.setDate(3, Date.valueOf(animal.getBirthDate()));
+            statement.setInt(4, animal.getOwnerId());
             statement.executeUpdate();
+
+            // Retrieve the generated ID and set it on the Animal object
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    animal.setAnimalId(generatedKeys.getInt(1)); // Set the auto-generated ID
+                }
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();

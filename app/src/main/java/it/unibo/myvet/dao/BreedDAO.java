@@ -55,15 +55,22 @@ public class BreedDAO {
     }
 
     public void save(Breed breed) {
-        String sql = "INSERT INTO Breeds (IDRazza, NomeRazza, IDSpecie) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Breeds (NomeRazza, IDSpecie) VALUES (?, ?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
-                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
+                PreparedStatement statement = dbWrapper.prepareStatement(sql,
+                        PreparedStatement.RETURN_GENERATED_KEYS)) {
 
-            statement.setInt(1, breed.getBreedId());
-            statement.setString(2, breed.getBreedName());
-            statement.setInt(3, breed.getSpeciesId());
+            statement.setString(1, breed.getBreedName());
+            statement.setInt(2, breed.getSpeciesId());
             statement.executeUpdate();
+
+            // Recupera l'ID generato automaticamente e impostalo sull'oggetto Breed
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    breed.setBreedId(generatedKeys.getInt(1));
+                }
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();

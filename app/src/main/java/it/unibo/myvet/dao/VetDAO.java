@@ -39,14 +39,21 @@ public class VetDAO {
 
     public void save(Vet vet) {
         accountDAO.save(vet); // Salva l'Account prima
-        String sql = "INSERT INTO Veterinari (IDVeterinario, CF) VALUES (?, ?)";
+        String sql = "INSERT INTO Veterinari (CF) VALUES (?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
-                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
+                PreparedStatement statement = dbWrapper.prepareStatement(sql,
+                        PreparedStatement.RETURN_GENERATED_KEYS)) {
 
-            statement.setInt(1, vet.getVetId());
-            statement.setString(2, vet.getCf());
+            statement.setString(1, vet.getCf());
             statement.executeUpdate();
+
+            // Recupera l'ID generato automaticamente e impostalo sull'oggetto Vet
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    vet.setVetId(generatedKeys.getInt(1));
+                }
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();

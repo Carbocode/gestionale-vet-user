@@ -6,6 +6,12 @@ public class Breed {
     private int speciesId; // Chiave esterna che fa riferimento a Species
 
     // Costruttore
+    public Breed(String breedName, int speciesId) {
+        this.breedName = breedName;
+        this.speciesId = speciesId;
+    }
+
+    // Costruttore
     public Breed(int breedId, String breedName, int speciesId) {
         this.breedId = breedId;
         this.breedName = breedName;

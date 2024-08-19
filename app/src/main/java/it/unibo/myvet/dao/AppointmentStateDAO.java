@@ -53,14 +53,22 @@ public class AppointmentStateDAO {
     }
 
     public void save(AppointmentState state) {
-        String sql = "INSERT INTO AppointmentStates (IDStatoAppuntamento, NomeStato) VALUES (?, ?)";
+        String sql = "INSERT INTO AppointmentStates (NomeStato) VALUES (?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
-                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
+                PreparedStatement statement = dbWrapper.prepareStatement(sql,
+                        PreparedStatement.RETURN_GENERATED_KEYS)) {
 
-            statement.setInt(1, state.getStateId());
-            statement.setString(2, state.getStateName());
+            statement.setString(1, state.getStateName());
             statement.executeUpdate();
+
+            // Recupera l'ID generato automaticamente e impostalo sull'oggetto
+            // AppointmentState
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    state.setStateId(generatedKeys.getInt(1));
+                }
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();

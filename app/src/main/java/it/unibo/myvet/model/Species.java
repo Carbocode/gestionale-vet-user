@@ -5,6 +5,11 @@ public class Species {
     private String speciesName;
 
     // Costruttore
+    public Species(String speciesName) {
+        this.speciesName = speciesName;
+    }
+
+    // Costruttore
     public Species(int speciesId, String speciesName) {
         this.speciesId = speciesId;
         this.speciesName = speciesName;

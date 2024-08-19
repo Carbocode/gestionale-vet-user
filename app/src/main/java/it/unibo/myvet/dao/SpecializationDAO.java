@@ -53,14 +53,22 @@ public class SpecializationDAO {
     }
 
     public void save(Specialization specialization) {
-        String sql = "INSERT INTO Specializations (IDSpecializzazione, Nome) VALUES (?, ?)";
+        String sql = "INSERT INTO Specializations (Nome) VALUES (?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
-                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
+                PreparedStatement statement = dbWrapper.prepareStatement(sql,
+                        PreparedStatement.RETURN_GENERATED_KEYS)) {
 
-            statement.setInt(1, specialization.getSpecializationId());
-            statement.setString(2, specialization.getName());
+            statement.setString(1, specialization.getName());
             statement.executeUpdate();
+
+            // Recupera l'ID generato automaticamente e impostalo sull'oggetto
+            // Specialization
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    specialization.setSpecializationId(generatedKeys.getInt(1));
+                }
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();

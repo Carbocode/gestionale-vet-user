@@ -39,14 +39,21 @@ public class UserDAO {
 
     public void save(User user) {
         accountDAO.save(user); // Salva l'Account prima
-        String sql = "INSERT INTO Utenti (IDUtente, CF) VALUES (?, ?)";
+        String sql = "INSERT INTO Utenti (CF) VALUES (?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
-                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
+                PreparedStatement statement = dbWrapper.prepareStatement(sql,
+                        PreparedStatement.RETURN_GENERATED_KEYS)) {
 
-            statement.setInt(1, user.getUserId());
-            statement.setString(2, user.getCf());
+            statement.setString(1, user.getCf());
             statement.executeUpdate();
+
+            // Recupera l'ID generato automaticamente e impostalo sull'oggetto User
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    user.setUserId(generatedKeys.getInt(1));
+                }
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();

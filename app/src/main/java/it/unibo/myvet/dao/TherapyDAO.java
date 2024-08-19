@@ -57,17 +57,24 @@ public class TherapyDAO {
     }
 
     public void save(Therapy therapy) {
-        String sql = "INSERT INTO Therapies (IDTerapia, IDAnimale, Descrizione, DataInizio, DataFine) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Therapies (IDAnimale, Descrizione, DataInizio, DataFine) VALUES (?, ?, ?, ?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
-                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
+                PreparedStatement statement = dbWrapper.prepareStatement(sql,
+                        PreparedStatement.RETURN_GENERATED_KEYS)) {
 
-            statement.setInt(1, therapy.getTherapyId());
-            statement.setInt(2, therapy.getAnimalId());
-            statement.setString(3, therapy.getDescription());
-            statement.setTimestamp(4, Timestamp.valueOf(therapy.getStartDate()));
-            statement.setTimestamp(5, Timestamp.valueOf(therapy.getEndDate()));
+            statement.setInt(1, therapy.getAnimalId());
+            statement.setString(2, therapy.getDescription());
+            statement.setTimestamp(3, Timestamp.valueOf(therapy.getStartDate()));
+            statement.setTimestamp(4, Timestamp.valueOf(therapy.getEndDate()));
             statement.executeUpdate();
+
+            // Recupera l'ID generato automaticamente e impostalo sull'oggetto Therapy
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    therapy.setTherapyId(generatedKeys.getInt(1));
+                }
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
