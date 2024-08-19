@@ -35,16 +35,18 @@ public class TherapyDAO {
         return therapy;
     }
 
-    public List<Therapy> findAll() {
+    public List<Therapy> findByAnimalId(int animalId) {
         List<Therapy> therapies = new ArrayList<>();
-        String sql = "SELECT * FROM Therapies";
+        String sql = "SELECT * FROM Therapies WHERE IDAnimale = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
-                PreparedStatement statement = dbWrapper.prepareStatement(sql);
-                ResultSet resultSet = statement.executeQuery()) {
+                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
-            while (resultSet.next()) {
-                therapies.add(mapToTherapy(resultSet));
+            statement.setInt(1, animalId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    therapies.add(mapToTherapy(resultSet));
+                }
             }
 
         } catch (SQLException e) {

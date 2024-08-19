@@ -3,6 +3,7 @@ package it.unibo.myvet.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,16 +34,18 @@ public class AnimalDAO {
         return animal;
     }
 
-    public List<Animal> findAll() {
+    public List<Animal> findByOwnerId(int ownerId) {
         List<Animal> animals = new ArrayList<>();
-        String sql = "SELECT * FROM Animals";
+        String sql = "SELECT * FROM Animals WHERE IDUtente = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
-                PreparedStatement statement = dbWrapper.prepareStatement(sql);
-                ResultSet resultSet = statement.executeQuery()) {
+                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
-            while (resultSet.next()) {
-                animals.add(mapToAnimal(resultSet));
+            statement.setInt(1, ownerId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    animals.add(mapToAnimal(resultSet));
+                }
             }
 
         } catch (SQLException e) {
@@ -53,17 +56,16 @@ public class AnimalDAO {
     }
 
     public void save(Animal animal) {
-        String sql = "INSERT INTO Animals (IDAnimale, Nome, Specie, Razza, Età, IDProprietario) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Animals (IDAnimale, Nome, Razza, DataNascita, IDUtente) VALUES (?, ?, ?, ?, ?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
             statement.setInt(1, animal.getAnimalId());
             statement.setString(2, animal.getName());
-            statement.setString(3, animal.getSpecies());
-            statement.setString(4, animal.getBreed());
-            statement.setInt(5, animal.getAge());
-            statement.setInt(6, animal.getOwnerId());
+            statement.setString(3, animal.getBreed());
+            statement.setDate(4, Date.valueOf(animal.getBirthDate()));
+            statement.setInt(5, animal.getOwnerId());
             statement.executeUpdate();
 
         } catch (SQLException e) {
@@ -72,17 +74,16 @@ public class AnimalDAO {
     }
 
     public void update(Animal animal) {
-        String sql = "UPDATE Animals SET Nome = ?, Specie = ?, Razza = ?, Età = ?, IDProprietario = ? WHERE IDAnimale = ?";
+        String sql = "UPDATE Animals SET Nome = ?, Razza = ?, DataNascita = ?, IDUtente = ? WHERE IDAnimale = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
             statement.setString(1, animal.getName());
-            statement.setString(2, animal.getSpecies());
-            statement.setString(3, animal.getBreed());
-            statement.setInt(4, animal.getAge());
-            statement.setInt(5, animal.getOwnerId());
-            statement.setInt(6, animal.getAnimalId());
+            statement.setString(2, animal.getBreed());
+            statement.setDate(3, Date.valueOf(animal.getBirthDate()));
+            statement.setInt(4, animal.getOwnerId());
+            statement.setInt(5, animal.getAnimalId());
             statement.executeUpdate();
 
         } catch (SQLException e) {
@@ -107,11 +108,10 @@ public class AnimalDAO {
     private Animal mapToAnimal(ResultSet resultSet) throws SQLException {
         int animalId = resultSet.getInt("IDAnimale");
         String name = resultSet.getString("Nome");
-        String species = resultSet.getString("Specie");
         String breed = resultSet.getString("Razza");
-        int age = resultSet.getInt("Età");
-        int ownerId = resultSet.getInt("IDProprietario");
+        Date birthDate = resultSet.getDate("DataNascita");
+        int ownerId = resultSet.getInt("IDUtente");
 
-        return new Animal(animalId, name, species, breed, age, ownerId);
+        return new Animal(animalId, name, breed, birthDate.toLocalDate(), ownerId);
     }
 }

@@ -55,25 +55,6 @@ public class FavouriteVetDAO {
         return favouriteVets;
     }
 
-    public List<FavouriteVet> findAll() {
-        List<FavouriteVet> favouriteVets = new ArrayList<>();
-        String sql = "SELECT * FROM FavouriteVets";
-
-        try (Database dbWrapper = DAOUtils.getConnection();
-                PreparedStatement statement = dbWrapper.prepareStatement(sql);
-                ResultSet resultSet = statement.executeQuery()) {
-
-            while (resultSet.next()) {
-                favouriteVets.add(mapToFavouriteVet(resultSet));
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return favouriteVets;
-    }
-
     public void save(FavouriteVet favouriteVet) {
         String sql = "INSERT INTO FavouriteVets (IDUtente, IDVeterinario) VALUES (?, ?)";
 

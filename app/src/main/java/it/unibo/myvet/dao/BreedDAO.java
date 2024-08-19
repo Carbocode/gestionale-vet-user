@@ -54,25 +54,6 @@ public class BreedDAO {
         return breeds;
     }
 
-    public List<Breed> findAll() {
-        List<Breed> breeds = new ArrayList<>();
-        String sql = "SELECT * FROM Breeds";
-
-        try (Database dbWrapper = DAOUtils.getConnection();
-                PreparedStatement statement = dbWrapper.prepareStatement(sql);
-                ResultSet resultSet = statement.executeQuery()) {
-
-            while (resultSet.next()) {
-                breeds.add(mapToBreed(resultSet));
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return breeds;
-    }
-
     public void save(Breed breed) {
         String sql = "INSERT INTO Breeds (IDRazza, NomeRazza, IDSpecie) VALUES (?, ?, ?)";
 

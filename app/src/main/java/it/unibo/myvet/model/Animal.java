@@ -1,20 +1,20 @@
 package it.unibo.myvet.model;
 
+import java.time.LocalDate;
+
 public class Animal {
     private int animalId;
     private String name;
-    private String species;
     private String breed;
-    private int age;
-    private int ownerId; // Reference to User (owner)
+    private LocalDate birthDate; // Data di nascita dell'animale
+    private int ownerId; // Riferimento all'utente proprietario
 
     // Costruttore
-    public Animal(int animalId, String name, String species, String breed, int age, int ownerId) {
+    public Animal(int animalId, String name, String breed, LocalDate birthDate, int ownerId) {
         this.animalId = animalId;
         this.name = name;
-        this.species = species;
         this.breed = breed;
-        this.age = age;
+        this.birthDate = birthDate;
         this.ownerId = ownerId;
     }
 
@@ -35,14 +35,6 @@ public class Animal {
         this.name = name;
     }
 
-    public String getSpecies() {
-        return species;
-    }
-
-    public void setSpecies(String species) {
-        this.species = species;
-    }
-
     public String getBreed() {
         return breed;
     }
@@ -51,12 +43,12 @@ public class Animal {
         this.breed = breed;
     }
 
-    public int getAge() {
-        return age;
+    public LocalDate getBirthDate() {
+        return birthDate;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
     }
 
     public int getOwnerId() {
@@ -72,9 +64,8 @@ public class Animal {
         return "Animal{" +
                 "animalId=" + animalId +
                 ", name='" + name + '\'' +
-                ", species='" + species + '\'' +
                 ", breed='" + breed + '\'' +
-                ", age=" + age +
+                ", birthDate=" + birthDate +
                 ", ownerId=" + ownerId +
                 '}';
     }
