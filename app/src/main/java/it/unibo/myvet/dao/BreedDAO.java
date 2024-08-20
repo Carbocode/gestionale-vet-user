@@ -1,16 +1,21 @@
 package it.unibo.myvet.dao;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import it.unibo.myvet.model.Breed;
+import it.unibo.myvet.model.Species;
 import it.unibo.myvet.utils.DAOUtils;
 import it.unibo.myvet.utils.Database;
 
 public class BreedDAO {
+
+    private final SpeciesDAO speciesDAO;
+
+    public BreedDAO(SpeciesDAO speciesDAO) {
+        this.speciesDAO = speciesDAO;
+    }
 
     public Breed findById(int breedId) {
         Breed breed = null;
@@ -54,6 +59,25 @@ public class BreedDAO {
         return breeds;
     }
 
+    public List<Breed> findAll() {
+        List<Breed> breeds = new ArrayList<>();
+        String sql = "SELECT * FROM Breeds";
+
+        try (Database dbWrapper = DAOUtils.getConnection();
+                PreparedStatement statement = dbWrapper.prepareStatement(sql);
+                ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                breeds.add(mapToBreed(resultSet));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return breeds;
+    }
+
     public void save(Breed breed) {
         String sql = "INSERT INTO Breeds (NomeRazza, IDSpecie) VALUES (?, ?)";
 
@@ -62,7 +86,7 @@ public class BreedDAO {
                         PreparedStatement.RETURN_GENERATED_KEYS)) {
 
             statement.setString(1, breed.getBreedName());
-            statement.setInt(2, breed.getSpeciesId());
+            statement.setInt(2, breed.getSpecies().getSpeciesId());
             statement.executeUpdate();
 
             // Recupera l'ID generato automaticamente e impostalo sull'oggetto Breed
@@ -84,7 +108,7 @@ public class BreedDAO {
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
             statement.setString(1, breed.getBreedName());
-            statement.setInt(2, breed.getSpeciesId());
+            statement.setInt(2, breed.getSpecies().getSpeciesId());
             statement.setInt(3, breed.getBreedId());
             statement.executeUpdate();
 
@@ -112,6 +136,8 @@ public class BreedDAO {
         String breedName = resultSet.getString("NomeRazza");
         int speciesId = resultSet.getInt("IDSpecie");
 
-        return new Breed(breedId, breedName, speciesId);
+        Species species = speciesDAO.findById(speciesId);
+
+        return new Breed(breedId, breedName, species);
     }
 }

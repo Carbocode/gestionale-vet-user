@@ -8,11 +8,21 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.unibo.myvet.model.Appointment;
+import it.unibo.myvet.model.*;
 import it.unibo.myvet.utils.DAOUtils;
 import it.unibo.myvet.utils.Database;
 
 public class AppointmentDAO {
+
+    private AnimalDAO animalDAO;
+    private VetDAO vetDAO;
+    private AppointmentStateDAO appointmentStateDAO;
+
+    public AppointmentDAO(AnimalDAO animalDAO, VetDAO vetDAO, AppointmentStateDAO appointmentStateDAO) {
+        this.animalDAO = animalDAO;
+        this.vetDAO = vetDAO;
+        this.appointmentStateDAO = appointmentStateDAO;
+    }
 
     public Appointment findById(int appointmentId) {
         Appointment appointment = null;
@@ -84,11 +94,11 @@ public class AppointmentDAO {
                 PreparedStatement statement = dbWrapper.prepareStatement(sql,
                         PreparedStatement.RETURN_GENERATED_KEYS)) {
 
-            statement.setInt(1, appointment.getAnimalId());
-            statement.setInt(2, appointment.getVetId());
+            statement.setInt(1, appointment.getAnimal().getAnimalId());
+            statement.setInt(2, appointment.getVet().getVetId());
             statement.setTimestamp(3, Timestamp.valueOf(appointment.getDateTime()));
             statement.setBytes(4, appointment.getReport()); // Gestione del file come array di byte
-            statement.setInt(5, appointment.getIdStatus()); // Inserisce l'ID dello stato
+            statement.setInt(5, appointment.getStatus().getStateId()); // Inserisce l'ID dello stato
             statement.executeUpdate();
 
             // Recupera l'ID generato automaticamente e impostalo sull'oggetto Appointment
@@ -109,11 +119,11 @@ public class AppointmentDAO {
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
-            statement.setInt(1, appointment.getAnimalId());
-            statement.setInt(2, appointment.getVetId());
+            statement.setInt(1, appointment.getAnimal().getAnimalId());
+            statement.setInt(2, appointment.getVet().getVetId());
             statement.setTimestamp(3, Timestamp.valueOf(appointment.getDateTime()));
             statement.setBytes(4, appointment.getReport()); // Gestione del file come array di byte
-            statement.setInt(5, appointment.getIdStatus()); // Aggiorna l'ID dello stato
+            statement.setInt(5, appointment.getStatus().getStateId()); // Aggiorna l'ID dello stato
             statement.setInt(6, appointment.getAppointmentId());
             statement.executeUpdate();
 
@@ -142,8 +152,12 @@ public class AppointmentDAO {
         int vetId = resultSet.getInt("IDVeterinario");
         LocalDateTime dateTime = resultSet.getTimestamp("DataOraAppuntamento").toLocalDateTime();
         byte[] report = resultSet.getBytes("Referto");
-        int idStatus = resultSet.getInt("IDStato"); // Recupera l'ID dello stato
+        int statusId = resultSet.getInt("IDStato");
 
-        return new Appointment(appointmentId, animalId, vetId, dateTime, report, idStatus);
+        Animal animal = animalDAO.findById(animalId);
+        Vet vet = vetDAO.findById(vetId);
+        AppointmentState status = appointmentStateDAO.findById(statusId);
+
+        return new Appointment(appointmentId, animal, vet, dateTime, report, status);
     }
 }

@@ -1,17 +1,24 @@
 package it.unibo.myvet.dao;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Date;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import it.unibo.myvet.model.Animal;
+import it.unibo.myvet.model.Breed;
+import it.unibo.myvet.model.User;
 import it.unibo.myvet.utils.DAOUtils;
 import it.unibo.myvet.utils.Database;
 
 public class AnimalDAO {
+
+    private final UserDAO userDAO;
+    private final BreedDAO breedDAO;
+
+    public AnimalDAO(UserDAO userDAO, BreedDAO breedDAO) {
+        this.userDAO = userDAO;
+        this.breedDAO = breedDAO;
+    }
 
     public Animal findById(Integer animalId) {
         Animal animal = null;
@@ -63,9 +70,9 @@ public class AnimalDAO {
                         PreparedStatement.RETURN_GENERATED_KEYS)) {
 
             statement.setString(1, animal.getName());
-            statement.setString(2, animal.getBreed());
+            statement.setInt(2, animal.getBreed().getBreedId());
             statement.setDate(3, Date.valueOf(animal.getBirthDate()));
-            statement.setInt(4, animal.getOwnerId());
+            statement.setInt(4, animal.getOwner().getUserId());
             statement.executeUpdate();
 
             // Retrieve the generated ID and set it on the Animal object
@@ -87,9 +94,9 @@ public class AnimalDAO {
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
             statement.setString(1, animal.getName());
-            statement.setString(2, animal.getBreed());
+            statement.setInt(2, animal.getBreed().getBreedId());
             statement.setDate(3, Date.valueOf(animal.getBirthDate()));
-            statement.setInt(4, animal.getOwnerId());
+            statement.setInt(4, animal.getOwner().getUserId());
             statement.setInt(5, animal.getAnimalId());
             statement.executeUpdate();
 
@@ -115,10 +122,13 @@ public class AnimalDAO {
     private Animal mapToAnimal(ResultSet resultSet) throws SQLException {
         int animalId = resultSet.getInt("IDAnimale");
         String name = resultSet.getString("Nome");
-        String breed = resultSet.getString("Razza");
         Date birthDate = resultSet.getDate("DataNascita");
         int ownerId = resultSet.getInt("IDUtente");
+        int breedId = resultSet.getInt("Razza");
 
-        return new Animal(animalId, name, breed, birthDate.toLocalDate(), ownerId);
+        User owner = userDAO.findById(ownerId);
+        Breed breed = breedDAO.findById(breedId);
+
+        return new Animal(animalId, name, birthDate.toLocalDate(), owner, breed);
     }
 }

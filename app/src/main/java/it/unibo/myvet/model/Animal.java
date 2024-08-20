@@ -5,25 +5,25 @@ import java.time.LocalDate;
 public class Animal {
     private int animalId;
     private String name;
-    private String breed;
-    private LocalDate birthDate; // Data di nascita dell'animale
-    private int ownerId; // Riferimento all'utente proprietario
+    private LocalDate birthDate;
+    private User owner; // L'oggetto User come riferimento al proprietario
+    private Breed breed; // L'oggetto Breed come riferimento alla razza
 
-    // Costruttore
-    public Animal(String name, String breed, LocalDate birthDate, int ownerId) {
+    // Costruttore senza ID dell'animale (per nuovi oggetti)
+    public Animal(String name, LocalDate birthDate, User owner, Breed breed) {
         this.name = name;
-        this.breed = breed;
         this.birthDate = birthDate;
-        this.ownerId = ownerId;
+        this.owner = owner;
+        this.breed = breed;
     }
 
-    // Costruttore
-    public Animal(int animalId, String name, String breed, LocalDate birthDate, int ownerId) {
+    // Costruttore con ID dell'animale (per oggetti esistenti)
+    public Animal(int animalId, String name, LocalDate birthDate, User owner, Breed breed) {
         this.animalId = animalId;
         this.name = name;
-        this.breed = breed;
         this.birthDate = birthDate;
-        this.ownerId = ownerId;
+        this.owner = owner;
+        this.breed = breed;
     }
 
     // Getter e Setter
@@ -43,14 +43,6 @@ public class Animal {
         this.name = name;
     }
 
-    public String getBreed() {
-        return breed;
-    }
-
-    public void setBreed(String breed) {
-        this.breed = breed;
-    }
-
     public LocalDate getBirthDate() {
         return birthDate;
     }
@@ -59,12 +51,20 @@ public class Animal {
         this.birthDate = birthDate;
     }
 
-    public int getOwnerId() {
-        return ownerId;
+    public User getOwner() {
+        return owner;
     }
 
-    public void setOwnerId(int ownerId) {
-        this.ownerId = ownerId;
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+    public Breed getBreed() {
+        return breed;
+    }
+
+    public void setBreed(Breed breed) {
+        this.breed = breed;
     }
 
     @Override
@@ -72,9 +72,9 @@ public class Animal {
         return "Animal{" +
                 "animalId=" + animalId +
                 ", name='" + name + '\'' +
-                ", breed='" + breed + '\'' +
                 ", birthDate=" + birthDate +
-                ", ownerId=" + ownerId +
+                ", owner=" + owner.getFirstName() + " " + owner.getLastName() +
+                ", breed=" + breed.getBreedName() +
                 '}';
     }
 }

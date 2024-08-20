@@ -4,30 +4,30 @@ import java.time.LocalDateTime;
 
 public class Appointment {
     private int appointmentId;
-    private int animalId;
-    private int vetId;
-    private LocalDateTime dateTime; // Cambiato da appointmentDate a dateTime
-    private byte[] report; // Questo campo rappresenta il file del referto
-    private int idStatus; // ID dello stato dell'appuntamento
+    private Animal animal;
+    private Vet vet;
+    private LocalDateTime dateTime;
+    private byte[] report;
+    private AppointmentState status;
 
     // Costruttore senza ID dell'appuntamento (per nuovi oggetti)
-    public Appointment(int animalId, int vetId, LocalDateTime dateTime, byte[] report, int idStatus) {
-        this.animalId = animalId;
-        this.vetId = vetId;
+    public Appointment(Animal animal, Vet vet, LocalDateTime dateTime, byte[] report, AppointmentState status) {
+        this.animal = animal;
+        this.vet = vet;
         this.dateTime = dateTime;
         this.report = report;
-        this.idStatus = idStatus;
+        this.status = status;
     }
 
     // Costruttore con ID dell'appuntamento (per oggetti esistenti)
-    public Appointment(int appointmentId, int animalId, int vetId, LocalDateTime dateTime, byte[] report,
-            int idStatus) {
+    public Appointment(int appointmentId, Animal animal, Vet vet, LocalDateTime dateTime, byte[] report,
+            AppointmentState status) {
         this.appointmentId = appointmentId;
-        this.animalId = animalId;
-        this.vetId = vetId;
+        this.animal = animal;
+        this.vet = vet;
         this.dateTime = dateTime;
         this.report = report;
-        this.idStatus = idStatus;
+        this.status = status;
     }
 
     // Getter e Setter
@@ -39,20 +39,20 @@ public class Appointment {
         this.appointmentId = appointmentId;
     }
 
-    public int getAnimalId() {
-        return animalId;
+    public Animal getAnimal() {
+        return animal;
     }
 
-    public void setAnimalId(int animalId) {
-        this.animalId = animalId;
+    public void setAnimal(Animal animal) {
+        this.animal = animal;
     }
 
-    public int getVetId() {
-        return vetId;
+    public Vet getVet() {
+        return vet;
     }
 
-    public void setVetId(int vetId) {
-        this.vetId = vetId;
+    public void setVet(Vet vet) {
+        this.vet = vet;
     }
 
     public LocalDateTime getDateTime() {
@@ -71,23 +71,23 @@ public class Appointment {
         this.report = report;
     }
 
-    public int getIdStatus() {
-        return idStatus;
+    public AppointmentState getStatus() {
+        return status;
     }
 
-    public void setIdStatus(int idStatus) {
-        this.idStatus = idStatus;
+    public void setStatus(AppointmentState status) {
+        this.status = status;
     }
 
     @Override
     public String toString() {
         return "Appointment{" +
                 "appointmentId=" + appointmentId +
-                ", animalId=" + animalId +
-                ", vetId=" + vetId +
+                ", animal=" + animal.getName() +
+                ", vet=" + vet.getFirstName() + " " + vet.getLastName() +
                 ", dateTime=" + dateTime +
                 ", report=" + (report != null ? "[binary data]" : "null") +
-                ", idStatus=" + idStatus +
+                ", status=" + status.getStateName() +
                 '}';
     }
 }

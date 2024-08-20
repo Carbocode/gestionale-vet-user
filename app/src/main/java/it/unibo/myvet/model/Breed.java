@@ -3,19 +3,19 @@ package it.unibo.myvet.model;
 public class Breed {
     private int breedId;
     private String breedName;
-    private int speciesId; // Chiave esterna che fa riferimento a Species
+    private Species species; // L'oggetto Species come riferimento alla specie
 
-    // Costruttore
-    public Breed(String breedName, int speciesId) {
+    // Costruttore senza ID della razza (per nuovi oggetti)
+    public Breed(String breedName, Species species) {
         this.breedName = breedName;
-        this.speciesId = speciesId;
+        this.species = species;
     }
 
-    // Costruttore
-    public Breed(int breedId, String breedName, int speciesId) {
+    // Costruttore con ID della razza (per oggetti esistenti)
+    public Breed(int breedId, String breedName, Species species) {
         this.breedId = breedId;
         this.breedName = breedName;
-        this.speciesId = speciesId;
+        this.species = species;
     }
 
     // Getter e Setter
@@ -35,12 +35,12 @@ public class Breed {
         this.breedName = breedName;
     }
 
-    public int getSpeciesId() {
-        return speciesId;
+    public Species getSpecies() {
+        return species;
     }
 
-    public void setSpeciesId(int speciesId) {
-        this.speciesId = speciesId;
+    public void setSpecies(Species species) {
+        this.species = species;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class Breed {
         return "Breed{" +
                 "breedId=" + breedId +
                 ", breedName='" + breedName + '\'' +
-                ", speciesId=" + speciesId +
+                ", species=" + species.getSpeciesName() +
                 '}';
     }
 }
