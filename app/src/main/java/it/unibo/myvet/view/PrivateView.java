@@ -9,6 +9,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import it.unibo.myvet.dao.AccountDAO;
@@ -20,8 +22,10 @@ import it.unibo.myvet.dao.UserDAO;
 import it.unibo.myvet.dao.VetDAO;
 import it.unibo.myvet.model.Animal;
 import it.unibo.myvet.model.Appointment;
+import it.unibo.myvet.model.AppointmentState;
 import it.unibo.myvet.model.Breed;
 import it.unibo.myvet.model.Species;
+import it.unibo.myvet.model.Vet;
 
 public class PrivateView {
     int userId = 0;
@@ -289,7 +293,8 @@ public class PrivateView {
             public void actionPerformed(ActionEvent e) {
                 Animal selectedAnimal = (Animal) animalComboBox.getSelectedItem();
                 String dateStr = dateField.getText();
-                String timeStr = timeField.getText();
+                LocalDateTime dateTime = LocalDateTime.parse(timeField.getText(),
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 
                 LocalDate appointmentDate = null;
                 try {
@@ -299,7 +304,7 @@ public class PrivateView {
                     return;
                 }
 
-                if (bookAppointment(selectedAnimal, appointmentDate, timeStr)) {
+                if (bookAppointment(selectedAnimal, appointmentDate, dateTime, 0)) {
                     JOptionPane.showMessageDialog(appointmentFrame, "Appointment booked successfully!");
                     appointmentFrame.dispose();
                 } else {
@@ -319,7 +324,8 @@ public class PrivateView {
         }
     }
 
-    private boolean bookAppointment(Animal animal, LocalDate appointmentDate, String time) {
+    private boolean bookAppointment(Animal animal, Vet vet, LocalDateTime appointmentDate, int time,
+            AppointmentState state) {
         // Aggiungi la logica per prenotare l'appuntamento
         // Questo esempio presuppone che tu abbia una classe `AppointmentDAO` per
         // gestire gli appuntamenti
@@ -329,7 +335,7 @@ public class PrivateView {
             // l'appuntamento
             AppointmentDAO appointmentDAO = new AppointmentDAO();
             // Creare un'istanza di appuntamento e salvarla
-            Appointment appointment = new Appointment(animal, appointmentDate, time);
+            Appointment appointment = new Appointment(animal, vet, appointmentDate, time, state);
             appointmentDAO.save(appointment);
             isBooked = true;
         } catch (Exception e) {
