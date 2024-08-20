@@ -86,8 +86,8 @@ public class PrivateView {
 
     UserDAO userDAO = new UserDAO();
     SpeciesDAO speciesDAO = new SpeciesDAO();
-    BreedDAO breedDAO = new BreedDAO(speciesDAO);
-    AnimalDAO animalDAO = new AnimalDAO(userDAO, breedDAO);
+    BreedDAO breedDAO = new BreedDAO();
+    AnimalDAO animalDAO = new AnimalDAO();
 
     private void showSignupView() {
         JFrame signupFrame = new JFrame("Sign Up");

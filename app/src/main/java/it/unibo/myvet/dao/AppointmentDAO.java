@@ -14,15 +14,9 @@ import it.unibo.myvet.utils.Database;
 
 public class AppointmentDAO {
 
-    private AnimalDAO animalDAO;
-    private VetDAO vetDAO;
-    private AppointmentStateDAO appointmentStateDAO;
-
-    public AppointmentDAO(AnimalDAO animalDAO, VetDAO vetDAO, AppointmentStateDAO appointmentStateDAO) {
-        this.animalDAO = animalDAO;
-        this.vetDAO = vetDAO;
-        this.appointmentStateDAO = appointmentStateDAO;
-    }
+    private AnimalDAO animalDAO = new AnimalDAO();
+    private VetDAO vetDAO = new VetDAO();
+    private AppointmentStateDAO appointmentStateDAO = new AppointmentStateDAO();
 
     public Appointment findById(int appointmentId) {
         Appointment appointment = null;

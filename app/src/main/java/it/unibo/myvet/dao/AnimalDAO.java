@@ -12,13 +12,8 @@ import it.unibo.myvet.utils.Database;
 
 public class AnimalDAO {
 
-    private final UserDAO userDAO;
-    private final BreedDAO breedDAO;
-
-    public AnimalDAO(UserDAO userDAO, BreedDAO breedDAO) {
-        this.userDAO = userDAO;
-        this.breedDAO = breedDAO;
-    }
+    private final UserDAO userDAO = new UserDAO();
+    private final BreedDAO breedDAO = new BreedDAO();
 
     public Animal findById(Integer animalId) {
         Animal animal = null;
