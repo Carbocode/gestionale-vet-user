@@ -19,7 +19,7 @@ public class BreedDAO {
 
     public Breed findById(int breedId) {
         Breed breed = null;
-        String sql = "SELECT * FROM Breeds WHERE IDRazza = ?";
+        String sql = "SELECT * FROM razze WHERE IDRazza = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -40,7 +40,7 @@ public class BreedDAO {
 
     public List<Breed> findBySpeciesId(int speciesId) {
         List<Breed> breeds = new ArrayList<>();
-        String sql = "SELECT * FROM Breeds WHERE IDSpecie = ?";
+        String sql = "SELECT * FROM razze WHERE IDSpecie = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -61,7 +61,7 @@ public class BreedDAO {
 
     public List<Breed> findAll() {
         List<Breed> breeds = new ArrayList<>();
-        String sql = "SELECT * FROM Breeds";
+        String sql = "SELECT * FROM razze";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql);
@@ -79,7 +79,7 @@ public class BreedDAO {
     }
 
     public void save(Breed breed) {
-        String sql = "INSERT INTO Breeds (NomeRazza, IDSpecie) VALUES (?, ?)";
+        String sql = "INSERT INTO razze (Nome, IDSpecie) VALUES (?, ?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql,
@@ -102,7 +102,7 @@ public class BreedDAO {
     }
 
     public void update(Breed breed) {
-        String sql = "UPDATE Breeds SET NomeRazza = ?, IDSpecie = ? WHERE IDRazza = ?";
+        String sql = "UPDATE razze SET Nome = ?, IDSpecie = ? WHERE IDRazza = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -118,7 +118,7 @@ public class BreedDAO {
     }
 
     public void delete(int breedId) {
-        String sql = "DELETE FROM Breeds WHERE IDRazza = ?";
+        String sql = "DELETE FROM razze WHERE IDRazza = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -133,7 +133,7 @@ public class BreedDAO {
 
     private Breed mapToBreed(ResultSet resultSet) throws SQLException {
         int breedId = resultSet.getInt("IDRazza");
-        String breedName = resultSet.getString("NomeRazza");
+        String breedName = resultSet.getString("Nome");
         int speciesId = resultSet.getInt("IDSpecie");
 
         Species species = speciesDAO.findById(speciesId);

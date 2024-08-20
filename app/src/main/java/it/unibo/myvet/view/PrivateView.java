@@ -5,73 +5,65 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.List;
 
+import it.unibo.myvet.dao.AccountDAO;
 import it.unibo.myvet.dao.AnimalDAO;
-import it.unibo.myvet.model.Account;
+import it.unibo.myvet.dao.AppointmentDAO;
+import it.unibo.myvet.dao.BreedDAO;
+import it.unibo.myvet.dao.SpeciesDAO;
+import it.unibo.myvet.dao.UserDAO;
+import it.unibo.myvet.dao.VetDAO;
 import it.unibo.myvet.model.Animal;
-import it.unibo.myvet.utils.DAOUtils;
-import it.unibo.myvet.utils.Database;
+import it.unibo.myvet.model.Appointment;
+import it.unibo.myvet.model.Breed;
+import it.unibo.myvet.model.Species;
 
 public class PrivateView {
+    int userId = 0;
 
-    public PrivateView() {
+    public PrivateView(int userID) {
+        this.userId = userID;
         JFrame mainFrame = new JFrame("Main View");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setSize(600, 400);
+        mainFrame.setLayout(new BorderLayout());
 
-        mainFrame.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        // Barra di ricerca
-        JLabel searchLabel = new JLabel("Search Animal:");
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 1;
-        mainFrame.add(searchLabel, gbc);
-
-        JTextField searchField = new JTextField();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        mainFrame.add(searchField, gbc);
-
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel searchLabel = new JLabel("Search Vet:");
+        JTextField searchField = new JTextField(20);
         JButton searchButton = new JButton("Search");
-        gbc.gridx = 3;
-        gbc.gridy = 0;
-        gbc.gridwidth = 1;
-        mainFrame.add(searchButton, gbc);
+        topPanel.add(searchLabel);
+        topPanel.add(searchField);
+        topPanel.add(searchButton);
 
-        // Tabella per visualizzare i risultati della ricerca
-        DefaultTableModel tableModel = new DefaultTableModel(
-                new Object[] { "ID", "Nome", "Cognome", "Telefono", "Data di Nascita" }, 0);
+        mainFrame.add(topPanel, BorderLayout.NORTH);
+
+        DefaultTableModel tableModel = new DefaultTableModel(new Object[] { "Nome", "Cognome" }, 0);
         JTable resultsTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(resultsTable);
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 4;
-        gbc.fill = GridBagConstraints.BOTH;
-        mainFrame.add(scrollPane, gbc);
+
+        mainFrame.add(scrollPane, BorderLayout.CENTER);
+
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JButton signupButton = new JButton("Register your pet");
+        JButton appointmentButton = new JButton("Book an Appointment");
+        bottomPanel.add(signupButton);
+        bottomPanel.add(appointmentButton);
+
+        mainFrame.add(bottomPanel, BorderLayout.SOUTH);
 
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String searchText = searchField.getText();
-                searchAnimals(searchText, tableModel);
+                searchVet(searchText, tableModel);
             }
         });
-
-        JButton signupButton = new JButton("Register your pet");
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 4;
-        gbc.fill = GridBagConstraints.NONE;
-        mainFrame.add(signupButton, gbc);
 
         signupButton.addActionListener(new ActionListener() {
             @Override
@@ -80,99 +72,114 @@ public class PrivateView {
             }
         });
 
+        appointmentButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showAppointmentView();
+            }
+        });
+
         mainFrame.setVisible(true);
     }
+
+    UserDAO userDAO = new UserDAO();
+    SpeciesDAO speciesDAO = new SpeciesDAO();
+    BreedDAO breedDAO = new BreedDAO(speciesDAO);
+    AnimalDAO animalDAO = new AnimalDAO(userDAO, breedDAO);
 
     private void showSignupView() {
         JFrame signupFrame = new JFrame("Sign Up");
         signupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        signupFrame.setSize(350, 350);
+        signupFrame.setSize(600, 600);
         signupFrame.setLayout(new GridBagLayout());
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        JLabel IDLabel = new JLabel("Id Animale:");
         gbc.gridx = 0;
         gbc.gridy = 0;
-        signupFrame.add(IDLabel, gbc);
-
-        JTextField IDField = new JTextField();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        signupFrame.add(IDField, gbc);
 
         JLabel nomeLabel = new JLabel("Nome:");
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.gridwidth = 1;
         signupFrame.add(nomeLabel, gbc);
 
-        JTextField nomeField = new JTextField();
         gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.gridwidth = 2;
+        JTextField nomeField = new JTextField();
         signupFrame.add(nomeField, gbc);
 
-        JLabel cognomeLabel = new JLabel("Cognome:");
         gbc.gridx = 0;
-        gbc.gridy = 2;
-        signupFrame.add(cognomeLabel, gbc);
-
-        JTextField cognomeField = new JTextField();
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
-        signupFrame.add(cognomeField, gbc);
-
+        gbc.gridy = 1;
         JLabel telefonoLabel = new JLabel("Telefono:");
-        gbc.gridx = 0;
-        gbc.gridy = 3;
         signupFrame.add(telefonoLabel, gbc);
 
-        JTextField telefonoField = new JTextField();
         gbc.gridx = 1;
-        gbc.gridy = 3;
-        gbc.gridwidth = 2;
+        JTextField telefonoField = new JTextField();
         signupFrame.add(telefonoField, gbc);
 
-        JLabel nascitaLabel = new JLabel("Data di nascita (YYYY-MM-DD):");
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 2;
+        JLabel nascitaLabel = new JLabel("Data di nascita (YYYY-MM-DD):");
         signupFrame.add(nascitaLabel, gbc);
 
-        JTextField dataNascitaField = new JTextField();
         gbc.gridx = 1;
-        gbc.gridy = 4;
-        gbc.gridwidth = 2;
+        JTextField dataNascitaField = new JTextField();
         signupFrame.add(dataNascitaField, gbc);
 
-        JButton submitButton = new JButton("Sign Up");
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        JLabel speciesLabel = new JLabel("Specie:");
+        signupFrame.add(speciesLabel, gbc);
+
+        gbc.gridx = 1;
+        JComboBox<Species> speciesComboBox = new JComboBox<>();
+        signupFrame.add(speciesComboBox, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        JLabel breedLabel = new JLabel("Razza:");
+        signupFrame.add(breedLabel, gbc);
+
+        gbc.gridx = 1;
+        JComboBox<Breed> breedComboBox = new JComboBox<>();
+        signupFrame.add(breedComboBox, gbc);
+
         gbc.gridx = 1;
         gbc.gridy = 5;
         gbc.gridwidth = 2;
+        JButton submitButton = new JButton("Sign Up");
         signupFrame.add(submitButton, gbc);
+
+        // Load species and breeds
+        loadSpecies(speciesComboBox);
+
+        speciesComboBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    Species selectedSpecies = (Species) speciesComboBox.getSelectedItem();
+                    loadBreeds(breedComboBox, selectedSpecies);
+                }
+            }
+        });
 
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String idAnimale = IDField.getText();
                 String nome = nomeField.getText();
-                String cognome = cognomeField.getText();
                 String telefono = telefonoField.getText();
                 String dataNascitaStr = dataNascitaField.getText();
+                Species selectedSpecies = (Species) speciesComboBox.getSelectedItem();
+                Breed selectedBreed = (Breed) breedComboBox.getSelectedItem();
 
-                java.sql.Date dataNascita = null;
+                LocalDate dataNascita = null;
                 try {
-                    dataNascita = java.sql.Date.valueOf(dataNascitaStr);
+                    dataNascita = Date.valueOf(dataNascitaStr).toLocalDate();
                 } catch (IllegalArgumentException ex) {
                     JOptionPane.showMessageDialog(signupFrame,
                             "Errore: formato della data non valido. Usa il formato YYYY-MM-DD.");
                     return;
                 }
 
-                if (registerAnimal(idAnimale, nome, cognome, telefono, dataNascita)) {
+                if (registerAnimal(nome, telefono, dataNascita, selectedSpecies, selectedBreed)) {
                     JOptionPane.showMessageDialog(signupFrame, "Registrazione avvenuta con successo!");
                     signupFrame.dispose();
                 } else {
@@ -184,44 +191,151 @@ public class PrivateView {
         signupFrame.setVisible(true);
     }
 
-    private boolean registerAnimal(String idAnimale, String nome, String cognome, String telefono,
-            java.sql.Date dataNascita) {
-        AnimalDAO animalDAO = new AnimalDAO();
+    private void loadSpecies(JComboBox<Species> speciesComboBox) {
+        speciesComboBox.removeAllItems();
+        List<Species> speciesList = speciesDAO.findAll();
+        for (Species species : speciesList) {
+            speciesComboBox.addItem(species);
+        }
+    }
+
+    private void loadBreeds(JComboBox<Breed> breedComboBox, Species species) {
+        breedComboBox.removeAllItems(); // Rimuovi tutte le razze attuali
+
+        if (species == null) {
+            System.out.println("Specie non selezionata o nullo.");
+            return;
+        }
+
+        int speciesId = species.getSpeciesId();
+        System.out.println("Caricamento razze per specie ID: " + speciesId);
+
+        List<Breed> breeds = breedDAO.findBySpeciesId(speciesId);
+        if (breeds == null || breeds.isEmpty()) {
+            System.out.println("Nessuna razza trovata per la specie con ID: " + speciesId);
+        } else {
+            for (Breed breed : breeds) {
+                breedComboBox.addItem(breed);
+            }
+        }
+    }
+
+    private boolean registerAnimal(String nome, String telefono, LocalDate dataNascita, Species species, Breed breed) {
+
         boolean isRegistered = false;
         try {
-            animalDAO.save(new Animal(0, nome, cognome, telefono, 0, 0));
-            isAuthenticated = true;
+            Animal animal = new Animal(userId, telefono, dataNascita, userDAO.findById(userId), breed);
+            animalDAO.save(animal);
+            isRegistered = true;
         } catch (Exception e) {
-        }
-        return isAuthenticated;
-    }
-
-    private void searchAnimals(String searchText, DefaultTableModel tableModel) {
-        String query = "SELECT * FROM animale WHERE nome LIKE ? OR cognome LIKE ?";
-        try (Database dbWrapper = DAOUtils.getConnection();
-                PreparedStatement statement = dbWrapper.prepareStatement(query)) {
-            statement.setString(1, "%" + searchText + "%");
-            statement.setString(2, "%" + searchText + "%");
-            ResultSet resultSet = statement.executeQuery();
-
-            // Clear the existing rows
-            tableModel.setRowCount(0);
-
-            // Add new rows
-            while (resultSet.next()) {
-                String id = resultSet.getString("id");
-                String nome = resultSet.getString("nome");
-                String cognome = resultSet.getString("cognome");
-                String telefono = resultSet.getString("telefono");
-                java.sql.Date dataNascita = resultSet.getDate("data_nascita");
-                tableModel.addRow(new Object[] { id, nome, cognome, telefono, dataNascita });
-            }
-        } catch (SQLException e) {
             e.printStackTrace();
         }
+        return isRegistered;
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(PrivateView::new);
+    private void searchVet(String searchText, DefaultTableModel tableModel) {
+        VetDAO vetDAO = new VetDAO();
+        vetDAO.searchVet(searchText, tableModel);
     }
+
+    private void showAppointmentView() {
+        JFrame appointmentFrame = new JFrame("Book Appointment");
+        appointmentFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        appointmentFrame.setSize(500, 400);
+        appointmentFrame.setLayout(new GridBagLayout());
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+
+        JLabel animalLabel = new JLabel("Select Animal:");
+        appointmentFrame.add(animalLabel, gbc);
+
+        gbc.gridx = 1;
+        JComboBox<Animal> animalComboBox = new JComboBox<>();
+        appointmentFrame.add(animalComboBox, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        JLabel dateLabel = new JLabel("Appointment Date (YYYY-MM-DD):");
+        appointmentFrame.add(dateLabel, gbc);
+
+        gbc.gridx = 1;
+        JTextField dateField = new JTextField();
+        appointmentFrame.add(dateField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        JLabel timeLabel = new JLabel("Appointment Time (HH:MM):");
+        appointmentFrame.add(timeLabel, gbc);
+
+        gbc.gridx = 1;
+        JTextField timeField = new JTextField();
+        appointmentFrame.add(timeField, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        JButton submitButton = new JButton("Book Appointment");
+        appointmentFrame.add(submitButton, gbc);
+
+        // Load user's animals
+        loadAnimals(animalComboBox);
+
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Animal selectedAnimal = (Animal) animalComboBox.getSelectedItem();
+                String dateStr = dateField.getText();
+                String timeStr = timeField.getText();
+
+                LocalDate appointmentDate = null;
+                try {
+                    appointmentDate = Date.valueOf(dateStr).toLocalDate();
+                } catch (IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(appointmentFrame, "Invalid date format. Use YYYY-MM-DD.");
+                    return;
+                }
+
+                if (bookAppointment(selectedAnimal, appointmentDate, timeStr)) {
+                    JOptionPane.showMessageDialog(appointmentFrame, "Appointment booked successfully!");
+                    appointmentFrame.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(appointmentFrame, "Error booking appointment.");
+                }
+            }
+        });
+
+        appointmentFrame.setVisible(true);
+    }
+
+    private void loadAnimals(JComboBox<Animal> animalComboBox) {
+        animalComboBox.removeAllItems();
+        List<Animal> animals = animalDAO.findByOwnerId(userId);
+        for (Animal animal : animals) {
+            animalComboBox.addItem(animal);
+        }
+    }
+
+    private boolean bookAppointment(Animal animal, LocalDate appointmentDate, String time) {
+        // Aggiungi la logica per prenotare l'appuntamento
+        // Questo esempio presuppone che tu abbia una classe `AppointmentDAO` per
+        // gestire gli appuntamenti
+        boolean isBooked = false;
+        try {
+            // Assumiamo che esista un metodo `save` in `AppointmentDAO` per salvare
+            // l'appuntamento
+            AppointmentDAO appointmentDAO = new AppointmentDAO();
+            // Creare un'istanza di appuntamento e salvarla
+            Appointment appointment = new Appointment(animal, appointmentDate, time);
+            appointmentDAO.save(appointment);
+            isBooked = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isBooked;
+    }
+
 }
