@@ -126,10 +126,10 @@ public class AppointmentListView extends JFrame {
                 AppointmentState state1 = new AppointmentState(1, "Completed");
                 AppointmentState state2 = new AppointmentState(2, "Pending");
 
-                Appointment appointment1 = new Appointment(1, animal1, vet1, LocalDateTime.of(2024, 8, 19, 10, 30),
-                                "Report 1".getBytes(), state1);
-                Appointment appointment2 = new Appointment(2, animal2, vet2, LocalDateTime.of(2024, 8, 20, 15, 00),
-                                "Report 2".getBytes(), state2);
+                Appointment appointment1 = new Appointment(1, animal1, vet1, LocalDateTime.of(2024, 8, 19, 10, 30), 10,
+                                state1);
+                Appointment appointment2 = new Appointment(2, animal2, vet2, LocalDateTime.of(2024, 8, 20, 15, 00), 10,
+                                state2);
                 // Creazione di alcuni appuntamenti
                 List<Appointment> appointments = new ArrayList<>();
 

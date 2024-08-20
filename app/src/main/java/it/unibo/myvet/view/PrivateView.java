@@ -8,8 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -237,21 +235,7 @@ public class PrivateView {
 
     private void searchVet(String searchText, DefaultTableModel tableModel) {
         VetDAO vetDAO = new VetDAO();
-        ResultSet resultSet=vetDAO.searchVet(searchText);
-
-        // Clear the existing rows
-        tableModel.setRowCount(0);
-
-        // Add new rows
-        try {
-            while (resultSet.next()) {
-                String nome = resultSet.getString("nome");
-                String cognome = resultSet.getString("cognome");
-                tableModel.addRow(new Object[] { nome, cognome });
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        vetDAO.searchVet(searchText, tableModel);
     }
 
     private void showAppointmentView() {

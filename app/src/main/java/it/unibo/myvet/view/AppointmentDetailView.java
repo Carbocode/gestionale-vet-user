@@ -145,9 +145,14 @@ public class AppointmentDetailView extends JFrame {
                                                // array
 
         // Creazione di un appuntamento
-        Appointment appointment = new Appointment(1, animal, vet, LocalDateTime.of(2024, 8, 19, 10, 30),
-                imageBytes,
-                state);
+        Appointment appointment = new Appointment(
+                1,
+                animal,
+                vet,
+                LocalDateTime.of(2024, 8, 19, 10, 30),
+                1,
+                state,
+                imageBytes);
 
         new AppointmentDetailView(appointment);
     }

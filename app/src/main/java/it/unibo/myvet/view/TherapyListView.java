@@ -117,9 +117,14 @@ public class TherapyListView extends JPanel {
                                                        // array
 
                 // Creazione di un appuntamento
-                Appointment appointment = new Appointment(1, animal1, vet, LocalDateTime.of(2024, 8, 19, 10, 30),
-                                imageBytes,
-                                state);
+                Appointment appointment = new Appointment(
+                                1,
+                                animal1,
+                                vet,
+                                LocalDateTime.of(2024, 8, 19, 10, 30),
+                                10,
+                                state,
+                                imageBytes);
 
                 // Esempio di lista di terapie
                 List<Therapy> therapies = List.of(

@@ -136,8 +136,9 @@ public class TherapyCreationView extends JFrame {
                 animal1,
                 vet1,
                 LocalDateTime.of(2024, 8, 19, 10, 30),
-                "Report 1".getBytes(),
-                state1);
+                10,
+                state1,
+                "Report 1".getBytes());
 
         TherapyListController therapyListController = new TherapyListController(new ArrayList<Therapy>());
 

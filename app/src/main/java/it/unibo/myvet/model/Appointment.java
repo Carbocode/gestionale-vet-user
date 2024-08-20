@@ -9,26 +9,42 @@ public class Appointment {
     private LocalDateTime dateTime;
     private byte[] report;
     private AppointmentState status;
+    private int duration;
 
+    // Costruttore senza ID, senza report, senza durata
     public Appointment(Animal animal, Vet vet, LocalDateTime dateTime, AppointmentState status) {
         this.animal = animal;
         this.vet = vet;
         this.dateTime = dateTime;
         this.status = status;
+        this.duration = 0;
     }
 
-    // Costruttore senza ID dell'appuntamento (per nuovi oggetti)
-    public Appointment(Animal animal, Vet vet, LocalDateTime dateTime, byte[] report, AppointmentState status) {
+    // Costruttore senza ID senza report
+    public Appointment(Animal animal, Vet vet, LocalDateTime dateTime, int duration, AppointmentState status) {
         this(animal, vet, dateTime, status);
+        this.duration = duration;
+    }
+
+    // Costruttore senza ID con report
+    public Appointment(Animal animal, Vet vet, LocalDateTime dateTime, int duration, AppointmentState status,
+            byte[] report) {
+        this(animal, vet, dateTime, duration, status);
         this.report = report;
     }
 
-    // Costruttore con ID dell'appuntamento (per oggetti esistenti)
-    public Appointment(int appointmentId, Animal animal, Vet vet, LocalDateTime dateTime, byte[] report,
+    // Costruttore con ID senza report
+    public Appointment(int appointmentId, Animal animal, Vet vet, LocalDateTime dateTime, int duration,
             AppointmentState status) {
-        this(animal, vet, dateTime, report, status);
+        this(animal, vet, dateTime, duration, status);
         this.appointmentId = appointmentId;
+    }
 
+    // Costruttore con ID e report
+    public Appointment(int appointmentId, Animal animal, Vet vet, LocalDateTime dateTime, int duration,
+            AppointmentState status, byte[] report) {
+        this(appointmentId, animal, vet, dateTime, duration, status);
+        this.report = report;
     }
 
     // Getter e Setter
@@ -80,6 +96,14 @@ public class Appointment {
         this.status = status;
     }
 
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
     @Override
     public String toString() {
         return "Appointment{" +
@@ -89,6 +113,7 @@ public class Appointment {
                 ", dateTime=" + dateTime +
                 ", report=" + (report != null ? "[binary data]" : "null") +
                 ", status=" + status.getStateName() +
+                ", duration=" + duration + " minutes" +
                 '}';
     }
 }

@@ -26,7 +26,7 @@ public class AppointmentListController {
     public void createAppointment(Animal animal, Vet vet, LocalDateTime dateTime, byte[] report,
             AppointmentState status) {
         // Crea un oggetto Therapy
-        Appointment appointment = new Appointment(animal, vet, dateTime, report, status);
+        Appointment appointment = new Appointment(animal, vet, dateTime, 10, status, report);
 
         // Salva la terapia nel database
         appointmentDAO.save(appointment);
