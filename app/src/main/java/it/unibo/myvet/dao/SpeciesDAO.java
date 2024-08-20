@@ -14,7 +14,7 @@ public class SpeciesDAO {
 
     public Species findById(int speciesId) {
         Species species = null;
-        String sql = "SELECT * FROM Species WHERE IDSpecie = ?";
+        String sql = "SELECT * FROM specie WHERE IDSpecie = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -35,7 +35,7 @@ public class SpeciesDAO {
 
     public List<Species> findAll() {
         List<Species> speciesList = new ArrayList<>();
-        String sql = "SELECT * FROM Species";
+        String sql = "SELECT * FROM specie";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql);
@@ -53,7 +53,7 @@ public class SpeciesDAO {
     }
 
     public void save(Species species) {
-        String sql = "INSERT INTO Species (NomeSpecie) VALUES (?)";
+        String sql = "INSERT INTO specie (Nome) VALUES (?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql,
@@ -75,7 +75,7 @@ public class SpeciesDAO {
     }
 
     public void update(Species species) {
-        String sql = "UPDATE Species SET NomeSpecie = ? WHERE IDSpecie = ?";
+        String sql = "UPDATE specie SET Nome = ? WHERE IDSpecie = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -90,7 +90,7 @@ public class SpeciesDAO {
     }
 
     public void delete(int speciesId) {
-        String sql = "DELETE FROM Species WHERE IDSpecie = ?";
+        String sql = "DELETE FROM specie WHERE IDSpecie = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -105,7 +105,7 @@ public class SpeciesDAO {
 
     private Species mapToSpecies(ResultSet resultSet) throws SQLException {
         int speciesId = resultSet.getInt("IDSpecie");
-        String speciesName = resultSet.getString("NomeSpecie");
+        String speciesName = resultSet.getString("Nome");
 
         return new Species(speciesId, speciesName);
     }

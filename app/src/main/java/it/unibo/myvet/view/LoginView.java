@@ -4,7 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 
 import it.unibo.myvet.dao.AccountDAO;
+import it.unibo.myvet.dao.UserDAO;
 import it.unibo.myvet.model.Account;
+import it.unibo.myvet.model.User;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -176,12 +178,17 @@ public class LoginView {
 
         signupFrame.setVisible(true);
     }
-
+    AccountDAO acc = new AccountDAO();
+    UserDAO userDAO=new UserDAO();
+    User user=null;
+    int userID=0;
     private boolean registerAccount(String CF, String nome, String cognome, String password, String telefono) {
-        AccountDAO acc = new AccountDAO();
         boolean isAuthenticated = false;
         try {
             acc.save(new Account(CF, password, cognome, password, telefono));
+            user=new User(CF, password, cognome, password, telefono);
+            userDAO.save(user);
+            userID=user.getUserId();
             isAuthenticated = true;
         } catch (Exception e) {
         }
@@ -189,7 +196,6 @@ public class LoginView {
     }
 
     private boolean authenticate(String CF, String password) {
-        AccountDAO acc = new AccountDAO();
         boolean isAuthenticated = false;
         if (acc.authenticate(CF, password) != null) {
             isAuthenticated = true;
@@ -198,11 +204,10 @@ public class LoginView {
     }
 
     private void showPrivateView() {
-        new PrivateView();
+        new PrivateView(userID);
     }
     
-    /*
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new LoginView());
-    } */
+    } 
 }
