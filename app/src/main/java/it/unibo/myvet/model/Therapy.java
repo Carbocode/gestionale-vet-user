@@ -4,23 +4,27 @@ import java.time.LocalDateTime;
 
 public class Therapy {
     private int therapyId;
-    private int animalId;
-    private String description;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    private int appointmentId; // Chiave esterna che fa riferimento all'appuntamento
+    private String name; // Nome della terapia
+    private String description; // Descrizione della terapia
+    private LocalDateTime startDate; // Data di inizio della terapia
+    private LocalDateTime endDate; // Data di fine della terapia
 
-    // Costruttore
-    public Therapy(int animalId, String description, LocalDateTime startDate, LocalDateTime endDate) {
-        this.animalId = animalId;
+    // Costruttore senza ID (per nuovi oggetti)
+    public Therapy(int appointmentId, String name, String description, LocalDateTime startDate, LocalDateTime endDate) {
+        this.appointmentId = appointmentId;
+        this.name = name;
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
     }
 
-    // Costruttore
-    public Therapy(int therapyId, int animalId, String description, LocalDateTime startDate, LocalDateTime endDate) {
+    // Costruttore con ID (per oggetti esistenti)
+    public Therapy(int therapyId, int appointmentId, String name, String description, LocalDateTime startDate,
+            LocalDateTime endDate) {
         this.therapyId = therapyId;
-        this.animalId = animalId;
+        this.appointmentId = appointmentId;
+        this.name = name;
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -35,12 +39,20 @@ public class Therapy {
         this.therapyId = therapyId;
     }
 
-    public int getAnimalId() {
-        return animalId;
+    public int getAppointmentId() {
+        return appointmentId;
     }
 
-    public void setAnimalId(int animalId) {
-        this.animalId = animalId;
+    public void setAppointmentId(int appointmentId) {
+        this.appointmentId = appointmentId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -71,7 +83,8 @@ public class Therapy {
     public String toString() {
         return "Therapy{" +
                 "therapyId=" + therapyId +
-                ", animalId=" + animalId +
+                ", appointmentId=" + appointmentId +
+                ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
