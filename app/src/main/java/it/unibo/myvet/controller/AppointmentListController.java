@@ -1,12 +1,6 @@
 package it.unibo.myvet.controller;
 
-import it.unibo.myvet.dao.AnimalDAO;
 import it.unibo.myvet.dao.AppointmentDAO;
-import it.unibo.myvet.dao.AppointmentStateDAO;
-import it.unibo.myvet.dao.BreedDAO;
-import it.unibo.myvet.dao.SpeciesDAO;
-import it.unibo.myvet.dao.UserDAO;
-import it.unibo.myvet.dao.VetDAO;
 import it.unibo.myvet.model.Animal;
 import it.unibo.myvet.model.Appointment;
 import it.unibo.myvet.model.AppointmentState;
@@ -21,8 +15,7 @@ public class AppointmentListController {
     private List<Appointment> appointments;
 
     public AppointmentListController(List<Appointment> appointments) {
-        this.appointmentDAO = new AppointmentDAO(new AnimalDAO(new UserDAO(), new BreedDAO(new SpeciesDAO())),
-                new VetDAO(), new AppointmentStateDAO());
+        this.appointmentDAO = new AppointmentDAO();
         this.appointments = appointments;
     }
 

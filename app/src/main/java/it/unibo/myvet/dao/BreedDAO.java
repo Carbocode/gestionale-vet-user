@@ -11,11 +11,7 @@ import it.unibo.myvet.utils.Database;
 
 public class BreedDAO {
 
-    private final SpeciesDAO speciesDAO;
-
-    public BreedDAO(SpeciesDAO speciesDAO) {
-        this.speciesDAO = speciesDAO;
-    }
+    private final SpeciesDAO speciesDAO = new SpeciesDAO();
 
     public Breed findById(int breedId) {
         Breed breed = null;
