@@ -10,24 +10,25 @@ public class Appointment {
     private byte[] report;
     private AppointmentState status;
 
-    // Costruttore senza ID dell'appuntamento (per nuovi oggetti)
-    public Appointment(Animal animal, Vet vet, LocalDateTime dateTime, byte[] report, AppointmentState status) {
+    public Appointment(Animal animal, Vet vet, LocalDateTime dateTime, AppointmentState status) {
         this.animal = animal;
         this.vet = vet;
         this.dateTime = dateTime;
-        this.report = report;
         this.status = status;
+    }
+
+    // Costruttore senza ID dell'appuntamento (per nuovi oggetti)
+    public Appointment(Animal animal, Vet vet, LocalDateTime dateTime, byte[] report, AppointmentState status) {
+        this(animal, vet, dateTime, status);
+        this.report = report;
     }
 
     // Costruttore con ID dell'appuntamento (per oggetti esistenti)
     public Appointment(int appointmentId, Animal animal, Vet vet, LocalDateTime dateTime, byte[] report,
             AppointmentState status) {
+        this(animal, vet, dateTime, report, status);
         this.appointmentId = appointmentId;
-        this.animal = animal;
-        this.vet = vet;
-        this.dateTime = dateTime;
-        this.report = report;
-        this.status = status;
+
     }
 
     // Getter e Setter

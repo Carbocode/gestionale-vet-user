@@ -11,8 +11,8 @@ public class Specialization {
 
     // Constructor
     public Specialization(int specializationId, String name) {
+        this(name);
         this.specializationId = specializationId;
-        this.name = name;
     }
 
     // Getters and Setters

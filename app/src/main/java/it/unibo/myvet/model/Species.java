@@ -11,8 +11,8 @@ public class Species {
 
     // Costruttore
     public Species(int speciesId, String speciesName) {
+        this(speciesName);
         this.speciesId = speciesId;
-        this.speciesName = speciesName;
     }
 
     // Getter e Setter

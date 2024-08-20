@@ -10,7 +10,7 @@ public class User extends Account {
 
     // Costruttore
     public User(String cf, String password, String firstName, String lastName, String phoneNumber, int userId) {
-        super(cf, password, firstName, lastName, phoneNumber);
+        this(cf, password, firstName, lastName, phoneNumber);
         this.userId = userId;
     }
 

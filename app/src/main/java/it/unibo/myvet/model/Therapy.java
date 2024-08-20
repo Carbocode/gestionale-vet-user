@@ -22,12 +22,9 @@ public class Therapy {
     // Costruttore con ID (per oggetti esistenti)
     public Therapy(int therapyId, int appointmentId, String name, String description, LocalDateTime startDate,
             LocalDateTime endDate) {
+        this(appointmentId, name, description, startDate, endDate);
         this.therapyId = therapyId;
-        this.appointmentId = appointmentId;
-        this.name = name;
-        this.description = description;
-        this.startDate = startDate;
-        this.endDate = endDate;
+
     }
 
     // Getter e Setter

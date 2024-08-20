@@ -19,11 +19,8 @@ public class Animal {
 
     // Costruttore con ID dell'animale (per oggetti esistenti)
     public Animal(int animalId, String name, LocalDate birthDate, User owner, Breed breed) {
+        this(name, birthDate, owner, breed);
         this.animalId = animalId;
-        this.name = name;
-        this.birthDate = birthDate;
-        this.owner = owner;
-        this.breed = breed;
     }
 
     // Getter e Setter

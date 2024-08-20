@@ -13,9 +13,8 @@ public class Breed {
 
     // Costruttore con ID della razza (per oggetti esistenti)
     public Breed(int breedId, String breedName, Species species) {
+        this(breedName, species);
         this.breedId = breedId;
-        this.breedName = breedName;
-        this.species = species;
     }
 
     // Getter e Setter

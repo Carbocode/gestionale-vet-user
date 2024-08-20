@@ -11,8 +11,8 @@ public class AppointmentState {
 
     // Costruttore
     public AppointmentState(int stateId, String stateName) {
+        this(stateName);
         this.stateId = stateId;
-        this.stateName = stateName;
     }
 
     // Getter e Setter

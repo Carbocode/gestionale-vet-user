@@ -11,8 +11,8 @@ public class Service {
 
     // Constructor
     public Service(int serviceId, String name) {
+        this(name);
         this.serviceId = serviceId;
-        this.name = name;
     }
 
     // Getters and Setters
