@@ -4,8 +4,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javax.swing.table.DefaultTableModel;
-
 import it.unibo.myvet.model.Vet;
 import it.unibo.myvet.utils.DAOUtils;
 import it.unibo.myvet.utils.Database;
@@ -96,25 +94,18 @@ public class VetDAO {
         }
     }
 
-        public void searchVet(String searchText, DefaultTableModel tableModel) {
+    public ResultSet searchVet(String searchText) {
         String query = "SELECT * FROM veterinari JOIN account ON account.CF=veterinari.CF WHERE nome LIKE ? OR cognome LIKE ?";
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(query)) {
             statement.setString(1, "%" + searchText + "%");
             statement.setString(2, "%" + searchText + "%");
             ResultSet resultSet = statement.executeQuery();
-
-            // Clear the existing rows
-            tableModel.setRowCount(0);
-
-            // Add new rows
-            while (resultSet.next()) {
-                String nome = resultSet.getString("nome");
-                String cognome = resultSet.getString("cognome");
-                tableModel.addRow(new Object[] { nome, cognome });
-            }
+            return resultSet;
+            
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return null;
     }
 }
