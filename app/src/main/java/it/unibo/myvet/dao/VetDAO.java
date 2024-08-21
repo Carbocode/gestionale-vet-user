@@ -3,6 +3,8 @@ package it.unibo.myvet.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import it.unibo.myvet.model.Vet;
 import it.unibo.myvet.utils.DAOUtils;
@@ -94,18 +96,34 @@ public class VetDAO {
         }
     }
 
-    public ResultSet searchVet(String searchText) {
-        String query = "SELECT * FROM veterinari JOIN account ON account.CF=veterinari.CF WHERE nome LIKE ? OR cognome LIKE ?";
+    public List<Vet> searchVet(String searchText) {
+        List<Vet> vets = new ArrayList<>();
+        String sql = "SELECT * FROM veterinari JOIN account ON account.CF=veterinari.CF WHERE nome LIKE ? OR cognome LIKE ?";
         try (Database dbWrapper = DAOUtils.getConnection();
-                PreparedStatement statement = dbWrapper.prepareStatement(query)) {
-            statement.setString(1, "%" + searchText + "%");
-            statement.setString(2, "%" + searchText + "%");
-            ResultSet resultSet = statement.executeQuery();
-            return resultSet;
-            
+                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
+
+            statement.setString(1, searchText);
+            statement.setString(2, searchText);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    int idVet = resultSet.getInt("IDVeterinario");
+                    String cf = resultSet.getString("CF");
+                    // Recupera i dettagli dell'account utilizzando l'AccountDAO
+                    Vet tempVet = (Vet) accountDAO.findByCf(cf);
+                    vets.add(new Vet(
+                            tempVet.getCf(),
+                            tempVet.getPassword(),
+                            tempVet.getFirstName(),
+                            tempVet.getLastName(),
+                            tempVet.getPhoneNumber(),
+                            idVet));
+                }
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+
+        return vets;
     }
 }

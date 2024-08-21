@@ -239,7 +239,11 @@ public class PrivateView {
 
     private void searchVet(String searchText, DefaultTableModel tableModel) {
         VetDAO vetDAO = new VetDAO();
-        vetDAO.searchVet(searchText, tableModel);
+        List<Vet> vets = vetDAO.searchVet(searchText);
+
+        for (Vet vet : vets) {
+            tableModel.addRow(new Object[] { vet.getFirstName(), vet.getLastName() });
+        }
     }
 
     private void showAppointmentView() {
