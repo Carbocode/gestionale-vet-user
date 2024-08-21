@@ -17,7 +17,7 @@ public class AnimalDAO {
 
     public Animal findById(Integer animalId) {
         Animal animal = null;
-        String sql = "SELECT * FROM Animals WHERE IDAnimale = ?";
+        String sql = "SELECT * FROM animali WHERE IDAnimale = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -38,7 +38,7 @@ public class AnimalDAO {
 
     public List<Animal> findByOwnerId(int ownerId) {
         List<Animal> animals = new ArrayList<>();
-        String sql = "SELECT * FROM Animals WHERE IDUtente = ?";
+        String sql = "SELECT * FROM animali WHERE IDUtente = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -58,7 +58,7 @@ public class AnimalDAO {
     }
 
     public void save(Animal animal) {
-        String sql = "INSERT INTO Animals (Nome, Razza, DataNascita, IDUtente) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO animali (Nome, Razza, DataNascita, IDUtente) VALUES (?, ?, ?, ?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql,
@@ -83,7 +83,7 @@ public class AnimalDAO {
     }
 
     public void update(Animal animal) {
-        String sql = "UPDATE Animals SET Nome = ?, Razza = ?, DataNascita = ?, IDUtente = ? WHERE IDAnimale = ?";
+        String sql = "UPDATE animali SET Nome = ?, Razza = ?, DataNascita = ?, IDUtente = ? WHERE IDAnimale = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -101,7 +101,7 @@ public class AnimalDAO {
     }
 
     public void delete(Integer animalId) {
-        String sql = "DELETE FROM Animals WHERE IDAnimale = ?";
+        String sql = "DELETE FROM animali WHERE IDAnimale = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {

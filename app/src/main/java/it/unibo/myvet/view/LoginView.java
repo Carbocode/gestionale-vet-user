@@ -5,12 +5,13 @@ import java.awt.*;
 
 import it.unibo.myvet.dao.AccountDAO;
 import it.unibo.myvet.dao.UserDAO;
+import it.unibo.myvet.dao.VetDAO;
 import it.unibo.myvet.model.Account;
 import it.unibo.myvet.model.User;
+import it.unibo.myvet.model.Vet;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 
 public class LoginView {
     private JFrame frame;
@@ -91,7 +92,7 @@ public class LoginView {
     private void showSignupView() {
         JFrame signupFrame = new JFrame("Sign Up");
         signupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        signupFrame.setSize(350, 300);
+        signupFrame.setSize(350, 400);
         signupFrame.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -111,7 +112,6 @@ public class LoginView {
         JLabel nomeLabel = new JLabel("Nome:");
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.gridwidth = 1;
         signupFrame.add(nomeLabel, gbc);
 
         JTextField nomeField = new JTextField();
@@ -153,9 +153,32 @@ public class LoginView {
         gbc.gridwidth = 2;
         signupFrame.add(telefonoField, gbc);
 
-        JButton submitButton = new JButton("Sign Up");
+        JCheckBox isVeterinarianCheckbox = new JCheckBox("Registrati come Veterinario");
         gbc.gridx = 1;
         gbc.gridy = 5;
+        gbc.gridwidth = 2;
+        signupFrame.add(isVeterinarianCheckbox, gbc);
+
+        // Aggiungi il JComboBox per la selezione delle specializzazioni
+        String[] specializations = { "Chirurgia", "Dermatologia", "Oncologia", "Cardiologia" };
+        JComboBox<String> specializationComboBox = new JComboBox<>(specializations);
+        specializationComboBox.setEnabled(false); // Disabilitato finché il checkbox non è selezionato
+        gbc.gridx = 1;
+        gbc.gridy = 6;
+        gbc.gridwidth = 2;
+        signupFrame.add(specializationComboBox, gbc);
+
+        isVeterinarianCheckbox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Abilita o disabilita il JComboBox in base alla selezione del checkbox
+                specializationComboBox.setEnabled(isVeterinarianCheckbox.isSelected());
+            }
+        });
+
+        JButton submitButton = new JButton("Sign Up");
+        gbc.gridx = 1;
+        gbc.gridy = 7;
         gbc.gridwidth = 2;
         signupFrame.add(submitButton, gbc);
 
@@ -167,7 +190,11 @@ public class LoginView {
                 String cognome = cognomeField.getText();
                 String password = new String(passwordField.getPassword());
                 String telefono = telefonoField.getText();
-                if (registerAccount(CF, nome, cognome, password, telefono)) {
+                boolean isVeterinarian = isVeterinarianCheckbox.isSelected();
+                int specializationIndex = specializationComboBox.getSelectedIndex() + 1; // Specializzazione selezionata
+                                                                                         // (come int)
+
+                if (registerAccount(CF, nome, cognome, password, telefono, isVeterinarian, specializationIndex)) {
                     JOptionPane.showMessageDialog(signupFrame, "Registrazione avvenuta con successo!");
                     signupFrame.dispose();
                 } else {
@@ -178,21 +205,35 @@ public class LoginView {
 
         signupFrame.setVisible(true);
     }
+
+    VetDAO veterinarianDAO = new VetDAO();
     AccountDAO acc = new AccountDAO();
-    UserDAO userDAO=new UserDAO();
-    User user=null;
-    int userID=0;
-    private boolean registerAccount(String CF, String nome, String cognome, String password, String telefono) {
-        boolean isAuthenticated = false;
+    UserDAO userDAO = new UserDAO();
+    User user = null;
+    int userID = 0;
+
+    private boolean registerAccount(String CF, String nome, String cognome, String password, String telefono,
+            boolean isVeterinarian, int specialization) {
+        boolean isRegistered = false;
         try {
-            acc.save(new Account(CF, password, cognome, password, telefono));
-            user=new User(CF, password, cognome, password, telefono);
-            userDAO.save(user);
-            userID=user.getUserId();
-            isAuthenticated = true;
+            if (isVeterinarian) {
+                // Registra come Veterinario con specializzazione
+                acc.save(new Account(CF, password, nome, cognome, telefono));
+                Vet veterinarian = new Vet(CF, nome, cognome, password, telefono, specialization);
+                veterinarianDAO.save(veterinarian);
+                userID = veterinarian.getVetId();
+            } else {
+                // Registra come Utente
+                acc.save(new Account(CF, password, nome, cognome, telefono));
+                User user = new User(CF, nome, cognome, password, telefono);
+                userDAO.save(user);
+                userID = user.getUserId();
+            }
+            isRegistered = true;
         } catch (Exception e) {
+            e.printStackTrace(); // Gestisci l'eccezione in modo appropriato
         }
-        return isAuthenticated;
+        return isRegistered;
     }
 
     private boolean authenticate(String CF, String password) {
@@ -206,8 +247,8 @@ public class LoginView {
     private void showPrivateView() {
         new PrivateView(userID);
     }
-    
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new LoginView());
-    } 
+    }
 }

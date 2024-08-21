@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.unibo.myvet.model.Account;
+import it.unibo.myvet.model.User;
 import it.unibo.myvet.model.Vet;
 import it.unibo.myvet.utils.DAOUtils;
 import it.unibo.myvet.utils.Database;
@@ -39,23 +41,15 @@ public class VetDAO {
         return vet;
     }
 
-    public void save(Vet vet) {
-        accountDAO.save(vet); // Salva l'Account prima
-        String sql = "INSERT INTO Veterinari (CF) VALUES (?)";
+    public void save(Vet account) {
+        String sql = "INSERT INTO veterinari (CF, Password) VALUES (?, ?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
-                PreparedStatement statement = dbWrapper.prepareStatement(sql,
-                        PreparedStatement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
-            statement.setString(1, vet.getCf());
+            statement.setString(1, account.getCf());
+            statement.setString(2, account.getPassword());
             statement.executeUpdate();
-
-            // Recupera l'ID generato automaticamente e impostalo sull'oggetto Vet
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    vet.setVetId(generatedKeys.getInt(1));
-                }
-            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -126,4 +120,35 @@ public class VetDAO {
 
         return vets;
     }
+
+    public List<Vet> findAll() {
+        List<Vet> vets = new ArrayList<>();
+        String sql = "SELECT * FROM veterinari JOIN account ON account.CF = veterinari.CF";
+
+        try (Database dbWrapper = DAOUtils.getConnection();
+                PreparedStatement statement = dbWrapper.prepareStatement(sql);
+                ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                int idVet = resultSet.getInt("IDVeterinario");
+                String cf = resultSet.getString("CF");
+
+                // Recupera i dettagli dell'account utilizzando l'AccountDAO
+                Vet tempVet = (Vet) accountDAO.findByCf(cf);
+                vets.add(new Vet(
+                        tempVet.getCf(),
+                        tempVet.getPassword(),
+                        tempVet.getFirstName(),
+                        tempVet.getLastName(),
+                        tempVet.getPhoneNumber(),
+                        idVet));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return vets;
+    }
+
 }

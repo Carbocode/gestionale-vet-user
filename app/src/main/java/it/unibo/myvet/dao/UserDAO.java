@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import it.unibo.myvet.model.Account;
 import it.unibo.myvet.model.User;
 import it.unibo.myvet.utils.DAOUtils;
 import it.unibo.myvet.utils.Database;
@@ -14,7 +15,7 @@ public class UserDAO {
 
     public User findById(int userId) {
         User user = null;
-        String sql = "SELECT * FROM Utenti WHERE IDUtente = ?";
+        String sql = "SELECT * FROM utenti WHERE IDUtente = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -37,23 +38,15 @@ public class UserDAO {
         return user;
     }
 
-    public void save(User user) {
-        accountDAO.save(user); // Salva l'Account prima
-        String sql = "INSERT INTO Utenti (CF) VALUES (?)";
+    public void save(User account) {
+        String sql = "INSERT INTO utenti (CF, Password) VALUES (?, ?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
-                PreparedStatement statement = dbWrapper.prepareStatement(sql,
-                        PreparedStatement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
-            statement.setString(1, user.getCf());
+            statement.setString(1, account.getCf());
+            statement.setString(2, account.getPassword());
             statement.executeUpdate();
-
-            // Recupera l'ID generato automaticamente e impostalo sull'oggetto User
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    user.setUserId(generatedKeys.getInt(1));
-                }
-            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -62,7 +55,7 @@ public class UserDAO {
 
     public void update(User user) {
         accountDAO.update(user); // Aggiorna l'Account prima
-        String sql = "UPDATE Utenti SET CF = ? WHERE IDUtente = ?";
+        String sql = "UPDATE utenti SET CF = ? WHERE IDUtente = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -80,7 +73,7 @@ public class UserDAO {
         User user = findById(userId);
         if (user != null) {
             accountDAO.delete(user.getCf()); // Elimina l'Account prima
-            String sql = "DELETE FROM Utenti WHERE IDUtente = ?";
+            String sql = "DELETE FROM utenti WHERE IDUtente = ?";
 
             try (Database dbWrapper = DAOUtils.getConnection();
                     PreparedStatement statement = dbWrapper.prepareStatement(sql)) {

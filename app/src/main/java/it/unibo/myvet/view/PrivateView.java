@@ -10,10 +10,8 @@ import java.awt.event.ItemListener;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import it.unibo.myvet.dao.AccountDAO;
 import it.unibo.myvet.dao.AnimalDAO;
 import it.unibo.myvet.dao.AppointmentDAO;
 import it.unibo.myvet.dao.BreedDAO;
@@ -25,10 +23,12 @@ import it.unibo.myvet.model.Appointment;
 import it.unibo.myvet.model.AppointmentState;
 import it.unibo.myvet.model.Breed;
 import it.unibo.myvet.model.Species;
+import it.unibo.myvet.model.User;
 import it.unibo.myvet.model.Vet;
 
 public class PrivateView {
     int userId = 0;
+    JFrame signupFrame;
 
     public PrivateView(int userID) {
         this.userId = userID;
@@ -225,10 +225,15 @@ public class PrivateView {
     }
 
     private boolean registerAnimal(String nome, String telefono, LocalDate dataNascita, Species species, Breed breed) {
-
         boolean isRegistered = false;
         try {
-            Animal animal = new Animal(userId, telefono, dataNascita, userDAO.findById(userId), breed);
+            User owner = userDAO.findById(userId);
+            if (owner == null) {
+                JOptionPane.showMessageDialog(signupFrame, "User not found. Cannot register animal.");
+                return false;
+            }
+
+            Animal animal = new Animal(userId, telefono, dataNascita, owner, breed);
             animalDAO.save(animal);
             isRegistered = true;
         } catch (Exception e) {
@@ -267,6 +272,15 @@ public class PrivateView {
 
         gbc.gridx = 0;
         gbc.gridy = 1;
+        JLabel vetLabel = new JLabel("Select Vet:");
+        appointmentFrame.add(vetLabel, gbc);
+
+        gbc.gridx = 1;
+        JComboBox<Vet> vetComboBox = new JComboBox<>();
+        appointmentFrame.add(vetComboBox, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
         JLabel dateLabel = new JLabel("Appointment Date (YYYY-MM-DD):");
         appointmentFrame.add(dateLabel, gbc);
 
@@ -275,7 +289,7 @@ public class PrivateView {
         appointmentFrame.add(dateField, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         JLabel timeLabel = new JLabel("Appointment Time (HH:MM):");
         appointmentFrame.add(timeLabel, gbc);
 
@@ -284,7 +298,7 @@ public class PrivateView {
         appointmentFrame.add(timeField, gbc);
 
         gbc.gridx = 1;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.gridwidth = 2;
         JButton submitButton = new JButton("Book Appointment");
         appointmentFrame.add(submitButton, gbc);
@@ -292,23 +306,28 @@ public class PrivateView {
         // Load user's animals
         loadAnimals(animalComboBox);
 
+        // Load available vets
+        loadVets(vetComboBox);
+
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Animal selectedAnimal = (Animal) animalComboBox.getSelectedItem();
+                Vet selectedVet = (Vet) vetComboBox.getSelectedItem();
                 String dateStr = dateField.getText();
-                LocalDateTime dateTime = LocalDateTime.parse(timeField.getText(),
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+                String timeStr = timeField.getText();
 
-                LocalDate appointmentDate = null;
+                LocalDateTime appointmentDateTime;
+
                 try {
-                    appointmentDate = Date.valueOf(dateStr).toLocalDate();
-                } catch (IllegalArgumentException ex) {
-                    JOptionPane.showMessageDialog(appointmentFrame, "Invalid date format. Use YYYY-MM-DD.");
+                    appointmentDateTime = LocalDateTime.parse(dateStr + "T" + timeStr);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(appointmentFrame,
+                            "Invalid date/time format. Please use the correct formats.");
                     return;
                 }
 
-                if (bookAppointment(selectedAnimal, appointmentDate, dateTime, 0)) {
+                if (bookAppointment(selectedAnimal, appointmentDateTime, selectedVet)) {
                     JOptionPane.showMessageDialog(appointmentFrame, "Appointment booked successfully!");
                     appointmentFrame.dispose();
                 } else {
@@ -328,20 +347,28 @@ public class PrivateView {
         }
     }
 
-    private boolean bookAppointment(Animal animal, Vet vet, LocalDateTime appointmentDate, int time,
-            AppointmentState state) {
-        // Aggiungi la logica per prenotare l'appuntamento
-        // Questo esempio presuppone che tu abbia una classe `AppointmentDAO` per
-        // gestire gli appuntamenti
+    private void loadVets(JComboBox<Vet> vetComboBox) {
+        vetComboBox.removeAllItems();
+        VetDAO vetDAO = new VetDAO();
+        List<Vet> vets = vetDAO.findAll();
+        for (Vet vet : vets) {
+            vetComboBox.addItem(vet);
+        }
+    }
+
+    private boolean bookAppointment(Animal animal, LocalDateTime appointmentDateTime, Vet vet) {
         boolean isBooked = false;
         try {
-            // Assumiamo che esista un metodo `save` in `AppointmentDAO` per salvare
-            // l'appuntamento
             AppointmentDAO appointmentDAO = new AppointmentDAO();
-            // Creare un'istanza di appuntamento e salvarla
-            Appointment appointment = new Appointment(animal, vet, appointmentDate, time, state);
-            appointmentDAO.save(appointment);
-            isBooked = true;
+            AppointmentState appointmentState = new AppointmentState("Scheduled");
+            for (Appointment app : appointmentDAO.findByVetId(userId)) {
+                if (app.getDateTime() != appointmentDateTime) {
+                    Appointment appointment = new Appointment(animal, vet, appointmentDateTime, appointmentState);
+                    appointmentDAO.save(appointment);
+                    isBooked = true;
+                }
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
