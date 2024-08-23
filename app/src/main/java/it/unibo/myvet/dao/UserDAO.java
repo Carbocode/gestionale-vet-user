@@ -4,7 +4,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import it.unibo.myvet.model.Account;
 import it.unibo.myvet.model.User;
 import it.unibo.myvet.utils.DAOUtils;
 import it.unibo.myvet.utils.Database;
@@ -38,15 +37,22 @@ public class UserDAO {
         return user;
     }
 
-    public void save(User account) {
-        String sql = "INSERT INTO utenti (CF, Password) VALUES (?, ?)";
+    public void save(User user) {
+        accountDAO.save(user);
+        String sql = "INSERT INTO utenti (CF) VALUES (?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
-                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
+                PreparedStatement statement = dbWrapper.prepareStatement(sql,
+                        PreparedStatement.RETURN_GENERATED_KEYS)) {
 
-            statement.setString(1, account.getCf());
-            statement.setString(2, account.getPassword());
+            statement.setString(1, user.getCf());
             statement.executeUpdate();
+            // Recupera l'ID generato automaticamente e impostalo sull'oggetto User
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    user.setUserId(generatedKeys.getInt(1));
+                }
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
