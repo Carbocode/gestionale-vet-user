@@ -6,7 +6,7 @@ import java.awt.*;
 import it.unibo.myvet.dao.AccountDAO;
 import it.unibo.myvet.dao.UserDAO;
 import it.unibo.myvet.dao.VetDAO;
-import it.unibo.myvet.model.Account;
+import it.unibo.myvet.model.Specialization;
 import it.unibo.myvet.model.User;
 import it.unibo.myvet.model.Vet;
 
@@ -217,14 +217,14 @@ public class LoginView {
         boolean isRegistered = false;
         try {
             if (isVeterinarian) {
+
                 // Registra come Veterinario con specializzazione
-                acc.save(new Account(CF, password, nome, cognome, telefono));
-                Vet veterinarian = new Vet(CF, nome, cognome, password, telefono, specialization);
+                Vet veterinarian = new Vet(CF, nome, cognome, password, telefono,
+                        new Specialization(String.valueOf(specialization)));
                 veterinarianDAO.save(veterinarian);
                 userID = veterinarian.getVetId();
             } else {
                 // Registra come Utente
-                acc.save(new Account(CF, password, nome, cognome, telefono));
                 User user = new User(CF, nome, cognome, password, telefono);
                 userDAO.save(user);
                 userID = user.getUserId();

@@ -8,6 +8,7 @@ import it.unibo.myvet.controller.AppointmentListController;
 import it.unibo.myvet.model.Animal;
 import it.unibo.myvet.model.AppointmentState;
 import it.unibo.myvet.model.Breed;
+import it.unibo.myvet.model.Specialization;
 import it.unibo.myvet.model.Species;
 import it.unibo.myvet.model.User;
 import it.unibo.myvet.model.Vet;
@@ -118,9 +119,11 @@ public class AppointmentListView extends JFrame {
                 Animal animal1 = new Animal(1, "Rex", LocalDate.of(2015, 5, 20), owner1, breed1);
                 Animal animal2 = new Animal(2, "Whiskers", LocalDate.of(2018, 3, 15), owner2, breed2);
 
+                Specialization specialization = new Specialization("pisellone");
+
                 // Creazione di alcuni veterinari
-                Vet vet1 = new Vet("CFV001", "vetpassword1", "Dr.", "Jones", "111222333", 1);
-                Vet vet2 = new Vet("CFV002", "vetpassword2", "Dr.", "Smith", "444555666", 2);
+                Vet vet1 = new Vet("CFV001", "vetpassword1", "Dr.", "Jones", "111222333", 1, specialization);
+                Vet vet2 = new Vet("CFV002", "vetpassword2", "Dr.", "Smith", "444555666", 2, specialization);
 
                 // Creazione di alcuni stati degli appuntamenti
                 AppointmentState state1 = new AppointmentState(1, "Completed");

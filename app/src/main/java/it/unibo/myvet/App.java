@@ -2,7 +2,6 @@ package it.unibo.myvet;
 
 import java.sql.SQLException;
 
-
 import it.unibo.myvet.view.LoginView;
 
 public final class App {

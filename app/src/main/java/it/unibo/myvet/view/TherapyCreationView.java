@@ -15,6 +15,7 @@ import it.unibo.myvet.model.Animal;
 import it.unibo.myvet.model.Appointment;
 import it.unibo.myvet.model.AppointmentState;
 import it.unibo.myvet.model.Breed;
+import it.unibo.myvet.model.Specialization;
 import it.unibo.myvet.model.Species;
 import it.unibo.myvet.model.User;
 import it.unibo.myvet.model.Vet;
@@ -124,8 +125,10 @@ public class TherapyCreationView extends JFrame {
         // Creazione di alcuni animali
         Animal animal1 = new Animal(1, "Rex", LocalDate.of(2015, 5, 20), owner1, breed1);
 
+        Specialization specialization = new Specialization("pisellone");
+
         // Creazione di alcuni veterinari
-        Vet vet1 = new Vet("CFV001", "vetpassword1", "Dr.", "Jones", "111222333");
+        Vet vet1 = new Vet("CFV001", "vetpassword1", "Dr.", "Jones", "111222333", specialization);
 
         // Creazione di alcuni stati degli appuntamenti
         AppointmentState state1 = new AppointmentState(1, "Completed");

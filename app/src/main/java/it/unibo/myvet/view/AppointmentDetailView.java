@@ -134,8 +134,10 @@ public class AppointmentDetailView extends JFrame {
         // Creazione di un animale
         Animal animal = new Animal(1, "Rex", LocalDate.of(2015, 5, 20), user, breed);
 
+        Specialization specialization = new Specialization("pisellone");
+
         // Creazione di un veterinario
-        Vet vet = new Vet("CFV001", "vetpassword1", "Dr.", "Jones", "111222333", 1);
+        Vet vet = new Vet("CFV001", "vetpassword1", "Dr.", "Jones", "111222333", 1, specialization);
 
         // Creazione dello stato dell'appuntamento
         AppointmentState state = new AppointmentState(1, "Completed");

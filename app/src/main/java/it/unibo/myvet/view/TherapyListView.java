@@ -9,6 +9,7 @@ import it.unibo.myvet.model.Animal;
 import it.unibo.myvet.model.Appointment;
 import it.unibo.myvet.model.AppointmentState;
 import it.unibo.myvet.model.Breed;
+import it.unibo.myvet.model.Specialization;
 import it.unibo.myvet.model.Species;
 import it.unibo.myvet.model.Therapy;
 import it.unibo.myvet.model.User;
@@ -106,8 +107,10 @@ public class TherapyListView extends JPanel {
                                 user,
                                 breed);
 
+                Specialization specialization = new Specialization("pisellone");
+
                 // Creazione di un veterinario
-                Vet vet = new Vet("CFV001", "vetpassword1", "Dr.", "Jones", "111222333", 1);
+                Vet vet = new Vet("CFV001", "vetpassword1", "Dr.", "Jones", "111222333", 1, specialization);
 
                 // Creazione dello stato dell'appuntamento
                 AppointmentState state = new AppointmentState(1, "Completed");
