@@ -4,7 +4,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import it.unibo.myvet.model.Specialization;
 import it.unibo.myvet.model.User;
+import it.unibo.myvet.model.Vet;
 import it.unibo.myvet.utils.DAOUtils;
 import it.unibo.myvet.utils.Database;
 
@@ -92,4 +94,31 @@ public class UserDAO {
             }
         }
     }
+
+    public User findByCf(String cf) {
+        User user = null;
+        String sql = "SELECT * FROM utenti WHERE CF = ?";
+    
+        try (Database dbWrapper = DAOUtils.getConnection();
+                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
+    
+            statement.setString(1, cf);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    int userId = resultSet.getInt("IDUtente");
+                    // Recupera i dettagli dell'account utilizzando l'AccountDAO
+                    User tempUser = (User) accountDAO.findByCf(cf);
+                    user = new User(tempUser.getCf(), tempUser.getPassword(), tempUser.getFirstName(),
+                            tempUser.getLastName(), tempUser.getPhoneNumber(), userId);
+                }
+            }
+    
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return user;
+    }
+    
+
 }

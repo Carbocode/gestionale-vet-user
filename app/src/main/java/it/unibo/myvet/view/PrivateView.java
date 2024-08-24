@@ -27,10 +27,10 @@ import it.unibo.myvet.model.User;
 import it.unibo.myvet.model.Vet;
 
 public class PrivateView {
-    int userId = 0;
+    String userId = "";
     JFrame signupFrame;
 
-    public PrivateView(int userID) {
+    public PrivateView(String userID) {
         this.userId = userID;
         JFrame mainFrame = new JFrame("Main View");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -112,15 +112,6 @@ public class PrivateView {
 
         gbc.gridx = 0;
         gbc.gridy = 1;
-        JLabel telefonoLabel = new JLabel("Telefono:");
-        signupFrame.add(telefonoLabel, gbc);
-
-        gbc.gridx = 1;
-        JTextField telefonoField = new JTextField();
-        signupFrame.add(telefonoField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 2;
         JLabel nascitaLabel = new JLabel("Data di nascita (YYYY-MM-DD):");
         signupFrame.add(nascitaLabel, gbc);
 
@@ -129,7 +120,7 @@ public class PrivateView {
         signupFrame.add(dataNascitaField, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 2;
         JLabel speciesLabel = new JLabel("Specie:");
         signupFrame.add(speciesLabel, gbc);
 
@@ -138,7 +129,7 @@ public class PrivateView {
         signupFrame.add(speciesComboBox, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 3;
         JLabel breedLabel = new JLabel("Razza:");
         signupFrame.add(breedLabel, gbc);
 
@@ -147,7 +138,7 @@ public class PrivateView {
         signupFrame.add(breedComboBox, gbc);
 
         gbc.gridx = 1;
-        gbc.gridy = 5;
+        gbc.gridy = 4;
         gbc.gridwidth = 2;
         JButton submitButton = new JButton("Sign Up");
         signupFrame.add(submitButton, gbc);
@@ -169,7 +160,6 @@ public class PrivateView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String nome = nomeField.getText();
-                String telefono = telefonoField.getText();
                 String dataNascitaStr = dataNascitaField.getText();
                 Species selectedSpecies = (Species) speciesComboBox.getSelectedItem();
                 Breed selectedBreed = (Breed) breedComboBox.getSelectedItem();
@@ -183,7 +173,7 @@ public class PrivateView {
                     return;
                 }
 
-                if (registerAnimal(nome, telefono, dataNascita, selectedSpecies, selectedBreed)) {
+                if (registerAnimal(nome, dataNascita, selectedSpecies, selectedBreed)) {
                     JOptionPane.showMessageDialog(signupFrame, "Registrazione avvenuta con successo!");
                     signupFrame.dispose();
                 } else {
@@ -224,16 +214,16 @@ public class PrivateView {
         }
     }
 
-    private boolean registerAnimal(String nome, String telefono, LocalDate dataNascita, Species species, Breed breed) {
+    private boolean registerAnimal(String nome, LocalDate dataNascita, Species species, Breed breed) {
         boolean isRegistered = false;
         try {
-            User owner = userDAO.findById(userId);
+            User owner = userDAO.findByCf(userId);
             if (owner == null) {
                 JOptionPane.showMessageDialog(signupFrame, "User not found. Cannot register animal.");
                 return false;
             }
 
-            Animal animal = new Animal(userId, telefono, dataNascita, owner, breed);
+            Animal animal = new Animal(userId, dataNascita, owner, breed);
             animalDAO.save(animal);
             isRegistered = true;
         } catch (Exception e) {
@@ -341,7 +331,7 @@ public class PrivateView {
 
     private void loadAnimals(JComboBox<Animal> animalComboBox) {
         animalComboBox.removeAllItems();
-        List<Animal> animals = animalDAO.findByOwnerId(userId);
+        List<Animal> animals = animalDAO.findByOwnerId(userDAO.findByCf(userId).getUserId());
         for (Animal animal : animals) {
             animalComboBox.addItem(animal);
         }
@@ -361,7 +351,7 @@ public class PrivateView {
         try {
             AppointmentDAO appointmentDAO = new AppointmentDAO();
             AppointmentState appointmentState = new AppointmentState("Scheduled");
-            for (Appointment app : appointmentDAO.findByVetId(userId)) {
+            for (Appointment app : appointmentDAO.findByVetId(vet.getVetId())) {
                 if (app.getDateTime() != appointmentDateTime) {
                     Appointment appointment = new Appointment(animal, vet, appointmentDateTime, appointmentState);
                     appointmentDAO.save(appointment);

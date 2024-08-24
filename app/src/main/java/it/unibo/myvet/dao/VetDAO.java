@@ -170,4 +170,39 @@ public class VetDAO {
         return vets;
     }
 
+    public Vet findByCf(String cf) {
+        Vet vet = null;
+        String sql = "SELECT * FROM Veterinari WHERE CF = ?";
+
+        try (Database dbWrapper = DAOUtils.getConnection();
+                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
+
+            statement.setString(1, cf);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    int vetId = resultSet.getInt("IDVeterinario");
+                    int idSpecialization = resultSet.getInt("IDSpecializzazione");
+
+                    // Recupera i dettagli dell'account utilizzando l'AccountDAO
+                    Vet tempVet = (Vet) accountDAO.findByCf(cf);
+                    Specialization specialization = specializationDAO.findById(idSpecialization);
+
+                    vet = new Vet(
+                            tempVet.getCf(),
+                            tempVet.getPassword(),
+                            tempVet.getFirstName(),
+                            tempVet.getLastName(),
+                            tempVet.getPhoneNumber(),
+                            vetId,
+                            specialization);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return vet;
+    }
+
 }

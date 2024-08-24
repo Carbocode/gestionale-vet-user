@@ -3,6 +3,7 @@ package it.unibo.myvet.view;
 import javax.swing.*;
 import java.awt.*;
 
+import it.unibo.myvet.controller.AppointmentListController;
 import it.unibo.myvet.dao.AccountDAO;
 import it.unibo.myvet.dao.UserDAO;
 import it.unibo.myvet.dao.VetDAO;
@@ -72,7 +73,11 @@ public class LoginView {
                 if (authenticate(username, password)) {
                     JOptionPane.showMessageDialog(frame, "Login successful!");
                     frame.dispose();
-                    showPrivateView();
+                    if (isVeterinarian(username)) {
+                        showAppointmentView();
+                    } else {
+                        showPrivateView(username);
+                    }
                 } else {
                     JOptionPane.showMessageDialog(frame, "Invalid username or password.");
                 }
@@ -210,24 +215,20 @@ public class LoginView {
     AccountDAO acc = new AccountDAO();
     UserDAO userDAO = new UserDAO();
     User user = null;
-    int userID = 0;
 
     private boolean registerAccount(String CF, String nome, String cognome, String password, String telefono,
             boolean isVeterinarian, int specialization) {
         boolean isRegistered = false;
         try {
             if (isVeterinarian) {
-
                 // Registra come Veterinario con specializzazione
                 Vet veterinarian = new Vet(CF, nome, cognome, password, telefono,
                         new Specialization(String.valueOf(specialization)));
                 veterinarianDAO.save(veterinarian);
-                userID = veterinarian.getVetId();
             } else {
                 // Registra come Utente
                 User user = new User(CF, nome, cognome, password, telefono);
                 userDAO.save(user);
-                userID = user.getUserId();
             }
             isRegistered = true;
         } catch (Exception e) {
@@ -240,12 +241,21 @@ public class LoginView {
         boolean isAuthenticated = false;
         if (acc.authenticate(CF, password) != null) {
             isAuthenticated = true;
+
         }
         return isAuthenticated;
     }
 
-    private void showPrivateView() {
+    private boolean isVeterinarian(String CF) {
+        return veterinarianDAO.findByCf(CF) != null;
+    }
+
+    private void showPrivateView(String userID) {
         new PrivateView(userID);
+    }
+
+    private void showAppointmentView() {
+        new AppointmentListView(new AppointmentListController(null));
     }
 
     public static void main(String[] args) {
