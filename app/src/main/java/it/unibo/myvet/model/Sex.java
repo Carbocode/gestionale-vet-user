@@ -1,8 +1,8 @@
 package it.unibo.myvet.model;
 
 public enum Sex {
-    FEMALE('F'),
-    MALE('M');
+    F('F'),
+    M('M');
 
     char sex;
 
@@ -17,9 +17,9 @@ public enum Sex {
     public static Sex fromChar(char sexChar) {
         switch (sexChar) {
             case 'F':
-                return Sex.FEMALE;
+                return Sex.F;
             case 'M':
-                return Sex.MALE;
+                return Sex.M;
             default:
                 throw new IllegalArgumentException("Carattere non valido: " + sexChar);
         }

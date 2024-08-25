@@ -105,7 +105,7 @@ public class TherapyListView extends JPanel {
                 Animal animal1 = new Animal(
                                 "Ciaone",
                                 LocalDateTime.of(2020, 1, 1, 0, 0).toLocalDate(),
-                                Sex.MALE,
+                                Sex.M,
                                 user,
                                 breed);
 

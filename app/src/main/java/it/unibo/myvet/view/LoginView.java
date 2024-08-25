@@ -81,7 +81,7 @@ public class LoginView {
                 if (authenticate(username, password)) {
                     frame.dispose();
                     if (isVeterinarian(username)) {
-                        showAppointmentView(vet);
+                        showVetView(vet);
                     } else if (isUser(username)) {
                         showPrivateView(user);
                     } else {
@@ -260,8 +260,8 @@ public class LoginView {
         new PrivateView(user);
     }
 
-    private void showAppointmentView(Vet vet) {
-        new AppointmentListView(new AppointmentListController(), vet);
+    private void showVetView(Vet vet) {
+        new VetInterfaceView(vet);
     }
 
     private void loadSpecializations(JComboBox<Specialization> specializationComboBox) {

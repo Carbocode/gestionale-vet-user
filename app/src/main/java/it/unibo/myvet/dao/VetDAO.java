@@ -30,11 +30,17 @@ public class VetDAO {
                     String cf = resultSet.getString("CF");
                     int idSpecialization = resultSet.getInt("IDSpecializzazione");
                     // Recupera i dettagli dell'account utilizzando l'AccountDAO
-                    Vet tempVet = (Vet) accountDAO.findByCf(cf);
+                    Account account = accountDAO.findByCf(cf);
                     Specialization specialization = specializationDAO.findById(idSpecialization);
 
-                    vet = new Vet(tempVet.getCf(), tempVet.getPassword(), tempVet.getFirstName(), tempVet.getLastName(),
-                            tempVet.getPhoneNumber(), vetId, specialization);
+                    vet = new Vet(
+                            account.getCf(),
+                            account.getPassword(),
+                            account.getFirstName(),
+                            account.getLastName(),
+                            account.getPhoneNumber(),
+                            vetId,
+                            specialization);
                 }
             }
 

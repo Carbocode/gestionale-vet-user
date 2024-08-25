@@ -2,9 +2,6 @@ package it.unibo.myvet.view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import it.unibo.myvet.controller.AppointmentListController;

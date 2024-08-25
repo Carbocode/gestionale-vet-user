@@ -124,7 +124,7 @@ public class TherapyCreationView extends JFrame {
         Breed breed1 = new Breed(1, "Labrador", dogSpecies);
 
         // Creazione di alcuni animali
-        Animal animal1 = new Animal(1, "Rex", LocalDate.of(2015, 5, 20), Sex.MALE, owner1, breed1);
+        Animal animal1 = new Animal(1, "Rex", LocalDate.of(2015, 5, 20), Sex.M, owner1, breed1);
 
         Specialization specialization = new Specialization("pisellone");
 

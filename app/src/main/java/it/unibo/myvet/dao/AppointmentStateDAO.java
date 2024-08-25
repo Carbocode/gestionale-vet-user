@@ -14,7 +14,7 @@ public class AppointmentStateDAO {
 
     public AppointmentState findById(int stateId) {
         AppointmentState state = null;
-        String sql = "SELECT * FROM Stati WHERE IDStatoAppuntamento = ?";
+        String sql = "SELECT * FROM Stati WHERE IDStato = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -53,7 +53,7 @@ public class AppointmentStateDAO {
     }
 
     public void save(AppointmentState state) {
-        String sql = "INSERT INTO Stati (NomeStato) VALUES (?)";
+        String sql = "INSERT INTO Stati (Nome) VALUES (?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql,
@@ -76,7 +76,7 @@ public class AppointmentStateDAO {
     }
 
     public void update(AppointmentState state) {
-        String sql = "UPDATE Stati SET NomeStato = ? WHERE IDStatoAppuntamento = ?";
+        String sql = "UPDATE Stati SET Nome = ? WHERE IDStato = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -91,7 +91,7 @@ public class AppointmentStateDAO {
     }
 
     public void delete(int stateId) {
-        String sql = "DELETE FROM Stati WHERE IDStatoAppuntamento = ?";
+        String sql = "DELETE FROM Stati WHERE IDStato = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -105,8 +105,8 @@ public class AppointmentStateDAO {
     }
 
     private AppointmentState mapToAppointmentState(ResultSet resultSet) throws SQLException {
-        int stateId = resultSet.getInt("IDStatoAppuntamento");
-        String stateName = resultSet.getString("NomeStato");
+        int stateId = resultSet.getInt("IDStato");
+        String stateName = resultSet.getString("Nome");
 
         return new AppointmentState(stateId, stateName);
     }
