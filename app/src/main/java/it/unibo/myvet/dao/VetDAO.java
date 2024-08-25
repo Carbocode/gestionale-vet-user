@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.unibo.myvet.model.Account;
 import it.unibo.myvet.model.Specialization;
 import it.unibo.myvet.model.Vet;
 import it.unibo.myvet.utils.DAOUtils;
@@ -115,15 +116,15 @@ public class VetDAO {
                     int idSpecialization = resultSet.getInt("IDSpecializzazione");
 
                     // Recupera i dettagli dell'account utilizzando l'AccountDAO
-                    Vet tempVet = (Vet) accountDAO.findByCf(cf);
+                    Account account = accountDAO.findByCf(cf);
                     Specialization specialization = specializationDAO.findById(idSpecialization);
 
                     vets.add(new Vet(
-                            tempVet.getCf(),
-                            tempVet.getPassword(),
-                            tempVet.getFirstName(),
-                            tempVet.getLastName(),
-                            tempVet.getPhoneNumber(),
+                            account.getCf(),
+                            account.getPassword(),
+                            account.getFirstName(),
+                            account.getLastName(),
+                            account.getPhoneNumber(),
                             idVet,
                             specialization));
                 }
@@ -150,15 +151,15 @@ public class VetDAO {
                 int idSpecialization = resultSet.getInt("IDSpecializzazione");
 
                 // Recupera i dettagli dell'account utilizzando l'AccountDAO
-                Vet tempVet = (Vet) accountDAO.findByCf(cf);
+                Account account = accountDAO.findByCf(cf);
                 Specialization specialization = specializationDAO.findById(idSpecialization);
 
                 vets.add(new Vet(
-                        tempVet.getCf(),
-                        tempVet.getPassword(),
-                        tempVet.getFirstName(),
-                        tempVet.getLastName(),
-                        tempVet.getPhoneNumber(),
+                        account.getCf(),
+                        account.getPassword(),
+                        account.getFirstName(),
+                        account.getLastName(),
+                        account.getPhoneNumber(),
                         idVet,
                         specialization));
             }
@@ -171,6 +172,7 @@ public class VetDAO {
     }
 
     public Vet findByCf(String cf) {
+        System.out.println(cf);
         Vet vet = null;
         String sql = "SELECT * FROM Veterinari WHERE CF = ?";
 
@@ -179,20 +181,21 @@ public class VetDAO {
 
             statement.setString(1, cf);
             try (ResultSet resultSet = statement.executeQuery()) {
+                System.out.println(resultSet.toString());
                 if (resultSet.next()) {
                     int vetId = resultSet.getInt("IDVeterinario");
                     int idSpecialization = resultSet.getInt("IDSpecializzazione");
 
                     // Recupera i dettagli dell'account utilizzando l'AccountDAO
-                    Vet tempVet = (Vet) accountDAO.findByCf(cf);
+                    Account account = accountDAO.findByCf(cf);
                     Specialization specialization = specializationDAO.findById(idSpecialization);
 
                     vet = new Vet(
-                            tempVet.getCf(),
-                            tempVet.getPassword(),
-                            tempVet.getFirstName(),
-                            tempVet.getLastName(),
-                            tempVet.getPhoneNumber(),
+                            account.getCf(),
+                            account.getPassword(),
+                            account.getFirstName(),
+                            account.getLastName(),
+                            account.getPhoneNumber(),
                             vetId,
                             specialization);
                 }

@@ -27,9 +27,11 @@ public class AppointmentListView extends JFrame {
         private JTable appointmentTable;
         private DefaultTableModel tableModel;
         private AppointmentListController appointmentListController;
+        private Vet vet;
         private List<Appointment> appointments;
 
-        public AppointmentListView(AppointmentListController appointmentListController) {
+        public AppointmentListView(AppointmentListController appointmentListController, Vet vet) {
+                this.vet = vet;
                 this.appointmentListController = appointmentListController;
                 this.appointments = this.appointmentListController.getAppointments();
 
@@ -140,6 +142,6 @@ public class AppointmentListView extends JFrame {
                 appointments.add(appointment2);
 
                 // Visualizzazione della finestra con gli appuntamenti
-                new AppointmentListView(new AppointmentListController(appointments));
+                new AppointmentListView(new AppointmentListController(appointments), vet1);
         }
 }
