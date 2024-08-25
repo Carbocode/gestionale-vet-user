@@ -1,17 +1,17 @@
 package it.unibo.myvet.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Therapy {
     private int therapyId;
     private int appointmentId; // Chiave esterna che fa riferimento all'appuntamento
     private String name; // Nome della terapia
     private String description; // Descrizione della terapia
-    private LocalDateTime startDate; // Data di inizio della terapia
-    private LocalDateTime endDate; // Data di fine della terapia
+    private LocalDate startDate; // Data di inizio della terapia
+    private LocalDate endDate; // Data di fine della terapia
 
     // Costruttore senza ID (per nuovi oggetti)
-    public Therapy(int appointmentId, String name, String description, LocalDateTime startDate, LocalDateTime endDate) {
+    public Therapy(int appointmentId, String name, String description, LocalDate startDate, LocalDate endDate) {
         this.appointmentId = appointmentId;
         this.name = name;
         this.description = description;
@@ -20,8 +20,8 @@ public class Therapy {
     }
 
     // Costruttore con ID (per oggetti esistenti)
-    public Therapy(int therapyId, int appointmentId, String name, String description, LocalDateTime startDate,
-            LocalDateTime endDate) {
+    public Therapy(int therapyId, int appointmentId, String name, String description, LocalDate startDate,
+            LocalDate endDate) {
         this(appointmentId, name, description, startDate, endDate);
         this.therapyId = therapyId;
 
@@ -60,19 +60,19 @@ public class Therapy {
         this.description = description;
     }
 
-    public LocalDateTime getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDateTime startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDateTime getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDateTime endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 

@@ -61,11 +61,11 @@ public class TherapyCreationView extends JFrame {
         descriptionArea = new JTextArea(3, 20);
         therapyPanel.add(new JScrollPane(descriptionArea));
 
-        therapyPanel.add(new JLabel("Start Date (yyyy-MM-dd HH:mm):"));
+        therapyPanel.add(new JLabel("Start Date (yyyy-MM-dd):"));
         startDateField = new JTextField();
         therapyPanel.add(startDateField);
 
-        therapyPanel.add(new JLabel("End Date (yyyy-MM-dd HH:mm):"));
+        therapyPanel.add(new JLabel("End Date (yyyy-MM-dd):"));
         endDateField = new JTextField();
         therapyPanel.add(endDateField);
 
@@ -93,10 +93,10 @@ public class TherapyCreationView extends JFrame {
         try {
             String name = nameField.getText();
             String description = descriptionArea.getText();
-            LocalDateTime startDate = LocalDateTime.parse(startDateField.getText(),
-                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-            LocalDateTime endDate = LocalDateTime.parse(endDateField.getText(),
-                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+            LocalDate startDate = LocalDate.parse(startDateField.getText(),
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            LocalDate endDate = LocalDate.parse(endDateField.getText(),
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
             // Chiamata al controller per creare la terapia
             therapyListController.createTherapy(appointment, name, description, startDate, endDate);

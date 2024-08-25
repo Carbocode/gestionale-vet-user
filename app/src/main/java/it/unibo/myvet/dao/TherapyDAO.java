@@ -1,10 +1,10 @@
 package it.unibo.myvet.dao;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class TherapyDAO {
 
     public Therapy findById(Integer therapyId) {
         Therapy therapy = null;
-        String sql = "SELECT * FROM Therapies WHERE IDTerapia = ?";
+        String sql = "SELECT * FROM Terapie WHERE IDTerapia = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -37,7 +37,7 @@ public class TherapyDAO {
 
     public List<Therapy> findByAppointmentId(int appointmentId) {
         List<Therapy> therapies = new ArrayList<>();
-        String sql = "SELECT * FROM Therapies WHERE IDAppuntamento = ?";
+        String sql = "SELECT * FROM Terapie WHERE IDAppuntamento = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -57,7 +57,7 @@ public class TherapyDAO {
     }
 
     public void save(Therapy therapy) {
-        String sql = "INSERT INTO Therapies (IDAppuntamento, Nome, Descrizione, DataInizio, DataFine) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Terapie (IDAppuntamento, Nome, Descrizione, DataInizio, DataFine) VALUES (?, ?, ?, ?, ?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql,
@@ -66,8 +66,8 @@ public class TherapyDAO {
             statement.setInt(1, therapy.getAppointmentId());
             statement.setString(2, therapy.getName());
             statement.setString(3, therapy.getDescription());
-            statement.setTimestamp(4, Timestamp.valueOf(therapy.getStartDate()));
-            statement.setTimestamp(5, Timestamp.valueOf(therapy.getEndDate()));
+            statement.setDate(4, Date.valueOf(therapy.getStartDate()));
+            statement.setDate(5, Date.valueOf(therapy.getStartDate()));
             statement.executeUpdate();
 
             // Recupera l'ID generato automaticamente e impostalo sull'oggetto Therapy
@@ -83,7 +83,7 @@ public class TherapyDAO {
     }
 
     public void update(Therapy therapy) {
-        String sql = "UPDATE Therapies SET IDAppuntamento = ?, Nome = ?, Descrizione = ?, DataInizio = ?, DataFine = ? WHERE IDTerapia = ?";
+        String sql = "UPDATE Terapie SET IDAppuntamento = ?, Nome = ?, Descrizione = ?, DataInizio = ?, DataFine = ? WHERE IDTerapia = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -91,8 +91,8 @@ public class TherapyDAO {
             statement.setInt(1, therapy.getAppointmentId());
             statement.setString(2, therapy.getName());
             statement.setString(3, therapy.getDescription());
-            statement.setTimestamp(4, Timestamp.valueOf(therapy.getStartDate()));
-            statement.setTimestamp(5, Timestamp.valueOf(therapy.getEndDate()));
+            statement.setDate(4, Date.valueOf(therapy.getStartDate()));
+            statement.setDate(5, Date.valueOf(therapy.getEndDate()));
             statement.setInt(6, therapy.getTherapyId());
             statement.executeUpdate();
 
@@ -102,7 +102,7 @@ public class TherapyDAO {
     }
 
     public void delete(Integer therapyId) {
-        String sql = "DELETE FROM Therapies WHERE IDTerapia = ?";
+        String sql = "DELETE FROM Terapie WHERE IDTerapia = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -120,8 +120,8 @@ public class TherapyDAO {
         int appointmentId = resultSet.getInt("IDAppuntamento");
         String name = resultSet.getString("Nome");
         String description = resultSet.getString("Descrizione");
-        LocalDateTime startDate = resultSet.getTimestamp("DataInizio").toLocalDateTime();
-        LocalDateTime endDate = resultSet.getTimestamp("DataFine").toLocalDateTime();
+        LocalDate startDate = resultSet.getDate("DataInizio").toLocalDate();
+        LocalDate endDate = resultSet.getDate("DataFine").toLocalDate();
 
         return new Therapy(therapyId, appointmentId, name, description, startDate, endDate);
     }

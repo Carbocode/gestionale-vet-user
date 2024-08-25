@@ -3,7 +3,6 @@ package it.unibo.myvet.view;
 import javax.swing.*;
 import java.awt.*;
 
-import it.unibo.myvet.controller.AppointmentListController;
 import it.unibo.myvet.dao.AccountDAO;
 import it.unibo.myvet.dao.SpecializationDAO;
 import it.unibo.myvet.dao.UserDAO;
