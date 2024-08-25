@@ -8,7 +8,6 @@ import it.unibo.myvet.dao.AccountDAO;
 import it.unibo.myvet.dao.SpecializationDAO;
 import it.unibo.myvet.dao.UserDAO;
 import it.unibo.myvet.dao.VetDAO;
-import it.unibo.myvet.model.Appointment;
 import it.unibo.myvet.model.Specialization;
 import it.unibo.myvet.model.User;
 import it.unibo.myvet.model.Vet;
@@ -16,7 +15,6 @@ import it.unibo.myvet.model.Vet;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import java.util.*;
 
 public class LoginView {
     private JFrame frame;
@@ -63,12 +61,6 @@ public class LoginView {
         gbc.gridwidth = 2;
         frame.add(passwordField, gbc);
 
-        JCheckBox isVeterinarianCheckbox = new JCheckBox("Accedi come Veterinario");
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
-        frame.add(isVeterinarianCheckbox, gbc);
-
         JButton loginButton = new JButton("Login");
         gbc.gridx = 1;
         gbc.gridy = 3;
@@ -87,11 +79,10 @@ public class LoginView {
                 String username = usernameField.getText();
                 String password = new String(passwordField.getPassword());
                 if (authenticate(username, password)) {
-                    JOptionPane.showMessageDialog(frame, "Correct Credentials!");
                     frame.dispose();
-                    if (isVeterinarianCheckbox.isSelected()) {
+                    if (isVeterinarian(username)) {
                         showAppointmentView(vet);
-                    } else if (isUser(password)) {
+                    } else if (isUser(username)) {
                         showPrivateView(user);
                     } else {
                         JOptionPane.showMessageDialog(frame, "Account is not a User, neither a Vet");
@@ -194,14 +185,6 @@ public class LoginView {
         signupFrame.add(specializationComboBox, gbc);
         loadSpecializations(specializationComboBox);
 
-        isVeterinarianCheckbox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Abilita o disabilita il JComboBox in base alla selezione del checkbox
-                specializationComboBox.setEnabled(isVeterinarianCheckbox.isSelected());
-            }
-        });
-
         JButton submitButton = new JButton("Sign Up");
         gbc.gridx = 1;
         gbc.gridy = 7;
@@ -278,7 +261,7 @@ public class LoginView {
     }
 
     private void showAppointmentView(Vet vet) {
-        new AppointmentListView(new AppointmentListController(null), vet);
+        new AppointmentListView(new AppointmentListController(), vet);
     }
 
     private void loadSpecializations(JComboBox<Specialization> specializationComboBox) {
