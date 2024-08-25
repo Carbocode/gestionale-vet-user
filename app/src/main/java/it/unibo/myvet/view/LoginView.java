@@ -191,6 +191,10 @@ public class LoginView {
         gbc.gridwidth = 2;
         signupFrame.add(submitButton, gbc);
 
+        isVeterinarianCheckbox.addItemListener(e -> {
+            boolean isSelected = isVeterinarianCheckbox.isSelected();
+            specializationComboBox.setEnabled(isSelected); // Abilita/disabilita la JComboBox
+        });
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -266,7 +270,11 @@ public class LoginView {
 
     private void loadSpecializations(JComboBox<Specialization> specializationComboBox) {
         specializationComboBox.removeAllItems();
+
+        specializationComboBox.addItem(null);
+
         List<Specialization> speciesList = specializationDAO.findAll();
+
         for (Specialization species : speciesList) {
             specializationComboBox.addItem(species);
         }

@@ -79,6 +79,16 @@ public class PrivateView {
 
         mainFrame.add(animalsPanel, BorderLayout.EAST);
 
+        JButton viewAppointmentsButton = new JButton("View Appointments");
+        animalsPanel.add(viewAppointmentsButton,BorderLayout.SOUTH);
+
+        viewAppointmentsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showAppointmentsView();
+            }
+        });
+
         // Carica gli animali dell'utente
         loadUserAnimals();
 
@@ -215,6 +225,7 @@ public class PrivateView {
 
     private void loadSpecies(JComboBox<Species> speciesComboBox) {
         speciesComboBox.removeAllItems();
+        speciesComboBox.addItem(null);
         List<Species> speciesList = speciesDAO.findAll();
         for (Species species : speciesList) {
             speciesComboBox.addItem(species);
@@ -223,7 +234,7 @@ public class PrivateView {
 
     private void loadBreeds(JComboBox<Breed> breedComboBox, Species species) {
         breedComboBox.removeAllItems(); // Rimuovi tutte le razze attuali
-
+        breedComboBox.addItem(null);
         if (species == null) {
             System.out.println("Specie non selezionata o nullo.");
             return;
@@ -277,7 +288,11 @@ public class PrivateView {
         gbc.gridx = 0;
         gbc.gridy = 0;
 
+        // Imposta una dimensione minima per le JLabel
+        Dimension labelSize = new Dimension(200, 20);
+
         JLabel animalLabel = new JLabel("Select Animal:");
+        animalLabel.setPreferredSize(labelSize);
         appointmentFrame.add(animalLabel, gbc);
 
         gbc.gridx = 1;
@@ -287,6 +302,7 @@ public class PrivateView {
         gbc.gridx = 0;
         gbc.gridy = 1;
         JLabel vetLabel = new JLabel("Select Vet:");
+        vetLabel.setPreferredSize(labelSize);
         appointmentFrame.add(vetLabel, gbc);
 
         gbc.gridx = 1;
@@ -296,6 +312,7 @@ public class PrivateView {
         gbc.gridx = 0;
         gbc.gridy = 2;
         JLabel dateLabel = new JLabel("Appointment Date (YYYY-MM-DD):");
+        dateLabel.setPreferredSize(labelSize);
         appointmentFrame.add(dateLabel, gbc);
 
         gbc.gridx = 1;
@@ -305,6 +322,7 @@ public class PrivateView {
         gbc.gridx = 0;
         gbc.gridy = 3;
         JLabel timeLabel = new JLabel("Appointment Time (HH:MM):");
+        timeLabel.setPreferredSize(labelSize);
         appointmentFrame.add(timeLabel, gbc);
 
         gbc.gridx = 1;
@@ -355,6 +373,7 @@ public class PrivateView {
 
     private void loadAnimals(JComboBox<Animal> animalComboBox) {
         animalComboBox.removeAllItems();
+        animalComboBox.addItem(null);
         List<Animal> animals = animalDAO.findByOwnerId(this.user.getUserId());
         for (Animal animal : animals) {
             animalComboBox.addItem(animal);
@@ -363,6 +382,7 @@ public class PrivateView {
 
     private void loadVets(JComboBox<Vet> vetComboBox) {
         vetComboBox.removeAllItems();
+        vetComboBox.addItem(null);
         VetDAO vetDAO = new VetDAO();
         List<Vet> vets = vetDAO.findAll();
         for (Vet vet : vets) {
@@ -401,6 +421,48 @@ public class PrivateView {
                     animal.getBreed().getBreedName(),
                     animal.getSex().toString(),
                     animal.getBirthDate().toString()
+            });
+        }
+    }
+
+    private void showAppointmentsView() {
+        JFrame appointmentsFrame = new JFrame("My Appointments");
+        appointmentsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        appointmentsFrame.setSize(800, 400);
+        appointmentsFrame.setLayout(new BorderLayout());
+    
+        // Modello per la tabella degli appuntamenti
+        DefaultTableModel appointmentsTableModel = new DefaultTableModel(
+                new Object[]{"Animal", "Vet", "Date", "Time", "Status"}, 0);
+        JTable appointmentsTable = new JTable(appointmentsTableModel);
+        JScrollPane scrollPane = new JScrollPane(appointmentsTable);
+        appointmentsFrame.add(scrollPane, BorderLayout.CENTER);
+    
+        // Carica gli appuntamenti dell'utente
+        loadUserAppointments(appointmentsTableModel);
+    
+        appointmentsFrame.setVisible(true);
+    }
+    
+    // Metodo per caricare gli appuntamenti dell'utente
+    private void loadUserAppointments(DefaultTableModel model) {
+        model.setRowCount(0); // Pulisce la tabella
+    
+        AppointmentDAO appointmentDAO = new AppointmentDAO();
+        List<Appointment> appointments = appointmentDAO.
+    
+        for (Appointment appointment : appointments) {
+            Animal animal = appointment.getAnimal();
+            Vet vet = appointment.getVet();
+            LocalDateTime dateTime = appointment.getDateTime();
+            String status = appointment.getAppointmentState().getState();
+    
+            model.addRow(new Object[]{
+                    animal.getName(),
+                    vet.getFirstName() + " " + vet.getLastName(),
+                    dateTime.toLocalDate().toString(),
+                    dateTime.toLocalTime().toString(),
+                    status
             });
         }
     }
