@@ -30,6 +30,7 @@ import it.unibo.myvet.model.Vet;
 public class PrivateView {
     User user;
     JFrame signupFrame;
+    JTable animalsTable;
 
     UserDAO userDAO = new UserDAO();
     SpeciesDAO speciesDAO = new SpeciesDAO();
@@ -67,6 +68,19 @@ public class PrivateView {
         bottomPanel.add(appointmentButton);
 
         mainFrame.add(bottomPanel, BorderLayout.SOUTH);
+        JPanel animalsPanel = new JPanel(new BorderLayout());
+        JLabel animalsLabel = new JLabel("I miei animali:");
+        animalsPanel.add(animalsLabel, BorderLayout.NORTH);
+
+        animalsTable = new JTable(
+                new DefaultTableModel(new Object[] { "Nome", "Specie", "Razza", "Sesso", "Data di nascita" }, 0));
+        JScrollPane animalsScrollPane = new JScrollPane(animalsTable);
+        animalsPanel.add(animalsScrollPane, BorderLayout.CENTER);
+
+        mainFrame.add(animalsPanel, BorderLayout.EAST);
+
+        // Carica gli animali dell'utente
+        loadUserAnimals();
 
         searchButton.addActionListener(new ActionListener() {
             @Override
@@ -121,8 +135,18 @@ public class PrivateView {
         JTextField dataNascitaField = new JTextField();
         signupFrame.add(dataNascitaField, gbc);
 
+        // Aggiunta della JComboBox per il sesso
         gbc.gridx = 0;
         gbc.gridy = 2;
+        JLabel sexLabel = new JLabel("Sesso:");
+        signupFrame.add(sexLabel, gbc);
+
+        gbc.gridx = 1;
+        JComboBox<Sex> sexComboBox = new JComboBox<>(Sex.values());
+        signupFrame.add(sexComboBox, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
         JLabel speciesLabel = new JLabel("Specie:");
         signupFrame.add(speciesLabel, gbc);
 
@@ -131,7 +155,7 @@ public class PrivateView {
         signupFrame.add(speciesComboBox, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         JLabel breedLabel = new JLabel("Razza:");
         signupFrame.add(breedLabel, gbc);
 
@@ -140,7 +164,7 @@ public class PrivateView {
         signupFrame.add(breedComboBox, gbc);
 
         gbc.gridx = 1;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.gridwidth = 2;
         JButton submitButton = new JButton("Sign Up");
         signupFrame.add(submitButton, gbc);
@@ -165,6 +189,7 @@ public class PrivateView {
                 String dataNascitaStr = dataNascitaField.getText();
                 Species selectedSpecies = (Species) speciesComboBox.getSelectedItem();
                 Breed selectedBreed = (Breed) breedComboBox.getSelectedItem();
+                Sex selectedSex = (Sex) sexComboBox.getSelectedItem(); // Ottieni il sesso selezionato
 
                 LocalDate dataNascita = null;
                 try {
@@ -175,7 +200,8 @@ public class PrivateView {
                     return;
                 }
 
-                if (registerAnimal(nome, dataNascita, selectedSpecies, selectedBreed)) {
+                if (registerAnimal(nome, dataNascita, selectedSex, selectedSpecies, selectedBreed)) { // Passa il sesso
+                                                                                                      // selezionato
                     JOptionPane.showMessageDialog(signupFrame, "Registrazione avvenuta con successo!");
                     signupFrame.dispose();
                 } else {
@@ -361,6 +387,22 @@ public class PrivateView {
             e.printStackTrace();
         }
         return isBooked;
+    }
+
+    private void loadUserAnimals() {
+        DefaultTableModel model = (DefaultTableModel) animalsTable.getModel();
+        model.setRowCount(0); // Pulisce la tabella
+
+        List<Animal> animals = animalDAO.findByOwnerId(user.getUserId());
+        for (Animal animal : animals) {
+            model.addRow(new Object[] {
+                    animal.getName(),
+                    animal.getBreed().getSpecies().getSpeciesName(),
+                    animal.getBreed().getBreedName(),
+                    animal.getSex().toString(),
+                    animal.getBirthDate().toString()
+            });
+        }
     }
 
 }
