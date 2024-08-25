@@ -30,6 +30,7 @@ import it.unibo.myvet.model.Vet;
 public class PrivateView {
     User user;
     JFrame signupFrame;
+    JTable animalsTable;
 
     UserDAO userDAO = new UserDAO();
     SpeciesDAO speciesDAO = new SpeciesDAO();
@@ -67,6 +68,19 @@ public class PrivateView {
         bottomPanel.add(appointmentButton);
 
         mainFrame.add(bottomPanel, BorderLayout.SOUTH);
+        JPanel animalsPanel = new JPanel(new BorderLayout());
+        JLabel animalsLabel = new JLabel("I miei animali:");
+        animalsPanel.add(animalsLabel, BorderLayout.NORTH);
+
+        animalsTable = new JTable(
+                new DefaultTableModel(new Object[] { "Nome", "Specie", "Razza", "Sesso", "Data di nascita" }, 0));
+        JScrollPane animalsScrollPane = new JScrollPane(animalsTable);
+        animalsPanel.add(animalsScrollPane, BorderLayout.CENTER);
+
+        mainFrame.add(animalsPanel, BorderLayout.EAST);
+
+        // Carica gli animali dell'utente
+        loadUserAnimals();
 
         searchButton.addActionListener(new ActionListener() {
             @Override
@@ -98,66 +112,66 @@ public class PrivateView {
         signupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         signupFrame.setSize(600, 600);
         signupFrame.setLayout(new GridBagLayout());
-    
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 0;
-    
+
         JLabel nomeLabel = new JLabel("Nome:");
         signupFrame.add(nomeLabel, gbc);
-    
+
         gbc.gridx = 1;
         JTextField nomeField = new JTextField();
         signupFrame.add(nomeField, gbc);
-    
+
         gbc.gridx = 0;
         gbc.gridy = 1;
         JLabel nascitaLabel = new JLabel("Data di nascita (YYYY-MM-DD):");
         signupFrame.add(nascitaLabel, gbc);
-    
+
         gbc.gridx = 1;
         JTextField dataNascitaField = new JTextField();
         signupFrame.add(dataNascitaField, gbc);
-    
+
         // Aggiunta della JComboBox per il sesso
         gbc.gridx = 0;
         gbc.gridy = 2;
         JLabel sexLabel = new JLabel("Sesso:");
         signupFrame.add(sexLabel, gbc);
-    
+
         gbc.gridx = 1;
         JComboBox<Sex> sexComboBox = new JComboBox<>(Sex.values());
         signupFrame.add(sexComboBox, gbc);
-    
+
         gbc.gridx = 0;
         gbc.gridy = 3;
         JLabel speciesLabel = new JLabel("Specie:");
         signupFrame.add(speciesLabel, gbc);
-    
+
         gbc.gridx = 1;
         JComboBox<Species> speciesComboBox = new JComboBox<>();
         signupFrame.add(speciesComboBox, gbc);
-    
+
         gbc.gridx = 0;
         gbc.gridy = 4;
         JLabel breedLabel = new JLabel("Razza:");
         signupFrame.add(breedLabel, gbc);
-    
+
         gbc.gridx = 1;
         JComboBox<Breed> breedComboBox = new JComboBox<>();
         signupFrame.add(breedComboBox, gbc);
-    
+
         gbc.gridx = 1;
         gbc.gridy = 5;
         gbc.gridwidth = 2;
         JButton submitButton = new JButton("Sign Up");
         signupFrame.add(submitButton, gbc);
-    
+
         // Load species and breeds
         loadSpecies(speciesComboBox);
-    
+
         speciesComboBox.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -167,7 +181,7 @@ public class PrivateView {
                 }
             }
         });
-    
+
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -175,8 +189,8 @@ public class PrivateView {
                 String dataNascitaStr = dataNascitaField.getText();
                 Species selectedSpecies = (Species) speciesComboBox.getSelectedItem();
                 Breed selectedBreed = (Breed) breedComboBox.getSelectedItem();
-                Sex selectedSex = (Sex) sexComboBox.getSelectedItem();  // Ottieni il sesso selezionato
-    
+                Sex selectedSex = (Sex) sexComboBox.getSelectedItem(); // Ottieni il sesso selezionato
+
                 LocalDate dataNascita = null;
                 try {
                     dataNascita = Date.valueOf(dataNascitaStr).toLocalDate();
@@ -185,8 +199,9 @@ public class PrivateView {
                             "Errore: formato della data non valido. Usa il formato YYYY-MM-DD.");
                     return;
                 }
-    
-                if (registerAnimal(nome, dataNascita, selectedSex, selectedSpecies, selectedBreed)) {  // Passa il sesso selezionato
+
+                if (registerAnimal(nome, dataNascita, selectedSex, selectedSpecies, selectedBreed)) { // Passa il sesso
+                                                                                                      // selezionato
                     JOptionPane.showMessageDialog(signupFrame, "Registrazione avvenuta con successo!");
                     signupFrame.dispose();
                 } else {
@@ -194,10 +209,9 @@ public class PrivateView {
                 }
             }
         });
-    
+
         signupFrame.setVisible(true);
     }
-    
 
     private void loadSpecies(JComboBox<Species> speciesComboBox) {
         speciesComboBox.removeAllItems();
@@ -373,6 +387,22 @@ public class PrivateView {
             e.printStackTrace();
         }
         return isBooked;
+    }
+
+    private void loadUserAnimals() {
+        DefaultTableModel model = (DefaultTableModel) animalsTable.getModel();
+        model.setRowCount(0); // Pulisce la tabella
+
+        List<Animal> animals = animalDAO.findByOwnerId(user.getUserId());
+        for (Animal animal : animals) {
+            model.addRow(new Object[] {
+                    animal.getName(),
+                    animal.getBreed().getSpecies().getSpeciesName(),
+                    animal.getBreed().getBreedName(),
+                    animal.getSex().toString(),
+                    animal.getBirthDate().toString()
+            });
+        }
     }
 
 }

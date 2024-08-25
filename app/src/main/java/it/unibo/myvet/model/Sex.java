@@ -13,4 +13,15 @@ public enum Sex {
     public String toString() {
         return String.valueOf(sex);
     }
+
+    public static Sex fromChar(char sexChar) {
+        switch (sexChar) {
+            case 'F':
+                return Sex.FEMALE;
+            case 'M':
+                return Sex.MALE;
+            default:
+                throw new IllegalArgumentException("Carattere non valido: " + sexChar);
+        }
+    }
 }
