@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import it.unibo.myvet.model.Account;
 import it.unibo.myvet.model.User;
 import it.unibo.myvet.utils.DAOUtils;
 import it.unibo.myvet.utils.Database;
@@ -24,9 +25,14 @@ public class UserDAO {
                 if (resultSet.next()) {
                     String cf = resultSet.getString("CF");
                     // Recupera i dettagli dell'account utilizzando l'AccountDAO
-                    User tempUser = (User) accountDAO.findByCf(cf);
-                    user = new User(tempUser.getCf(), tempUser.getPassword(), tempUser.getFirstName(),
-                            tempUser.getLastName(), tempUser.getPhoneNumber(), userId);
+                    Account account = accountDAO.findByCf(cf);
+                    user = new User(
+                            account.getCf(),
+                            account.getPassword(),
+                            account.getFirstName(),
+                            account.getLastName(),
+                            account.getPhoneNumber(),
+                            userId);
                 }
             }
 
@@ -105,9 +111,14 @@ public class UserDAO {
                 if (resultSet.next()) {
                     int userId = resultSet.getInt("IDUtente");
                     // Recupera i dettagli dell'account utilizzando l'AccountDAO
-                    User tempUser = (User) accountDAO.findByCf(cf);
-                    user = new User(tempUser.getCf(), tempUser.getPassword(), tempUser.getFirstName(),
-                            tempUser.getLastName(), tempUser.getPhoneNumber(), userId);
+                    Account account = accountDAO.findByCf(cf);
+                    user = new User(
+                            account.getCf(),
+                            account.getPassword(),
+                            account.getFirstName(),
+                            account.getLastName(),
+                            account.getPhoneNumber(),
+                            userId);
                 }
             }
 

@@ -87,12 +87,14 @@ public class LoginView {
                 String username = usernameField.getText();
                 String password = new String(passwordField.getPassword());
                 if (authenticate(username, password)) {
-                    JOptionPane.showMessageDialog(frame, "Login successful!");
+                    JOptionPane.showMessageDialog(frame, "Correct Credentials!");
                     frame.dispose();
                     if (isVeterinarianCheckbox.isSelected()) {
-                        showAppointmentView();
-                    } else {
+                        showAppointmentView(vet);
+                    } else if (isUser(password)) {
                         showPrivateView(user);
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Account is not a User, neither a Vet");
                     }
                 } else {
                     JOptionPane.showMessageDialog(frame, "Invalid username or password.");
@@ -261,13 +263,22 @@ public class LoginView {
         return isAuthenticated;
     }
 
+    private boolean isVeterinarian(String CF) {
+        this.vet = veterinarianDAO.findByCf(CF);
+        return this.vet != null;
+    }
+
+    private boolean isUser(String CF) {
+        this.user = userDAO.findByCf(CF);
+        return this.user != null;
+    }
+
     private void showPrivateView(User user) {
         new PrivateView(user);
     }
 
-    private void showAppointmentView() {
-        List<Appointment> appList = new ArrayList<>();
-        new AppointmentListView(new AppointmentListController(appList));
+    private void showAppointmentView(Vet vet) {
+        new AppointmentListView(new AppointmentListController(null), vet);
     }
 
     private void loadSpecializations(JComboBox<Specialization> specializationComboBox) {

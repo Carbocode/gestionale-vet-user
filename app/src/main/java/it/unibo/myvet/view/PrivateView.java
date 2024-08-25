@@ -30,8 +30,14 @@ public class PrivateView {
     User user;
     JFrame signupFrame;
 
+    UserDAO userDAO = new UserDAO();
+    SpeciesDAO speciesDAO = new SpeciesDAO();
+    BreedDAO breedDAO = new BreedDAO();
+    AnimalDAO animalDAO = new AnimalDAO();
+
     public PrivateView(User user) {
         this.user = user;
+
         JFrame mainFrame = new JFrame("Main View");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setSize(600, 400);
@@ -85,11 +91,6 @@ public class PrivateView {
 
         mainFrame.setVisible(true);
     }
-
-    UserDAO userDAO = new UserDAO();
-    SpeciesDAO speciesDAO = new SpeciesDAO();
-    BreedDAO breedDAO = new BreedDAO();
-    AnimalDAO animalDAO = new AnimalDAO();
 
     private void showSignupView() {
         JFrame signupFrame = new JFrame("Sign Up");
@@ -216,6 +217,7 @@ public class PrivateView {
 
     private boolean registerAnimal(String nome, LocalDate dataNascita, Species species, Breed breed) {
         boolean isRegistered = false;
+        System.out.println(this.user.toString());
         try {
 
             Animal animal = new Animal(nome, dataNascita, this.user, breed);

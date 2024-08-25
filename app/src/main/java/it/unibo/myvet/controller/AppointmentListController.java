@@ -7,6 +7,7 @@ import it.unibo.myvet.model.AppointmentState;
 import it.unibo.myvet.model.Vet;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AppointmentListController {
@@ -17,6 +18,10 @@ public class AppointmentListController {
     public AppointmentListController(List<Appointment> appointments) {
         this.appointmentDAO = new AppointmentDAO();
         this.appointments = appointments;
+    }
+
+    public AppointmentListController() {
+        this(new ArrayList<>());
     }
 
     public List<Appointment> getAppointments() {
