@@ -5,6 +5,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import it.unibo.myvet.controller.TherapyListController;
+import it.unibo.myvet.dao.TherapyDAO;
 import it.unibo.myvet.model.Animal;
 import it.unibo.myvet.model.Appointment;
 import it.unibo.myvet.model.AppointmentState;
@@ -21,6 +22,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -29,11 +31,14 @@ public class TherapyListView extends JPanel {
 
         private JTable therapyTable;
         private DefaultTableModel tableModel;
+
+        TherapyDAO therapyDAO = new TherapyDAO();
         private TherapyListController therapyListController;
         private List<Therapy> therapies;
         private Appointment appointment;
 
         public TherapyListView(Appointment appointment, TherapyListController therapyListController) {
+
                 this.therapyListController = therapyListController;
                 this.therapies = this.therapyListController.getTherapies();
                 this.appointment = appointment;
@@ -137,14 +142,14 @@ public class TherapyListView extends JPanel {
                                                 101,
                                                 "Therapy Name 1",
                                                 "Therapy Description 1",
-                                                LocalDateTime.of(2024, 1, 1, 10, 0),
-                                                LocalDateTime.of(2024, 1, 15, 10, 0)),
+                                                LocalDate.of(2024, 1, 1),
+                                                LocalDate.of(2024, 1, 15)),
                                 new Therapy(
                                                 101,
                                                 "Therapy Name 1",
                                                 "Therapy Description 1",
-                                                LocalDateTime.of(2024, 1, 1, 10, 0),
-                                                LocalDateTime.of(2024, 1, 15, 10, 0)));
+                                                LocalDate.of(2024, 1, 1),
+                                                LocalDate.of(2024, 1, 15)));
 
                 // Visualizzazione della finestra con la lista di terapie
 

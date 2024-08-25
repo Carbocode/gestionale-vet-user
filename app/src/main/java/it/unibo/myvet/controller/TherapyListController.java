@@ -4,7 +4,8 @@ import it.unibo.myvet.dao.TherapyDAO;
 import it.unibo.myvet.model.Appointment;
 import it.unibo.myvet.model.Therapy;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TherapyListController {
@@ -17,12 +18,16 @@ public class TherapyListController {
         this.therapies = therapies;
     }
 
+    public TherapyListController() {
+        this(new ArrayList<>());
+    }
+
     public List<Therapy> getTherapies() {
         return therapies;
     }
 
-    public void createTherapy(Appointment appointment, String name, String description, LocalDateTime startDate,
-            LocalDateTime endDate) {
+    public void createTherapy(Appointment appointment, String name, String description, LocalDate startDate,
+            LocalDate endDate) {
         // Crea un oggetto Therapy
         Therapy therapy = new Therapy(appointment.getAppointmentId(), name, description, startDate, endDate);
 
