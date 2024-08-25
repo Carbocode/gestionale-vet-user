@@ -8,6 +8,7 @@ import it.unibo.myvet.dao.AccountDAO;
 import it.unibo.myvet.dao.SpecializationDAO;
 import it.unibo.myvet.dao.UserDAO;
 import it.unibo.myvet.dao.VetDAO;
+import it.unibo.myvet.model.Appointment;
 import it.unibo.myvet.model.Specialization;
 import it.unibo.myvet.model.User;
 import it.unibo.myvet.model.Vet;
@@ -15,6 +16,7 @@ import it.unibo.myvet.model.Vet;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.*;
 
 public class LoginView {
     private JFrame frame;
@@ -61,15 +63,21 @@ public class LoginView {
         gbc.gridwidth = 2;
         frame.add(passwordField, gbc);
 
-        JButton loginButton = new JButton("Login");
+        JCheckBox isVeterinarianCheckbox = new JCheckBox("Accedi come Veterinario");
         gbc.gridx = 1;
         gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        frame.add(isVeterinarianCheckbox, gbc);
+
+        JButton loginButton = new JButton("Login");
+        gbc.gridx = 1;
+        gbc.gridy = 3;
         gbc.gridwidth = 1;
         frame.add(loginButton, gbc);
 
         JButton signupButton = new JButton("Sign Up");
         gbc.gridx = 2;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.gridwidth = 1;
         frame.add(signupButton, gbc);
 
@@ -81,7 +89,7 @@ public class LoginView {
                 if (authenticate(username, password)) {
                     JOptionPane.showMessageDialog(frame, "Login successful!");
                     frame.dispose();
-                    if (isVeterinarian(username)) {
+                    if (isVeterinarianCheckbox.isSelected()) {
                         showAppointmentView();
                     } else {
                         showPrivateView(user);
@@ -253,16 +261,13 @@ public class LoginView {
         return isAuthenticated;
     }
 
-    private boolean isVeterinarian(String CF) {
-        return veterinarianDAO.findByCf(CF) != null;
-    }
-
     private void showPrivateView(User user) {
         new PrivateView(user);
     }
 
     private void showAppointmentView() {
-        new AppointmentListView(new AppointmentListController(null));
+        List<Appointment> appList = new ArrayList<>();
+        new AppointmentListView(new AppointmentListController(appList));
     }
 
     private void loadSpecializations(JComboBox<Specialization> specializationComboBox) {
