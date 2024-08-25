@@ -23,7 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AppointmentListView extends JFrame {
+public class AppointmentListView extends JPanel {
 
         private JTable appointmentTable;
         private DefaultTableModel tableModel;
@@ -40,10 +40,7 @@ public class AppointmentListView extends JFrame {
         }
 
         private void createView() {
-                setTitle("Appointments");
-                setSize(1000, 400);
-                setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                setLocationRelativeTo(null);
+                setLayout(new BorderLayout());
 
                 // Nomi delle colonne per la tabella
                 String[] columnNames = { "Animal Name", "Owner Name", "Vet Name", "Date & Time", "Report", "Status" };
@@ -98,8 +95,6 @@ public class AppointmentListView extends JFrame {
                                 }
                         }
                 });
-
-                setVisible(true);
         }
 
         // Metodo main temporaneo per testare la visualizzazione
@@ -142,7 +137,16 @@ public class AppointmentListView extends JFrame {
                 appointments.add(appointment1);
                 appointments.add(appointment2);
 
-                // Visualizzazione della finestra con gli appuntamenti
-                new AppointmentListView(new AppointmentListController(appointments), vet1);
+                // Creazione del JFrame e aggiunta del pannello
+                JFrame frame = new JFrame("Appointments");
+                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                frame.setSize(1000, 400);
+                frame.setLocationRelativeTo(null);
+
+                AppointmentListView appointmentListView = new AppointmentListView(
+                                new AppointmentListController(appointments), vet1);
+                frame.add(appointmentListView);
+
+                frame.setVisible(true);
         }
 }

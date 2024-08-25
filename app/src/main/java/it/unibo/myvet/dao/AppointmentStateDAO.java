@@ -14,7 +14,7 @@ public class AppointmentStateDAO {
 
     public AppointmentState findById(int stateId) {
         AppointmentState state = null;
-        String sql = "SELECT * FROM AppointmentStates WHERE IDStatoAppuntamento = ?";
+        String sql = "SELECT * FROM Stati WHERE IDStatoAppuntamento = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -35,7 +35,7 @@ public class AppointmentStateDAO {
 
     public List<AppointmentState> findAll() {
         List<AppointmentState> states = new ArrayList<>();
-        String sql = "SELECT * FROM AppointmentStates";
+        String sql = "SELECT * FROM Stati";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql);
@@ -53,7 +53,7 @@ public class AppointmentStateDAO {
     }
 
     public void save(AppointmentState state) {
-        String sql = "INSERT INTO AppointmentStates (NomeStato) VALUES (?)";
+        String sql = "INSERT INTO Stati (NomeStato) VALUES (?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql,
@@ -76,7 +76,7 @@ public class AppointmentStateDAO {
     }
 
     public void update(AppointmentState state) {
-        String sql = "UPDATE AppointmentStates SET NomeStato = ? WHERE IDStatoAppuntamento = ?";
+        String sql = "UPDATE Stati SET NomeStato = ? WHERE IDStatoAppuntamento = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -91,7 +91,7 @@ public class AppointmentStateDAO {
     }
 
     public void delete(int stateId) {
-        String sql = "DELETE FROM AppointmentStates WHERE IDStatoAppuntamento = ?";
+        String sql = "DELETE FROM Stati WHERE IDStatoAppuntamento = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {

@@ -20,7 +20,7 @@ public class AppointmentDAO {
 
     public Appointment findById(int appointmentId) {
         Appointment appointment = null;
-        String sql = "SELECT * FROM Appointments WHERE IDAppuntamento = ?";
+        String sql = "SELECT * FROM Appuntamenti WHERE IDAppuntamento = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -41,7 +41,7 @@ public class AppointmentDAO {
 
     public List<Appointment> findByAnimalId(int animalId) {
         List<Appointment> appointments = new ArrayList<>();
-        String sql = "SELECT * FROM Appointments WHERE IDAnimale = ?";
+        String sql = "SELECT * FROM Appuntamenti WHERE IDAnimale = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -62,7 +62,7 @@ public class AppointmentDAO {
 
     public List<Appointment> findByVetId(int vetId) {
         List<Appointment> appointments = new ArrayList<>();
-        String sql = "SELECT * FROM Appointments WHERE IDVeterinario = ?";
+        String sql = "SELECT * FROM Appuntamenti WHERE IDVeterinario = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -82,7 +82,7 @@ public class AppointmentDAO {
     }
 
     public void save(Appointment appointment) {
-        String sql = "INSERT INTO Appointments (IDAnimale, IDVeterinario, DataOraAppuntamento, Referto, IDStato, Durata) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Appuntamenti (IDAnimale, IDVeterinario, DataOra, Referto, IDStato, Durata) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql,
@@ -109,7 +109,7 @@ public class AppointmentDAO {
     }
 
     public void update(Appointment appointment) {
-        String sql = "UPDATE Appointments SET IDAnimale = ?, IDVeterinario = ?, DataOraAppuntamento = ?, Referto = ?, IDStato = ?, Durata = ? WHERE IDAppuntamento = ?";
+        String sql = "UPDATE Appuntamenti SET IDAnimale = ?, IDVeterinario = ?, DataOra = ?, Referto = ?, IDStato = ?, Durata = ? WHERE IDAppuntamento = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -129,7 +129,7 @@ public class AppointmentDAO {
     }
 
     public void delete(int appointmentId) {
-        String sql = "DELETE FROM Appointments WHERE IDAppuntamento = ?";
+        String sql = "DELETE FROM Appuntamenti WHERE IDAppuntamento = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -146,7 +146,7 @@ public class AppointmentDAO {
         int appointmentId = resultSet.getInt("IDAppuntamento");
         int animalId = resultSet.getInt("IDAnimale");
         int vetId = resultSet.getInt("IDVeterinario");
-        LocalDateTime dateTime = resultSet.getTimestamp("DataOraAppuntamento").toLocalDateTime();
+        LocalDateTime dateTime = resultSet.getTimestamp("DataOra").toLocalDateTime();
         byte[] report = resultSet.getBytes("Referto");
         int statusId = resultSet.getInt("IDStato");
         int duration = resultSet.getInt("Durata");
