@@ -31,8 +31,7 @@ public class AppointmentListView extends JPanel {
         private Vet vet;
         private List<Appointment> appointments;
 
-        public AppointmentListView(AppointmentListController appointmentListController, Vet vet) {
-                this.vet = vet;
+        public AppointmentListView(AppointmentListController appointmentListController) {
                 this.appointmentListController = appointmentListController;
                 this.appointments = this.appointmentListController.getAppointments();
 
