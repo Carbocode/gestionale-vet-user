@@ -132,7 +132,7 @@ public class AppointmentDetailView extends JFrame {
         User user = new User("ciao", "ciao", "ciao", "ciao", "ciao");
 
         // Creazione di un animale
-        Animal animal = new Animal(1, "Rex", LocalDate.of(2015, 5, 20), user, breed);
+        Animal animal = new Animal(1, "Rex", LocalDate.of(2015, 5, 20), Sex.MALE, user, breed);
 
         Specialization specialization = new Specialization("pisellone");
 

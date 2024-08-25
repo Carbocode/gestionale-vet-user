@@ -22,6 +22,7 @@ import it.unibo.myvet.model.Animal;
 import it.unibo.myvet.model.Appointment;
 import it.unibo.myvet.model.AppointmentState;
 import it.unibo.myvet.model.Breed;
+import it.unibo.myvet.model.Sex;
 import it.unibo.myvet.model.Species;
 import it.unibo.myvet.model.User;
 import it.unibo.myvet.model.Vet;
@@ -215,12 +216,12 @@ public class PrivateView {
         }
     }
 
-    private boolean registerAnimal(String nome, LocalDate dataNascita, Species species, Breed breed) {
+    private boolean registerAnimal(String nome, LocalDate dataNascita, Sex sex, Species species, Breed breed) {
         boolean isRegistered = false;
         System.out.println(this.user.toString());
         try {
 
-            Animal animal = new Animal(nome, dataNascita, this.user, breed);
+            Animal animal = new Animal(nome, dataNascita, sex, this.user, breed);
             animalDAO.save(animal);
             isRegistered = true;
         } catch (Exception e) {

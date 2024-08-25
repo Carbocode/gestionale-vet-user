@@ -8,6 +8,7 @@ import it.unibo.myvet.controller.AppointmentListController;
 import it.unibo.myvet.model.Animal;
 import it.unibo.myvet.model.AppointmentState;
 import it.unibo.myvet.model.Breed;
+import it.unibo.myvet.model.Sex;
 import it.unibo.myvet.model.Specialization;
 import it.unibo.myvet.model.Species;
 import it.unibo.myvet.model.User;
@@ -118,8 +119,8 @@ public class AppointmentListView extends JFrame {
                 Breed breed2 = new Breed(2, "Siamese", catSpecies);
 
                 // Creazione di alcuni animali
-                Animal animal1 = new Animal(1, "Rex", LocalDate.of(2015, 5, 20), owner1, breed1);
-                Animal animal2 = new Animal(2, "Whiskers", LocalDate.of(2018, 3, 15), owner2, breed2);
+                Animal animal1 = new Animal(1, "Rex", LocalDate.of(2015, 5, 20), Sex.MALE, owner1, breed1);
+                Animal animal2 = new Animal(2, "Whiskers", LocalDate.of(2018, 3, 15), Sex.MALE, owner2, breed2);
 
                 Specialization specialization = new Specialization("pisellone");
 

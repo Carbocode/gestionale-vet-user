@@ -6,6 +6,7 @@ import java.util.List;
 
 import it.unibo.myvet.model.Animal;
 import it.unibo.myvet.model.Breed;
+import it.unibo.myvet.model.Sex;
 import it.unibo.myvet.model.User;
 import it.unibo.myvet.utils.DAOUtils;
 import it.unibo.myvet.utils.Database;
@@ -58,7 +59,7 @@ public class AnimalDAO {
     }
 
     public void save(Animal animal) {
-        String sql = "INSERT INTO animali (Nome, IDRazza, DataNascita, IDUtente) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO animali (Nome, IDRazza, DataNascita, Sesso, IDUtente) VALUES (?, ?, ?, ?, ?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql,
@@ -67,7 +68,8 @@ public class AnimalDAO {
             statement.setString(1, animal.getName());
             statement.setInt(2, animal.getBreed().getBreedId());
             statement.setDate(3, Date.valueOf(animal.getBirthDate()));
-            statement.setInt(4, animal.getOwner().getUserId());
+            statement.setString(4, animal.getSex().toString());
+            statement.setInt(5, animal.getOwner().getUserId());
             statement.executeUpdate();
 
             // Retrieve the generated ID and set it on the Animal object
@@ -83,7 +85,7 @@ public class AnimalDAO {
     }
 
     public void update(Animal animal) {
-        String sql = "UPDATE animali SET Nome = ?, IDRazza = ?, DataNascita = ?, IDUtente = ? WHERE IDAnimale = ?";
+        String sql = "UPDATE animali SET Nome = ?, IDRazza = ?, DataNascita = ?, Sesso = ?, IDUtente = ? WHERE IDAnimale = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -91,8 +93,9 @@ public class AnimalDAO {
             statement.setString(1, animal.getName());
             statement.setInt(2, animal.getBreed().getBreedId());
             statement.setDate(3, Date.valueOf(animal.getBirthDate()));
-            statement.setInt(4, animal.getOwner().getUserId());
-            statement.setInt(5, animal.getAnimalId());
+            statement.setString(4, animal.getSex().toString());
+            statement.setInt(5, animal.getOwner().getUserId());
+            statement.setInt(6, animal.getAnimalId());
             statement.executeUpdate();
 
         } catch (SQLException e) {
@@ -118,12 +121,13 @@ public class AnimalDAO {
         int animalId = resultSet.getInt("IDAnimale");
         String name = resultSet.getString("Nome");
         Date birthDate = resultSet.getDate("DataNascita");
+        Sex sex = Sex.valueOf(resultSet.getString("Sesso"));
         int ownerId = resultSet.getInt("IDUtente");
         int breedId = resultSet.getInt("IDRazza");
 
         User owner = userDAO.findById(ownerId);
         Breed breed = breedDAO.findById(breedId);
 
-        return new Animal(animalId, name, birthDate.toLocalDate(), owner, breed);
+        return new Animal(animalId, name, birthDate.toLocalDate(), sex, owner, breed);
     }
 }

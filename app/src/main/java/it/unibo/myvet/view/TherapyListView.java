@@ -9,6 +9,7 @@ import it.unibo.myvet.model.Animal;
 import it.unibo.myvet.model.Appointment;
 import it.unibo.myvet.model.AppointmentState;
 import it.unibo.myvet.model.Breed;
+import it.unibo.myvet.model.Sex;
 import it.unibo.myvet.model.Specialization;
 import it.unibo.myvet.model.Species;
 import it.unibo.myvet.model.Therapy;
@@ -104,6 +105,7 @@ public class TherapyListView extends JPanel {
                 Animal animal1 = new Animal(
                                 "Ciaone",
                                 LocalDateTime.of(2020, 1, 1, 0, 0).toLocalDate(),
+                                Sex.MALE,
                                 user,
                                 breed);
 
