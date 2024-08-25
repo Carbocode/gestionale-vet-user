@@ -98,56 +98,66 @@ public class PrivateView {
         signupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         signupFrame.setSize(600, 600);
         signupFrame.setLayout(new GridBagLayout());
-
+    
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 0;
-
+    
         JLabel nomeLabel = new JLabel("Nome:");
         signupFrame.add(nomeLabel, gbc);
-
+    
         gbc.gridx = 1;
         JTextField nomeField = new JTextField();
         signupFrame.add(nomeField, gbc);
-
+    
         gbc.gridx = 0;
         gbc.gridy = 1;
         JLabel nascitaLabel = new JLabel("Data di nascita (YYYY-MM-DD):");
         signupFrame.add(nascitaLabel, gbc);
-
+    
         gbc.gridx = 1;
         JTextField dataNascitaField = new JTextField();
         signupFrame.add(dataNascitaField, gbc);
-
+    
+        // Aggiunta della JComboBox per il sesso
         gbc.gridx = 0;
         gbc.gridy = 2;
+        JLabel sexLabel = new JLabel("Sesso:");
+        signupFrame.add(sexLabel, gbc);
+    
+        gbc.gridx = 1;
+        JComboBox<Sex> sexComboBox = new JComboBox<>(Sex.values());
+        signupFrame.add(sexComboBox, gbc);
+    
+        gbc.gridx = 0;
+        gbc.gridy = 3;
         JLabel speciesLabel = new JLabel("Specie:");
         signupFrame.add(speciesLabel, gbc);
-
+    
         gbc.gridx = 1;
         JComboBox<Species> speciesComboBox = new JComboBox<>();
         signupFrame.add(speciesComboBox, gbc);
-
+    
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         JLabel breedLabel = new JLabel("Razza:");
         signupFrame.add(breedLabel, gbc);
-
+    
         gbc.gridx = 1;
         JComboBox<Breed> breedComboBox = new JComboBox<>();
         signupFrame.add(breedComboBox, gbc);
-
+    
         gbc.gridx = 1;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.gridwidth = 2;
         JButton submitButton = new JButton("Sign Up");
         signupFrame.add(submitButton, gbc);
-
+    
         // Load species and breeds
         loadSpecies(speciesComboBox);
-
+    
         speciesComboBox.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -157,7 +167,7 @@ public class PrivateView {
                 }
             }
         });
-
+    
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -165,7 +175,8 @@ public class PrivateView {
                 String dataNascitaStr = dataNascitaField.getText();
                 Species selectedSpecies = (Species) speciesComboBox.getSelectedItem();
                 Breed selectedBreed = (Breed) breedComboBox.getSelectedItem();
-
+                Sex selectedSex = (Sex) sexComboBox.getSelectedItem();  // Ottieni il sesso selezionato
+    
                 LocalDate dataNascita = null;
                 try {
                     dataNascita = Date.valueOf(dataNascitaStr).toLocalDate();
@@ -174,8 +185,8 @@ public class PrivateView {
                             "Errore: formato della data non valido. Usa il formato YYYY-MM-DD.");
                     return;
                 }
-
-                if (registerAnimal(nome, dataNascita, selectedSpecies, selectedBreed)) {
+    
+                if (registerAnimal(nome, dataNascita, selectedSex, selectedSpecies, selectedBreed)) {  // Passa il sesso selezionato
                     JOptionPane.showMessageDialog(signupFrame, "Registrazione avvenuta con successo!");
                     signupFrame.dispose();
                 } else {
@@ -183,9 +194,10 @@ public class PrivateView {
                 }
             }
         });
-
+    
         signupFrame.setVisible(true);
     }
+    
 
     private void loadSpecies(JComboBox<Species> speciesComboBox) {
         speciesComboBox.removeAllItems();
