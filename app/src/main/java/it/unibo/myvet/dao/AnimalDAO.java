@@ -58,7 +58,7 @@ public class AnimalDAO {
     }
 
     public void save(Animal animal) {
-        String sql = "INSERT INTO animali (Nome, Razza, DataNascita, IDUtente) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO animali (Nome, IDRazza, DataNascita, IDUtente) VALUES (?, ?, ?, ?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql,
@@ -83,7 +83,7 @@ public class AnimalDAO {
     }
 
     public void update(Animal animal) {
-        String sql = "UPDATE animali SET Nome = ?, Razza = ?, DataNascita = ?, IDUtente = ? WHERE IDAnimale = ?";
+        String sql = "UPDATE animali SET Nome = ?, IDRazza = ?, DataNascita = ?, IDUtente = ? WHERE IDAnimale = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -119,7 +119,7 @@ public class AnimalDAO {
         String name = resultSet.getString("Nome");
         Date birthDate = resultSet.getDate("DataNascita");
         int ownerId = resultSet.getInt("IDUtente");
-        int breedId = resultSet.getInt("Razza");
+        int breedId = resultSet.getInt("IDRazza");
 
         User owner = userDAO.findById(ownerId);
         Breed breed = breedDAO.findById(breedId);
