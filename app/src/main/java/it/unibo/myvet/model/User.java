@@ -28,7 +28,6 @@ public class User extends Account {
         return "User{" +
                 "userId=" + userId +
                 ", cf='" + getCf() + '\'' +
-                ", password='" + getPassword() + '\'' +
                 ", firstName='" + getFirstName() + '\'' +
                 ", lastName='" + getLastName() + '\'' +
                 ", phoneNumber='" + getPhoneNumber() + '\'' +

@@ -61,7 +61,6 @@ public class Account {
     public String toString() {
         return "Account{" +
                 "cf='" + cf + '\'' +
-                ", password='" + password + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +

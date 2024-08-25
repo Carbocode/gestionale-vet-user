@@ -41,7 +41,6 @@ public class Vet extends Account {
         return "Vet{" +
                 "vetId=" + vetId +
                 ", cf='" + getCf() + '\'' +
-                ", password='" + getPassword() + '\'' +
                 ", firstName='" + getFirstName() + '\'' +
                 ", lastName='" + getLastName() + '\'' +
                 ", phoneNumber='" + getPhoneNumber() + '\'' +
