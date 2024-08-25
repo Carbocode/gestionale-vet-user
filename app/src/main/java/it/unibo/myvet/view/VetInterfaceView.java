@@ -31,8 +31,7 @@ public class VetInterfaceView extends JFrame {
         requestsLabel.setFont(new Font("Arial", Font.BOLD, 16));
 
         AppointmentListView requestsListView = new AppointmentListView(
-                new AppointmentListController(appointments),
-                vet);
+                new AppointmentListController(appointments));
 
         requestsPanel.add(requestsLabel, BorderLayout.NORTH);
         requestsPanel.add(requestsListView, BorderLayout.CENTER);
@@ -44,8 +43,7 @@ public class VetInterfaceView extends JFrame {
         upcomingLabel.setFont(new Font("Arial", Font.BOLD, 16));
 
         AppointmentListView upcomingListView = new AppointmentListView(
-                new AppointmentListController(appointments),
-                vet);
+                new AppointmentListController(appointments));
         upcomingPanel.add(upcomingLabel, BorderLayout.NORTH);
         upcomingPanel.add(upcomingListView, BorderLayout.CENTER);
 

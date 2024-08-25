@@ -143,7 +143,7 @@ public class AppointmentListView extends JPanel {
                 frame.setLocationRelativeTo(null);
 
                 AppointmentListView appointmentListView = new AppointmentListView(
-                                new AppointmentListController(appointments), vet1);
+                                new AppointmentListController(appointments));
                 frame.add(appointmentListView);
 
                 frame.setVisible(true);
