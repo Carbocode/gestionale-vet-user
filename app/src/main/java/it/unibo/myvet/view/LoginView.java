@@ -5,6 +5,7 @@ import java.awt.*;
 
 import it.unibo.myvet.controller.AppointmentListController;
 import it.unibo.myvet.dao.AccountDAO;
+import it.unibo.myvet.dao.SpecializationDAO;
 import it.unibo.myvet.dao.UserDAO;
 import it.unibo.myvet.dao.VetDAO;
 import it.unibo.myvet.model.Specialization;
@@ -13,6 +14,7 @@ import it.unibo.myvet.model.Vet;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 public class LoginView {
     private JFrame frame;
@@ -102,10 +104,12 @@ public class LoginView {
         frame.setVisible(true);
     }
 
+    SpecializationDAO specializationDAO = new SpecializationDAO();
+
     private void showSignupView() {
         JFrame signupFrame = new JFrame("Sign Up");
         signupFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        signupFrame.setSize(350, 400);
+        signupFrame.setSize(500, 400);
         signupFrame.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -173,13 +177,14 @@ public class LoginView {
         signupFrame.add(isVeterinarianCheckbox, gbc);
 
         // Aggiungi il JComboBox per la selezione delle specializzazioni
-        String[] specializations = { "Chirurgia", "Dermatologia", "Oncologia", "Cardiologia" };
-        JComboBox<String> specializationComboBox = new JComboBox<>(specializations);
+
+        JComboBox<Specialization> specializationComboBox = new JComboBox<>();
         specializationComboBox.setEnabled(false); // Disabilitato finché il checkbox non è selezionato
         gbc.gridx = 1;
         gbc.gridy = 6;
         gbc.gridwidth = 2;
         signupFrame.add(specializationComboBox, gbc);
+        loadSpecializations(specializationComboBox);
 
         isVeterinarianCheckbox.addActionListener(new ActionListener() {
             @Override
@@ -266,6 +271,14 @@ public class LoginView {
 
     private void showAppointmentView(Vet vet) {
         new AppointmentListView(new AppointmentListController(null), vet);
+    }
+
+    private void loadSpecializations(JComboBox<Specialization> specializationComboBox) {
+        specializationComboBox.removeAllItems();
+        List<Specialization> speciesList = specializationDAO.findAll();
+        for (Specialization species : speciesList) {
+            specializationComboBox.addItem(species);
+        }
     }
 
     public static void main(String[] args) {

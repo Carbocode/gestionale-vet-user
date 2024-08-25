@@ -14,7 +14,7 @@ public class SpecializationDAO {
 
     public Specialization findById(Integer specializationId) {
         Specialization specialization = null;
-        String sql = "SELECT * FROM Specializations WHERE IDSpecializzazione = ?";
+        String sql = "SELECT * FROM specializzazioni WHERE IDSpecializzazione = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -35,7 +35,7 @@ public class SpecializationDAO {
 
     public List<Specialization> findAll() {
         List<Specialization> specializations = new ArrayList<>();
-        String sql = "SELECT * FROM Specializations";
+        String sql = "SELECT * FROM specializzazioni";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql);
@@ -53,7 +53,7 @@ public class SpecializationDAO {
     }
 
     public void save(Specialization specialization) {
-        String sql = "INSERT INTO Specializations (Nome) VALUES (?)";
+        String sql = "INSERT INTO specializzazioni (Nome) VALUES (?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql,
@@ -76,7 +76,7 @@ public class SpecializationDAO {
     }
 
     public void update(Specialization specialization) {
-        String sql = "UPDATE Specializations SET Nome = ? WHERE IDSpecializzazione = ?";
+        String sql = "UPDATE specializzazioni SET Nome = ? WHERE IDSpecializzazione = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -91,7 +91,7 @@ public class SpecializationDAO {
     }
 
     public void delete(Integer specializationId) {
-        String sql = "DELETE FROM Specializations WHERE IDSpecializzazione = ?";
+        String sql = "DELETE FROM specializzazioni WHERE IDSpecializzazione = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
