@@ -10,7 +10,7 @@ public final class DAOUtils {
     private static final String PORT = "3306";
     private static final String DB_NAME = "myvet";
     private static final String USER = "root";
-    private static final String PASSWORD = "";
+    private static final String PASSWORD = "Dajeroma";
 
     private static final String URL = DRIVER + ":" + DB + "://" + DOMAIN + ":" + PORT + "/" + DB_NAME;
 

@@ -268,7 +268,7 @@ public class PrivateView {
     private void showAppointmentView() {
         JFrame appointmentFrame = new JFrame("Book Appointment");
         appointmentFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        appointmentFrame.setSize(500, 400);
+        appointmentFrame.setSize(800, 400);
         appointmentFrame.setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
