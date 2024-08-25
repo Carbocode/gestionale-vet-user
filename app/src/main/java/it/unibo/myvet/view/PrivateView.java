@@ -80,7 +80,7 @@ public class PrivateView {
         mainFrame.add(animalsPanel, BorderLayout.EAST);
 
         JButton viewAppointmentsButton = new JButton("View Appointments");
-        animalsPanel.add(viewAppointmentsButton,BorderLayout.SOUTH);
+        animalsPanel.add(viewAppointmentsButton, BorderLayout.SOUTH);
 
         viewAppointmentsButton.addActionListener(new ActionListener() {
             @Override
@@ -430,34 +430,34 @@ public class PrivateView {
         appointmentsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         appointmentsFrame.setSize(800, 400);
         appointmentsFrame.setLayout(new BorderLayout());
-    
+
         // Modello per la tabella degli appuntamenti
         DefaultTableModel appointmentsTableModel = new DefaultTableModel(
-                new Object[]{"Animal", "Vet", "Date", "Time", "Status"}, 0);
+                new Object[] { "Animal", "Vet", "Date", "Time", "Status" }, 0);
         JTable appointmentsTable = new JTable(appointmentsTableModel);
         JScrollPane scrollPane = new JScrollPane(appointmentsTable);
         appointmentsFrame.add(scrollPane, BorderLayout.CENTER);
-    
+
         // Carica gli appuntamenti dell'utente
         loadUserAppointments(appointmentsTableModel);
-    
+
         appointmentsFrame.setVisible(true);
     }
-    
+
     // Metodo per caricare gli appuntamenti dell'utente
     private void loadUserAppointments(DefaultTableModel model) {
         model.setRowCount(0); // Pulisce la tabella
-    
+
         AppointmentDAO appointmentDAO = new AppointmentDAO();
-        List<Appointment> appointments = appointmentDAO.
-    
+        List<Appointment> appointments = appointmentDAO.findByAnimalId(1); // TODO: Prendere l'id dall'animale
+
         for (Appointment appointment : appointments) {
             Animal animal = appointment.getAnimal();
             Vet vet = appointment.getVet();
             LocalDateTime dateTime = appointment.getDateTime();
-            String status = appointment.getAppointmentState().getState();
-    
-            model.addRow(new Object[]{
+            String status = appointment.getStatus().getStateName();
+
+            model.addRow(new Object[] {
                     animal.getName(),
                     vet.getFirstName() + " " + vet.getLastName(),
                     dateTime.toLocalDate().toString(),
