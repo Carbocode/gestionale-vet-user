@@ -27,11 +27,11 @@ import it.unibo.myvet.model.User;
 import it.unibo.myvet.model.Vet;
 
 public class PrivateView {
-    String userId = "";
+    User user;
     JFrame signupFrame;
 
-    public PrivateView(String userID) {
-        this.userId = userID;
+    public PrivateView(User user) {
+        this.user = user;
         JFrame mainFrame = new JFrame("Main View");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setSize(600, 400);
@@ -217,13 +217,8 @@ public class PrivateView {
     private boolean registerAnimal(String nome, LocalDate dataNascita, Species species, Breed breed) {
         boolean isRegistered = false;
         try {
-            User owner = userDAO.findByCf(userId);
-            if (owner == null) {
-                JOptionPane.showMessageDialog(signupFrame, "User not found. Cannot register animal.");
-                return false;
-            }
 
-            Animal animal = new Animal(userId, dataNascita, owner, breed);
+            Animal animal = new Animal(nome, dataNascita, this.user, breed);
             animalDAO.save(animal);
             isRegistered = true;
         } catch (Exception e) {
@@ -331,7 +326,7 @@ public class PrivateView {
 
     private void loadAnimals(JComboBox<Animal> animalComboBox) {
         animalComboBox.removeAllItems();
-        List<Animal> animals = animalDAO.findByOwnerId(userDAO.findByCf(userId).getUserId());
+        List<Animal> animals = animalDAO.findByOwnerId(this.user.getUserId());
         for (Animal animal : animals) {
             animalComboBox.addItem(animal);
         }

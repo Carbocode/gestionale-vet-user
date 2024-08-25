@@ -21,6 +21,12 @@ public class LoginView {
     private JTextField usernameField;
     private JPasswordField passwordField;
 
+    VetDAO veterinarianDAO = new VetDAO();
+    AccountDAO acc = new AccountDAO();
+    UserDAO userDAO = new UserDAO();
+    User user = null;
+    Vet vet = null;
+
     public LoginView() {
         frame = new JFrame("Login");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -78,7 +84,7 @@ public class LoginView {
                     if (isVeterinarian(username)) {
                         showAppointmentView();
                     } else {
-                        showPrivateView(username);
+                        showPrivateView(user);
                     }
                 } else {
                     JOptionPane.showMessageDialog(frame, "Invalid username or password.");
@@ -216,24 +222,20 @@ public class LoginView {
         signupFrame.setVisible(true);
     }
 
-    VetDAO veterinarianDAO = new VetDAO();
-    AccountDAO acc = new AccountDAO();
-    UserDAO userDAO = new UserDAO();
-    User user = null;
-
     private boolean registerAccount(String CF, String nome, String cognome, String password, String telefono,
             boolean isVeterinarian, int specialization) {
         boolean isRegistered = false;
         try {
             if (isVeterinarian) {
                 // Registra come Veterinario con specializzazione
-                Vet veterinarian = new Vet(CF, nome, cognome, password, telefono,
+                this.vet = new Vet(CF, nome, cognome, password, telefono,
                         new Specialization(String.valueOf(specialization)));
-                veterinarianDAO.save(veterinarian);
+
+                veterinarianDAO.save(this.vet);
             } else {
                 // Registra come Utente
-                User user = new User(CF, nome, cognome, password, telefono);
-                userDAO.save(user);
+                this.user = new User(CF, nome, cognome, password, telefono);
+                userDAO.save(this.user);
             }
             isRegistered = true;
         } catch (Exception e) {
@@ -255,8 +257,8 @@ public class LoginView {
         return veterinarianDAO.findByCf(CF) != null;
     }
 
-    private void showPrivateView(String userID) {
-        new PrivateView(userID);
+    private void showPrivateView(User user) {
+        new PrivateView(user);
     }
 
     private void showAppointmentView() {
