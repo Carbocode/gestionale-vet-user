@@ -11,10 +11,14 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
 
+import it.unibo.myvet.controller.ButtonEditor;
+import it.unibo.myvet.controller.ButtonRenderer;
 import it.unibo.myvet.dao.AnimalDAO;
 import it.unibo.myvet.dao.AppointmentDAO;
 import it.unibo.myvet.dao.BreedDAO;
+import it.unibo.myvet.dao.FavouriteVetDAO;
 import it.unibo.myvet.dao.SpeciesDAO;
 import it.unibo.myvet.dao.UserDAO;
 import it.unibo.myvet.dao.VetDAO;
@@ -22,6 +26,7 @@ import it.unibo.myvet.model.Animal;
 import it.unibo.myvet.model.Appointment;
 import it.unibo.myvet.model.AppointmentState;
 import it.unibo.myvet.model.Breed;
+import it.unibo.myvet.model.FavouriteVet;
 import it.unibo.myvet.model.Sex;
 import it.unibo.myvet.model.Species;
 import it.unibo.myvet.model.User;
@@ -29,20 +34,29 @@ import it.unibo.myvet.model.Vet;
 
 public class PrivateView {
     User user;
+    JFrame mainFrame;
     JFrame signupFrame;
     JTable animalsTable;
+    JTable resultsTable;
+    DefaultListModel<String> favoriteVetsModel;
+    JList<String> favoriteVetsList;
+    List<Vet> favoriteVets = new ArrayList<>();
+    JFrame appointmentFrame;
+    DefaultTableModel appointmentsTableModel;
 
     UserDAO userDAO = new UserDAO();
     SpeciesDAO speciesDAO = new SpeciesDAO();
     BreedDAO breedDAO = new BreedDAO();
     AnimalDAO animalDAO = new AnimalDAO();
+    FavouriteVetDAO favouriteVetDAO = new FavouriteVetDAO();
+    VetDAO vetDAO = new VetDAO();
 
     public PrivateView(User user) {
         this.user = user;
 
-        JFrame mainFrame = new JFrame("Main View");
+        mainFrame = new JFrame("Main View");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setSize(600, 400);
+        mainFrame.setSize(900, 800);
         mainFrame.setLayout(new BorderLayout());
 
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -55,11 +69,23 @@ public class PrivateView {
 
         mainFrame.add(topPanel, BorderLayout.NORTH);
 
-        DefaultTableModel tableModel = new DefaultTableModel(new Object[] { "Nome", "Cognome" }, 0);
-        JTable resultsTable = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(resultsTable);
+        DefaultTableModel searchTableModel = new DefaultTableModel(new Object[] { "Nome", "Cognome", "Preferito" }, 0);
+        resultsTable = new JTable(searchTableModel);
+        resultsTable.getColumn("Preferito").setCellRenderer(new ButtonRenderer());
+        resultsTable.getColumn("Preferito").setCellEditor(new ButtonEditor(new JCheckBox(), resultsTable));
+        JScrollPane searchScrollPane = new JScrollPane(resultsTable);
+        mainFrame.add(searchScrollPane, BorderLayout.CENTER);
 
-        mainFrame.add(scrollPane, BorderLayout.CENTER);
+        JPanel favoritesPanel = new JPanel(new BorderLayout());
+        JLabel favoritesLabel = new JLabel("Favorite Vets:");
+        favoritesPanel.add(favoritesLabel, BorderLayout.NORTH);
+
+        favoriteVetsModel = new DefaultListModel<>();
+        favoriteVetsList = new JList<>(favoriteVetsModel);
+        JScrollPane favoritesScrollPane = new JScrollPane(favoriteVetsList);
+        favoritesPanel.add(favoritesScrollPane, BorderLayout.CENTER);
+
+        mainFrame.add(favoritesPanel, BorderLayout.EAST);
 
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton signupButton = new JButton("Register your pet");
@@ -82,6 +108,13 @@ public class PrivateView {
         JButton viewAppointmentsButton = new JButton("View Appointments");
         animalsPanel.add(viewAppointmentsButton, BorderLayout.SOUTH);
 
+        // Usa JSplitPane per visualizzare il pannello degli animali e dei preferiti
+        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        splitPane.setLeftComponent(animalsPanel); // Pannello degli animali
+        splitPane.setRightComponent(favoritesPanel); // Pannello dei preferiti
+
+        mainFrame.add(splitPane, BorderLayout.EAST); // Usa BorderLayout.CENTER per il contenuto centrale
+
         viewAppointmentsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -91,12 +124,13 @@ public class PrivateView {
 
         // Carica gli animali dell'utente
         loadUserAnimals();
+        loadUserFavorites();
 
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String searchText = searchField.getText();
-                searchVet(searchText, tableModel);
+                searchVet(searchText, searchTableModel);
             }
         });
 
@@ -268,16 +302,59 @@ public class PrivateView {
     }
 
     private void searchVet(String searchText, DefaultTableModel tableModel) {
+        tableModel.setRowCount(0); // Clears the table
+
         VetDAO vetDAO = new VetDAO();
         List<Vet> vets = vetDAO.searchVet(searchText);
-
+        System.out.println("Searching vets with: " + searchText);
+        System.out.println("Found " + vets.size() + " vets");
         for (Vet vet : vets) {
-            tableModel.addRow(new Object[] { vet.getFirstName(), vet.getLastName() });
+            JButton addButton = new JButton("Preferito");
+            addButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    addVetToFavorites(vet);
+                }
+            });
+
+            tableModel.addRow(new Object[] { vet.getFirstName(), vet.getLastName(), addButton });
+        }
+    }
+
+    private void addVetToFavorites(Vet vet) {
+        if (!favoriteVets.contains(vet)) {
+            favoriteVets.add(vet);
+            favoriteVetsModel.addElement(vet.getFirstName() + " " + vet.getLastName());
+
+            FavouriteVet favouriteVet = new FavouriteVet(user.getUserId(), vet.getVetId());
+            favouriteVetDAO.save(favouriteVet);
+        } else {
+            JOptionPane.showMessageDialog(mainFrame, "Vet is already in your favorites!");
+        }
+    }
+
+    private void loadUserFavorites() {
+        favoriteVets.clear();
+        favoriteVetsModel.clear();
+
+        List<FavouriteVet> favourites = favouriteVetDAO.findByUserId(user.getUserId());
+        System.out.println("Loading user favorites...");
+        System.out.println("Number of favorite vets: " + favourites.size());
+
+        for (FavouriteVet favourite : favourites) {
+            Vet vet = vetDAO.findById(favourite.getVetId());
+            if (vet != null) {
+                favoriteVets.add(vet);
+                favoriteVetsModel.addElement(vet.getFirstName() + " " + vet.getLastName());
+                System.out.println("Added vet to list: " + vet.getFirstName() + " " + vet.getLastName());
+            } else {
+                System.out.println("Vet with ID " + favourite.getVetId() + " not found.");
+            }
         }
     }
 
     private void showAppointmentView() {
-        JFrame appointmentFrame = new JFrame("Book Appointment");
+        appointmentFrame = new JFrame("Book Appointment");
         appointmentFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         appointmentFrame.setSize(800, 400);
         appointmentFrame.setLayout(new GridBagLayout());
@@ -394,7 +471,7 @@ public class PrivateView {
         boolean isBooked = false;
         try {
             AppointmentDAO appointmentDAO = new AppointmentDAO();
-            AppointmentState appointmentState = new AppointmentState("Scheduled");
+            AppointmentState appointmentState = new AppointmentState("Prenotato");
             for (Appointment app : appointmentDAO.findByVetId(vet.getVetId())) {
                 if (app.getDateTime() != appointmentDateTime) {
                     Appointment appointment = new Appointment(animal, vet, appointmentDateTime, appointmentState);
@@ -432,8 +509,8 @@ public class PrivateView {
         appointmentsFrame.setLayout(new BorderLayout());
 
         // Modello per la tabella degli appuntamenti
-        DefaultTableModel appointmentsTableModel = new DefaultTableModel(
-                new Object[] { "Animal", "Vet", "Date", "Time", "Status" }, 0);
+       appointmentsTableModel = new DefaultTableModel(
+                new Object[] { "Animal", "Vet", "Date", "Time", "Status", "cANCEL" }, 0);
         JTable appointmentsTable = new JTable(appointmentsTableModel);
         JScrollPane scrollPane = new JScrollPane(appointmentsTable);
         appointmentsFrame.add(scrollPane, BorderLayout.CENTER);
@@ -444,27 +521,42 @@ public class PrivateView {
         appointmentsFrame.setVisible(true);
     }
 
-    // Metodo per caricare gli appuntamenti dell'utente
-    private void loadUserAppointments(DefaultTableModel model) {
-        model.setRowCount(0); // Pulisce la tabella
+        private void loadUserAppointments(DefaultTableModel model) {
+            model.setRowCount(0); // Clears the table
 
-        AppointmentDAO appointmentDAO = new AppointmentDAO();
-        List<Appointment> appointments = appointmentDAO.findByAnimalId(1); // TODO: Prendere l'id dall'animale
+            AppointmentDAO appointmentDAO = new AppointmentDAO();
+            AnimalDAO animalDAO = new AnimalDAO();
+            List<Animal> userAnimals = animalDAO.findByOwnerId(user.getUserId());
 
-        for (Appointment appointment : appointments) {
-            Animal animal = appointment.getAnimal();
-            Vet vet = appointment.getVet();
-            LocalDateTime dateTime = appointment.getDateTime();
-            String status = appointment.getStatus().getStateName();
+            for (Animal animal : userAnimals) {
+                List<Appointment> appointments = appointmentDAO.findByAnimalId(animal.getAnimalId());
 
-            model.addRow(new Object[] {
-                    animal.getName(),
-                    vet.getFirstName() + " " + vet.getLastName(),
-                    dateTime.toLocalDate().toString(),
-                    dateTime.toLocalTime().toString(),
-                    status
-            });
+                for (Appointment appointment : appointments) {
+                    Vet vet = appointment.getVet();
+                    LocalDateTime dateTime = appointment.getDateTime();
+                    String status = appointment.getStatus().getStateName();
+
+                    JButton cancelButton = new JButton("Cancel");
+                    cancelButton.addActionListener(e -> cancelAppointment(appointment));
+
+                    model.addRow(new Object[] {
+                        animal.getName(),
+                        vet.getFirstName() + " " + vet.getLastName(),
+                        dateTime.toLocalDate().toString(),
+                        dateTime.toLocalTime().toString(),
+                        status,
+                        cancelButton
+                    });
+                }
+            }
         }
+    private void cancelAppointment(Appointment appointment) {
+        AppointmentDAO appointmentDAO = new AppointmentDAO();
+        AppointmentState cancelledState = new AppointmentState("Annullato");
+        appointment.setStatus(cancelledState);
+        appointmentDAO.update(appointment);
+        JOptionPane.showMessageDialog(appointmentFrame, "Appointment cancelled successfully!");
+        loadUserAppointments(appointmentsTableModel); // Refresh the table
     }
 
 }

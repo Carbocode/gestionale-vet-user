@@ -14,7 +14,7 @@ public class FavouriteVetDAO {
 
     public FavouriteVet findById(int userId, int vetId) {
         FavouriteVet favouriteVet = null;
-        String sql = "SELECT * FROM FavouriteVets WHERE IDUtente = ? AND IDVeterinario = ?";
+        String sql = "SELECT * FROM preferito WHERE IDUtente = ? AND IDVeterinario = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -36,7 +36,7 @@ public class FavouriteVetDAO {
 
     public List<FavouriteVet> findByUserId(int userId) {
         List<FavouriteVet> favouriteVets = new ArrayList<>();
-        String sql = "SELECT * FROM FavouriteVets WHERE IDUtente = ?";
+        String sql = "SELECT * FROM preferito WHERE IDUtente = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -56,7 +56,7 @@ public class FavouriteVetDAO {
     }
 
     public void save(FavouriteVet favouriteVet) {
-        String sql = "INSERT INTO FavouriteVets (IDUtente, IDVeterinario) VALUES (?, ?)";
+        String sql = "INSERT INTO preferito (IDUtente, IDVeterinario) VALUES (?, ?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -71,7 +71,7 @@ public class FavouriteVetDAO {
     }
 
     public void delete(int userId, int vetId) {
-        String sql = "DELETE FROM FavouriteVets WHERE IDUtente = ? AND IDVeterinario = ?";
+        String sql = "DELETE FROM preferito WHERE IDUtente = ? AND IDVeterinario = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
