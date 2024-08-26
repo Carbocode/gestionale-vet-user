@@ -16,7 +16,7 @@ public class ShiftDAO {
 
     public Shift findById(int vetId, DayOfWeek day) {
         Shift shift = null;
-        String sql = "SELECT * FROM Shifts WHERE IDVeterinario = ? AND Giorno = ?";
+        String sql = "SELECT * FROM orari WHERE IDVeterinario = ? AND Giorno = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -38,7 +38,7 @@ public class ShiftDAO {
 
     public List<Shift> findByVetId(int vetId) {
         List<Shift> shifts = new ArrayList<>();
-        String sql = "SELECT * FROM Shifts WHERE IDVeterinario = ?";
+        String sql = "SELECT * FROM orari WHERE IDVeterinario = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -59,7 +59,7 @@ public class ShiftDAO {
 
     public List<Shift> findAll() {
         List<Shift> shifts = new ArrayList<>();
-        String sql = "SELECT * FROM Shifts";
+        String sql = "SELECT * FROM orari";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql);
@@ -77,7 +77,7 @@ public class ShiftDAO {
     }
 
     public void save(Shift shift) {
-        String sql = "INSERT INTO Shifts (Giorno, IDVeterinario, OraInizio, OraFine) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO orari (Giorno, IDVeterinario, OraInizio, OraFine) VALUES (?, ?, ?, ?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -94,7 +94,7 @@ public class ShiftDAO {
     }
 
     public void update(Shift shift) {
-        String sql = "UPDATE Shifts SET OraInizio = ?, OraFine = ? WHERE Giorno = ? AND IDVeterinario = ?";
+        String sql = "UPDATE orari SET OraInizio = ?, OraFine = ? WHERE Giorno = ? AND IDVeterinario = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -111,7 +111,7 @@ public class ShiftDAO {
     }
 
     public void delete(int vetId, DayOfWeek day) {
-        String sql = "DELETE FROM Shifts WHERE IDVeterinario = ? AND Giorno = ?";
+        String sql = "DELETE FROM orari WHERE IDVeterinario = ? AND Giorno = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {

@@ -56,7 +56,8 @@ public class VetInterfaceView extends JFrame {
 
         add(mainPanel, BorderLayout.CENTER);
 
-        // Aggiungi il pannello inferiore con il pulsante per aprire VetServicesView
+        // Aggiungi il pannello inferiore con i pulsanti per aprire VetServicesView e
+        // VetShiftView
         addBottomPanel();
 
         // Mostra la finestra
@@ -67,13 +68,21 @@ public class VetInterfaceView extends JFrame {
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
+        // Pulsante per aprire VetServicesView
         JButton openVetServicesButton = new JButton("Apri Vet Services");
         openVetServicesButton.addActionListener(e -> {
             // Apri la finestra VetServicesView
             new VetServicesView(vet);
         });
-
         bottomPanel.add(openVetServicesButton);
+
+        // Pulsante per aprire VetShiftView
+        JButton openVetShiftButton = new JButton("Apri Vet Shift");
+        openVetShiftButton.addActionListener(e -> {
+            // Apri la finestra VetShiftView
+            new VetShiftView(vet);
+        });
+        bottomPanel.add(openVetShiftButton);
 
         // Aggiungi il pannello inferiore al frame
         add(bottomPanel, BorderLayout.SOUTH);
