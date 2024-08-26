@@ -28,7 +28,6 @@ public class AppointmentListView extends JPanel {
         private JTable appointmentTable;
         private DefaultTableModel tableModel;
         private AppointmentListController appointmentListController;
-        private Vet vet;
         private List<Appointment> appointments;
 
         public AppointmentListView(AppointmentListController appointmentListController) {

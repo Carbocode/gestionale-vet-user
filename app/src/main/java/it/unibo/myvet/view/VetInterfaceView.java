@@ -20,7 +20,7 @@ public class VetInterfaceView extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(1200, 600);
         setLocationRelativeTo(null);
-        setLayout(new GridLayout(1, 2));
+        setLayout(new BorderLayout());
 
         List<Appointment> appointments = appointmentDAO.findByVetId(this.vet.getVetId());
 
@@ -47,12 +47,36 @@ public class VetInterfaceView extends JFrame {
         upcomingPanel.add(upcomingLabel, BorderLayout.NORTH);
         upcomingPanel.add(upcomingListView, BorderLayout.CENTER);
 
-        // Aggiungi entrambi i pannelli al JFrame
-        add(requestsPanel);
-        add(upcomingPanel);
+        // Aggiungi i pannelli delle richieste e degli appuntamenti al pannello
+        // principale
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new GridLayout(1, 2));
+        mainPanel.add(requestsPanel);
+        mainPanel.add(upcomingPanel);
+
+        add(mainPanel, BorderLayout.CENTER);
+
+        // Aggiungi il pannello inferiore con il pulsante per aprire VetServicesView
+        addBottomPanel();
 
         // Mostra la finestra
         setVisible(true);
+    }
+
+    private void addBottomPanel() {
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        JButton openVetServicesButton = new JButton("Apri Vet Services");
+        openVetServicesButton.addActionListener(e -> {
+            // Apri la finestra VetServicesView
+            new VetServicesView(vet);
+        });
+
+        bottomPanel.add(openVetServicesButton);
+
+        // Aggiungi il pannello inferiore al frame
+        add(bottomPanel, BorderLayout.SOUTH);
     }
 
     // Metodo main per testare la GUI
@@ -60,7 +84,7 @@ public class VetInterfaceView extends JFrame {
         // Creazione di dati fittizi per testare la view
         Specialization specialization = new Specialization("General");
 
-        // Creazione di alcuni veterinari
+        // Creazione di un veterinario
         Vet vet1 = new Vet("PRSVCN02P21D704E", "vetpassword1", "Dr.", "Jones", "111222333", 2, specialization);
 
         // Creazione e visualizzazione della finestra principale

@@ -14,7 +14,7 @@ public class ServiceDAO {
 
     public Service findById(Integer serviceId) {
         Service service = null;
-        String sql = "SELECT * FROM Services WHERE IDServizio = ?";
+        String sql = "SELECT * FROM servizi_veterinario WHERE IDServizio = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -35,7 +35,7 @@ public class ServiceDAO {
 
     public List<Service> findAll() {
         List<Service> services = new ArrayList<>();
-        String sql = "SELECT * FROM Services";
+        String sql = "SELECT * FROM servizi_veterinario";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql);
@@ -53,7 +53,7 @@ public class ServiceDAO {
     }
 
     public void save(Service service) {
-        String sql = "INSERT INTO Services (Nome) VALUES (?)";
+        String sql = "INSERT INTO servizi_veterinario (Nome) VALUES (?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql,
@@ -75,7 +75,7 @@ public class ServiceDAO {
     }
 
     public void update(Service service) {
-        String sql = "UPDATE Services SET Nome = ? WHERE IDServizio = ?";
+        String sql = "UPDATE servizi_veterinario SET Nome = ? WHERE IDServizio = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
@@ -90,7 +90,7 @@ public class ServiceDAO {
     }
 
     public void delete(Integer serviceId) {
-        String sql = "DELETE FROM Services WHERE IDServizio = ?";
+        String sql = "DELETE FROM servizi_veterinario WHERE IDServizio = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {

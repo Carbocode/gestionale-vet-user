@@ -2,13 +2,13 @@ package it.unibo.myvet.model;
 
 public class VetService {
     private int vetId; // Reference to Vet
-    private int serviceId; // Reference to Service
+    private Service service; // Reference to Service object
     private int durationMinutes; // Duration in minutes
 
     // Constructor
-    public VetService(int vetId, int serviceId, int durationMinutes) {
+    public VetService(int vetId, Service service, int durationMinutes) {
         this.vetId = vetId;
-        this.serviceId = serviceId;
+        this.service = service;
         this.durationMinutes = durationMinutes;
     }
 
@@ -21,12 +21,12 @@ public class VetService {
         this.vetId = vetId;
     }
 
-    public int getServiceId() {
-        return serviceId;
+    public Service getService() {
+        return service;
     }
 
-    public void setServiceId(int serviceId) {
-        this.serviceId = serviceId;
+    public void setService(Service service) {
+        this.service = service;
     }
 
     public int getDurationMinutes() {
@@ -41,7 +41,7 @@ public class VetService {
     public String toString() {
         return "VetService{" +
                 "vetId=" + vetId +
-                ", serviceId=" + serviceId +
+                ", service=" + service +
                 ", durationMinutes=" + durationMinutes +
                 '}';
     }
