@@ -69,7 +69,13 @@ public class PrivateView {
 
         mainFrame.add(topPanel, BorderLayout.NORTH);
 
-        DefaultTableModel searchTableModel = new DefaultTableModel(new Object[] { "Nome", "Cognome", "Preferito" }, 0);
+        DefaultTableModel searchTableModel = new DefaultTableModel(new Object[] { "Nome", "Cognome", "Preferito" }, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 2;
+            }
+        };
+
         resultsTable = new JTable(searchTableModel);
         resultsTable.getColumn("Preferito").setCellRenderer(new ButtonRenderer());
         resultsTable.getColumn("Preferito").setCellEditor(new ButtonEditor(new JCheckBox(), resultsTable));
@@ -98,8 +104,15 @@ public class PrivateView {
         JLabel animalsLabel = new JLabel("I miei animali:");
         animalsPanel.add(animalsLabel, BorderLayout.NORTH);
 
-        animalsTable = new JTable(
-                new DefaultTableModel(new Object[] { "Nome", "Specie", "Razza", "Sesso", "Data di nascita" }, 0));
+        animalsTable = new JTable(new DefaultTableModel(
+                new Object[] { "Nome", "Specie", "Razza", "Sesso", "Data di nascita" }, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Nessuna cella è editabile
+                return false;
+            }
+        });
+
         JScrollPane animalsScrollPane = new JScrollPane(animalsTable);
         animalsPanel.add(animalsScrollPane, BorderLayout.CENTER);
 
@@ -509,8 +522,15 @@ public class PrivateView {
         appointmentsFrame.setLayout(new BorderLayout());
 
         // Modello per la tabella degli appuntamenti
-       appointmentsTableModel = new DefaultTableModel(
-                new Object[] { "Animal", "Vet", "Date", "Time", "Status", "cANCEL" }, 0);
+        appointmentsTableModel = new DefaultTableModel(
+                new Object[] { "Animal", "Vet", "Date", "Time", "Status", "Cancel" }, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Solo la colonna "Cancel" è editabile
+                return column == 5;
+            }
+        };
+
         JTable appointmentsTable = new JTable(appointmentsTableModel);
         JScrollPane scrollPane = new JScrollPane(appointmentsTable);
         appointmentsFrame.add(scrollPane, BorderLayout.CENTER);
@@ -521,35 +541,36 @@ public class PrivateView {
         appointmentsFrame.setVisible(true);
     }
 
-        private void loadUserAppointments(DefaultTableModel model) {
-            model.setRowCount(0); // Clears the table
+    private void loadUserAppointments(DefaultTableModel model) {
+        model.setRowCount(0); // Clears the table
 
-            AppointmentDAO appointmentDAO = new AppointmentDAO();
-            AnimalDAO animalDAO = new AnimalDAO();
-            List<Animal> userAnimals = animalDAO.findByOwnerId(user.getUserId());
+        AppointmentDAO appointmentDAO = new AppointmentDAO();
+        AnimalDAO animalDAO = new AnimalDAO();
+        List<Animal> userAnimals = animalDAO.findByOwnerId(user.getUserId());
 
-            for (Animal animal : userAnimals) {
-                List<Appointment> appointments = appointmentDAO.findByAnimalId(animal.getAnimalId());
+        for (Animal animal : userAnimals) {
+            List<Appointment> appointments = appointmentDAO.findByAnimalId(animal.getAnimalId());
 
-                for (Appointment appointment : appointments) {
-                    Vet vet = appointment.getVet();
-                    LocalDateTime dateTime = appointment.getDateTime();
-                    String status = appointment.getStatus().getStateName();
+            for (Appointment appointment : appointments) {
+                Vet vet = appointment.getVet();
+                LocalDateTime dateTime = appointment.getDateTime();
+                String status = appointment.getStatus().getStateName();
 
-                    JButton cancelButton = new JButton("Cancel");
-                    cancelButton.addActionListener(e -> cancelAppointment(appointment));
+                JButton cancelButton = new JButton("Cancel");
+                cancelButton.addActionListener(e -> cancelAppointment(appointment));
 
-                    model.addRow(new Object[] {
+                model.addRow(new Object[] {
                         animal.getName(),
                         vet.getFirstName() + " " + vet.getLastName(),
                         dateTime.toLocalDate().toString(),
                         dateTime.toLocalTime().toString(),
                         status,
                         cancelButton
-                    });
-                }
+                });
             }
         }
+    }
+
     private void cancelAppointment(Appointment appointment) {
         AppointmentDAO appointmentDAO = new AppointmentDAO();
         AppointmentState cancelledState = new AppointmentState("Annullato");
