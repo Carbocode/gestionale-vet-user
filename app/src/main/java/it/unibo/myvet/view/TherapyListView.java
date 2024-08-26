@@ -10,6 +10,7 @@ import it.unibo.myvet.model.Animal;
 import it.unibo.myvet.model.Appointment;
 import it.unibo.myvet.model.AppointmentState;
 import it.unibo.myvet.model.Breed;
+import it.unibo.myvet.model.Service;
 import it.unibo.myvet.model.Sex;
 import it.unibo.myvet.model.Specialization;
 import it.unibo.myvet.model.Species;
@@ -126,12 +127,15 @@ public class TherapyListView extends JPanel {
                 byte[] imageBytes = loadSampleImage(); // Funzione per caricare un'immagine di esempio come byte
                                                        // array
 
+                Service service = new Service("General Checkup");
+
                 // Creazione di un appuntamento
                 Appointment appointment = new Appointment(
                                 1,
                                 animal1,
                                 vet,
                                 LocalDateTime.of(2024, 8, 19, 10, 30),
+                                service,
                                 10,
                                 state,
                                 imageBytes);

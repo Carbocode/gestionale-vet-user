@@ -113,8 +113,8 @@ public class VetDAO {
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
-            statement.setString(1, searchText);
-            statement.setString(2, searchText);
+            statement.setString(1, '%' + searchText + '%');
+            statement.setString(2, '%' + searchText + '%');
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     int idVet = resultSet.getInt("IDVeterinario");

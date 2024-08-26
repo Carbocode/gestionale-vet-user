@@ -8,6 +8,7 @@ import it.unibo.myvet.controller.AppointmentListController;
 import it.unibo.myvet.model.Animal;
 import it.unibo.myvet.model.AppointmentState;
 import it.unibo.myvet.model.Breed;
+import it.unibo.myvet.model.Service;
 import it.unibo.myvet.model.Sex;
 import it.unibo.myvet.model.Specialization;
 import it.unibo.myvet.model.Species;
@@ -125,9 +126,13 @@ public class AppointmentListView extends JPanel {
                 AppointmentState state1 = new AppointmentState(1, "Completed");
                 AppointmentState state2 = new AppointmentState(2, "Pending");
 
-                Appointment appointment1 = new Appointment(1, animal1, vet1, LocalDateTime.of(2024, 8, 19, 10, 30), 10,
+                Service service = new Service("General Checkup");
+
+                Appointment appointment1 = new Appointment(1, animal1, vet1, LocalDateTime.of(2024, 8, 19, 10, 30),
+                                service, 10,
                                 state1);
-                Appointment appointment2 = new Appointment(2, animal2, vet2, LocalDateTime.of(2024, 8, 20, 15, 00), 10,
+                Appointment appointment2 = new Appointment(2, animal2, vet2, LocalDateTime.of(2024, 8, 20, 15, 00),
+                                service, 10,
                                 state2);
                 // Creazione di alcuni appuntamenti
                 List<Appointment> appointments = new ArrayList<>();

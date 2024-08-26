@@ -4,6 +4,7 @@ import it.unibo.myvet.dao.AppointmentDAO;
 import it.unibo.myvet.model.Animal;
 import it.unibo.myvet.model.Appointment;
 import it.unibo.myvet.model.AppointmentState;
+import it.unibo.myvet.model.Service;
 import it.unibo.myvet.model.Vet;
 
 import java.time.LocalDateTime;
@@ -28,10 +29,11 @@ public class AppointmentListController {
         return appointments;
     }
 
-    public void createAppointment(Animal animal, Vet vet, LocalDateTime dateTime, byte[] report,
+    public void createAppointment(Animal animal, Vet vet, LocalDateTime dateTime, Service service, byte[] report,
             AppointmentState status) {
+
         // Crea un oggetto Therapy
-        Appointment appointment = new Appointment(animal, vet, dateTime, 10, status, report);
+        Appointment appointment = new Appointment(animal, vet, dateTime, service, 10, status, report);
 
         // Salva la terapia nel database
         appointmentDAO.save(appointment);

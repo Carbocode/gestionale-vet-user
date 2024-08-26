@@ -8,8 +8,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.sql.Date;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -17,20 +19,26 @@ import it.unibo.myvet.controller.ButtonEditor;
 import it.unibo.myvet.controller.ButtonRenderer;
 import it.unibo.myvet.dao.AnimalDAO;
 import it.unibo.myvet.dao.AppointmentDAO;
+import it.unibo.myvet.dao.AppointmentStateDAO;
 import it.unibo.myvet.dao.BreedDAO;
 import it.unibo.myvet.dao.FavouriteVetDAO;
+import it.unibo.myvet.dao.ShiftDAO;
 import it.unibo.myvet.dao.SpeciesDAO;
 import it.unibo.myvet.dao.UserDAO;
 import it.unibo.myvet.dao.VetDAO;
+import it.unibo.myvet.dao.VetServiceDAO;
 import it.unibo.myvet.model.Animal;
 import it.unibo.myvet.model.Appointment;
 import it.unibo.myvet.model.AppointmentState;
 import it.unibo.myvet.model.Breed;
 import it.unibo.myvet.model.FavouriteVet;
+import it.unibo.myvet.model.Service;
 import it.unibo.myvet.model.Sex;
+import it.unibo.myvet.model.Shift;
 import it.unibo.myvet.model.Species;
 import it.unibo.myvet.model.User;
 import it.unibo.myvet.model.Vet;
+import it.unibo.myvet.model.VetService;
 
 public class PrivateView {
     User user;
@@ -373,13 +381,13 @@ public class PrivateView {
         appointmentFrame.setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(10, 10, 10, 10); // Imposta margini più grandi per un aspetto più arioso
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 0;
 
         // Imposta una dimensione minima per le JLabel
-        Dimension labelSize = new Dimension(200, 20);
+        Dimension labelSize = new Dimension(200, 25);
 
         JLabel animalLabel = new JLabel("Select Animal:");
         animalLabel.setPreferredSize(labelSize);
@@ -387,6 +395,7 @@ public class PrivateView {
 
         gbc.gridx = 1;
         JComboBox<Animal> animalComboBox = new JComboBox<>();
+        animalComboBox.setPreferredSize(new Dimension(200, 25)); // Imposta la dimensione del combo box
         appointmentFrame.add(animalComboBox, gbc);
 
         gbc.gridx = 0;
@@ -397,32 +406,48 @@ public class PrivateView {
 
         gbc.gridx = 1;
         JComboBox<Vet> vetComboBox = new JComboBox<>();
+        vetComboBox.setPreferredSize(new Dimension(200, 25)); // Imposta la dimensione del combo box
         appointmentFrame.add(vetComboBox, gbc);
 
         gbc.gridx = 0;
         gbc.gridy = 2;
+        JLabel serviceLabel = new JLabel("Select Service:");
+        serviceLabel.setPreferredSize(labelSize);
+        appointmentFrame.add(serviceLabel, gbc);
+
+        gbc.gridx = 1;
+        JComboBox<Service> serviceComboBox = new JComboBox<>();
+        serviceComboBox.setPreferredSize(new Dimension(200, 25)); // Imposta la dimensione del combo box
+        appointmentFrame.add(serviceComboBox, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
         JLabel dateLabel = new JLabel("Appointment Date (YYYY-MM-DD):");
         dateLabel.setPreferredSize(labelSize);
         appointmentFrame.add(dateLabel, gbc);
 
         gbc.gridx = 1;
         JTextField dateField = new JTextField();
+        dateField.setPreferredSize(new Dimension(200, 25));
         appointmentFrame.add(dateField, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         JLabel timeLabel = new JLabel("Appointment Time (HH:MM):");
         timeLabel.setPreferredSize(labelSize);
         appointmentFrame.add(timeLabel, gbc);
 
         gbc.gridx = 1;
         JTextField timeField = new JTextField();
+        timeField.setPreferredSize(new Dimension(200, 25));
         appointmentFrame.add(timeField, gbc);
 
         gbc.gridx = 1;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
         JButton submitButton = new JButton("Book Appointment");
+        submitButton.setPreferredSize(new Dimension(200, 30));
         appointmentFrame.add(submitButton, gbc);
 
         // Load user's animals
@@ -431,34 +456,57 @@ public class PrivateView {
         // Load available vets
         loadVets(vetComboBox);
 
+        // Load available services for the selected vet
+        vetComboBox.addActionListener(e -> loadServicesForVet((Vet) vetComboBox.getSelectedItem(), serviceComboBox));
+
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Animal selectedAnimal = (Animal) animalComboBox.getSelectedItem();
                 Vet selectedVet = (Vet) vetComboBox.getSelectedItem();
-                String dateStr = dateField.getText();
-                String timeStr = timeField.getText();
+                Service selectedService = (Service) serviceComboBox.getSelectedItem();
+                LocalDate date = LocalDate.parse(dateField.getText());
+                LocalTime time = LocalTime.parse(timeField.getText());
 
-                LocalDateTime appointmentDateTime;
+                LocalDateTime appointmentDateTime = LocalDateTime.of(date, time);
+                DayOfWeek dayOfWeek = date.getDayOfWeek();
 
-                try {
-                    appointmentDateTime = LocalDateTime.parse(dateStr + "T" + timeStr);
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(appointmentFrame,
-                            "Invalid date/time format. Please use the correct formats.");
-                    return;
-                }
+                // Recupera gli orari di lavoro del veterinario per il giorno specifico
+                ShiftDAO shiftDAO = new ShiftDAO();
+                Shift vetShift = shiftDAO.findById(selectedVet.getVetId(), dayOfWeek);
 
-                if (bookAppointment(selectedAnimal, appointmentDateTime, selectedVet)) {
-                    JOptionPane.showMessageDialog(appointmentFrame, "Appointment booked successfully!");
-                    appointmentFrame.dispose();
+                if (vetShift != null && isWithinShift(time, vetShift)) {
+                    if (bookAppointment(selectedAnimal, appointmentDateTime, selectedVet, selectedService)) {
+                        JOptionPane.showMessageDialog(appointmentFrame, "Appointment booked successfully!");
+                        appointmentFrame.dispose();
+                    } else {
+                        JOptionPane.showMessageDialog(appointmentFrame, "Error booking appointment.");
+                    }
                 } else {
-                    JOptionPane.showMessageDialog(appointmentFrame, "Error booking appointment.");
+                    JOptionPane.showMessageDialog(appointmentFrame,
+                            "Selected time is outside of the vet's working hours.");
                 }
             }
         });
 
         appointmentFrame.setVisible(true);
+    }
+
+    // Carica i servizi disponibili per il veterinario selezionato
+    private void loadServicesForVet(Vet selectedVet, JComboBox<Service> serviceComboBox) {
+        if (selectedVet != null) {
+            VetServiceDAO vetServiceDAO = new VetServiceDAO();
+            List<VetService> vetServices = vetServiceDAO.findByVetId(selectedVet.getVetId());
+            serviceComboBox.removeAllItems();
+            for (VetService vetService : vetServices) {
+                serviceComboBox.addItem(vetService.getService());
+            }
+        }
+    }
+
+    // Metodo per controllare se l'ora scelta rientra negli orari del veterinario
+    private boolean isWithinShift(LocalTime time, Shift shift) {
+        return !time.isBefore(shift.getStartTime()) && !time.isAfter(shift.getEndTime());
     }
 
     private void loadAnimals(JComboBox<Animal> animalComboBox) {
@@ -480,23 +528,20 @@ public class PrivateView {
         }
     }
 
-    private boolean bookAppointment(Animal animal, LocalDateTime appointmentDateTime, Vet vet) {
-        boolean isBooked = false;
+    private boolean bookAppointment(Animal animal, LocalDateTime appointmentDateTime, Vet vet, Service service) {
         try {
             AppointmentDAO appointmentDAO = new AppointmentDAO();
-            AppointmentState appointmentState = new AppointmentState("Prenotato");
-            for (Appointment app : appointmentDAO.findByVetId(vet.getVetId())) {
-                if (app.getDateTime() != appointmentDateTime) {
-                    Appointment appointment = new Appointment(animal, vet, appointmentDateTime, appointmentState);
-                    appointmentDAO.save(appointment);
-                    isBooked = true;
-                }
-            }
+            AppointmentState appointmentState = new AppointmentStateDAO().findById(1);
+
+            // Creazione dell'oggetto Appointment con il servizio selezionato
+            Appointment appointment = new Appointment(animal, vet, appointmentDateTime, service, appointmentState);
+            appointmentDAO.save(appointment);
+            return true;
 
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
-        return isBooked;
     }
 
     private void loadUserAnimals() {

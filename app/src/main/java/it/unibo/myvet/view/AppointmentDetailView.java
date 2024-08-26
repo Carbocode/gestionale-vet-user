@@ -146,13 +146,16 @@ public class AppointmentDetailView extends JFrame {
         byte[] imageBytes = loadSampleImage(); // Funzione per caricare un'immagine di esempio come byte
                                                // array
 
+        Service service = new Service("General Checkup");
+
         // Creazione di un appuntamento
         Appointment appointment = new Appointment(
                 1,
                 animal,
                 vet,
                 LocalDateTime.of(2024, 8, 19, 10, 30),
-                1,
+                service,
+                30,
                 state,
                 imageBytes);
 
