@@ -129,12 +129,11 @@ public class PrivateView {
         JButton viewAppointmentsButton = new JButton("View Appointments");
         animalsPanel.add(viewAppointmentsButton, BorderLayout.SOUTH);
 
-        // Usa JSplitPane per visualizzare il pannello degli animali e dei preferiti
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        splitPane.setLeftComponent(animalsPanel); // Pannello degli animali
-        splitPane.setRightComponent(favoritesPanel); // Pannello dei preferiti
+        splitPane.setLeftComponent(animalsPanel);
+        splitPane.setRightComponent(favoritesPanel);
 
-        mainFrame.add(splitPane, BorderLayout.EAST); // Usa BorderLayout.CENTER per il contenuto centrale
+        mainFrame.add(splitPane, BorderLayout.EAST);
 
         viewAppointmentsButton.addActionListener(new ActionListener() {
             @Override
@@ -200,7 +199,6 @@ public class PrivateView {
         JTextField dataNascitaField = new JTextField();
         signupFrame.add(dataNascitaField, gbc);
 
-        // Aggiunta della JComboBox per il sesso
         gbc.gridx = 0;
         gbc.gridy = 2;
         JLabel sexLabel = new JLabel("Sesso:");
@@ -234,7 +232,6 @@ public class PrivateView {
         JButton submitButton = new JButton("Sign Up");
         signupFrame.add(submitButton, gbc);
 
-        // Load species and breeds
         loadSpecies(speciesComboBox);
 
         speciesComboBox.addItemListener(new ItemListener() {
@@ -265,8 +262,7 @@ public class PrivateView {
                     return;
                 }
 
-                if (registerAnimal(nome, dataNascita, selectedSex, selectedSpecies, selectedBreed)) { // Passa il sesso
-                                                                                                      // selezionato
+                if (registerAnimal(nome, dataNascita, selectedSex, selectedSpecies, selectedBreed)) {
                     JOptionPane.showMessageDialog(signupFrame, "Registrazione avvenuta con successo!");
                     signupFrame.dispose();
                 } else {
@@ -323,7 +319,7 @@ public class PrivateView {
     }
 
     private void searchVet(String searchText, DefaultTableModel tableModel) {
-        tableModel.setRowCount(0); // Clears the table
+        tableModel.setRowCount(0);
 
         VetDAO vetDAO = new VetDAO();
         List<Vet> vets = vetDAO.searchVet(searchText);
@@ -381,12 +377,11 @@ public class PrivateView {
         appointmentFrame.setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10); // Imposta margini più grandi per un aspetto più arioso
+        gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.gridy = 0;
 
-        // Imposta una dimensione minima per le JLabel
         Dimension labelSize = new Dimension(200, 25);
 
         JLabel animalLabel = new JLabel("Select Animal:");
@@ -395,7 +390,7 @@ public class PrivateView {
 
         gbc.gridx = 1;
         JComboBox<Animal> animalComboBox = new JComboBox<>();
-        animalComboBox.setPreferredSize(new Dimension(200, 25)); // Imposta la dimensione del combo box
+        animalComboBox.setPreferredSize(new Dimension(200, 25));
         appointmentFrame.add(animalComboBox, gbc);
 
         gbc.gridx = 0;
@@ -406,7 +401,7 @@ public class PrivateView {
 
         gbc.gridx = 1;
         JComboBox<Vet> vetComboBox = new JComboBox<>();
-        vetComboBox.setPreferredSize(new Dimension(200, 25)); // Imposta la dimensione del combo box
+        vetComboBox.setPreferredSize(new Dimension(200, 25));
         appointmentFrame.add(vetComboBox, gbc);
 
         gbc.gridx = 0;
@@ -417,7 +412,7 @@ public class PrivateView {
 
         gbc.gridx = 1;
         JComboBox<Service> serviceComboBox = new JComboBox<>();
-        serviceComboBox.setPreferredSize(new Dimension(200, 25)); // Imposta la dimensione del combo box
+        serviceComboBox.setPreferredSize(new Dimension(200, 25));
         appointmentFrame.add(serviceComboBox, gbc);
 
         gbc.gridx = 0;
@@ -450,13 +445,10 @@ public class PrivateView {
         submitButton.setPreferredSize(new Dimension(200, 30));
         appointmentFrame.add(submitButton, gbc);
 
-        // Load user's animals
         loadAnimals(animalComboBox);
 
-        // Load available vets
         loadVets(vetComboBox);
 
-        // Load available services for the selected vet
         vetComboBox.addActionListener(e -> loadServicesForVet((Vet) vetComboBox.getSelectedItem(), serviceComboBox));
 
         submitButton.addActionListener(new ActionListener() {
@@ -492,7 +484,6 @@ public class PrivateView {
         appointmentFrame.setVisible(true);
     }
 
-    // Carica i servizi disponibili per il veterinario selezionato
     private void loadServicesForVet(Vet selectedVet, JComboBox<Service> serviceComboBox) {
         if (selectedVet != null) {
             VetServiceDAO vetServiceDAO = new VetServiceDAO();
@@ -504,7 +495,6 @@ public class PrivateView {
         }
     }
 
-    // Metodo per controllare se l'ora scelta rientra negli orari del veterinario
     private boolean isWithinShift(LocalTime time, Shift shift) {
         return !time.isBefore(shift.getStartTime()) && !time.isAfter(shift.getEndTime());
     }
@@ -566,7 +556,6 @@ public class PrivateView {
         appointmentsFrame.setSize(800, 400);
         appointmentsFrame.setLayout(new BorderLayout());
 
-        // Modello per la tabella degli appuntamenti
         appointmentsTableModel = new DefaultTableModel(
                 new Object[] { "Animal", "Vet", "Date", "Time", "Status", "Cancel" }, 0) {
             @Override
@@ -587,7 +576,7 @@ public class PrivateView {
     }
 
     private void loadUserAppointments(DefaultTableModel model) {
-        model.setRowCount(0); // Clears the table
+        model.setRowCount(0);
 
         AppointmentDAO appointmentDAO = new AppointmentDAO();
         AnimalDAO animalDAO = new AnimalDAO();
@@ -622,7 +611,7 @@ public class PrivateView {
         appointment.setStatus(cancelledState);
         appointmentDAO.update(appointment);
         JOptionPane.showMessageDialog(appointmentFrame, "Appointment cancelled successfully!");
-        loadUserAppointments(appointmentsTableModel); // Refresh the table
+        loadUserAppointments(appointmentsTableModel);
     }
 
 }

@@ -174,8 +174,6 @@ public class LoginView {
         gbc.gridwidth = 2;
         signupFrame.add(isVeterinarianCheckbox, gbc);
 
-        // Aggiungi il JComboBox per la selezione delle specializzazioni
-
         JComboBox<Specialization> specializationComboBox = new JComboBox<>();
         specializationComboBox.setEnabled(false); // Disabilitato finché il checkbox non è selezionato
         gbc.gridx = 1;
@@ -192,7 +190,7 @@ public class LoginView {
 
         isVeterinarianCheckbox.addItemListener(e -> {
             boolean isSelected = isVeterinarianCheckbox.isSelected();
-            specializationComboBox.setEnabled(isSelected); // Abilita/disabilita la JComboBox
+            specializationComboBox.setEnabled(isSelected);
         });
         submitButton.addActionListener(new ActionListener() {
             @Override
@@ -203,8 +201,7 @@ public class LoginView {
                 String password = new String(passwordField.getPassword());
                 String telefono = telefonoField.getText();
                 boolean isVeterinarian = isVeterinarianCheckbox.isSelected();
-                int specializationIndex = specializationComboBox.getSelectedIndex() + 1; // Specializzazione selezionata
-                                                                                         // (come int)
+                int specializationIndex = specializationComboBox.getSelectedIndex() + 1;
 
                 if (registerAccount(CF, nome, cognome, password, telefono, isVeterinarian, specializationIndex)) {
                     JOptionPane.showMessageDialog(signupFrame, "Registrazione avvenuta con successo!");
@@ -223,19 +220,18 @@ public class LoginView {
         boolean isRegistered = false;
         try {
             if (isVeterinarian) {
-                // Registra come Veterinario con specializzazione
+
                 this.vet = new Vet(CF, nome, cognome, password, telefono,
                         new Specialization(String.valueOf(specialization)));
 
                 veterinarianDAO.save(this.vet);
             } else {
-                // Registra come Utente
                 this.user = new User(CF, nome, cognome, password, telefono);
                 userDAO.save(this.user);
             }
             isRegistered = true;
         } catch (Exception e) {
-            e.printStackTrace(); // Gestisci l'eccezione in modo appropriato
+            e.printStackTrace();
         }
         return isRegistered;
     }
