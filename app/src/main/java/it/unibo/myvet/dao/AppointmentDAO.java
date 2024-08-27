@@ -63,12 +63,34 @@ public class AppointmentDAO {
 
     public List<Appointment> findByVetId(int vetId) {
         List<Appointment> appointments = new ArrayList<>();
-        String sql = "SELECT * FROM Appuntamenti WHERE IDVeterinario = ?";
+        String sql = "SELECT * FROM Appuntamenti WHERE IDVeterinario = ?  AND IDStato != 3";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
             statement.setInt(1, vetId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    appointments.add(mapToAppointment(resultSet));
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return appointments;
+    }
+
+    public List<Appointment> findByVetIdAndStateId(int vetId, int stateId) {
+        List<Appointment> appointments = new ArrayList<>();
+        String sql = "SELECT * FROM Appuntamenti WHERE IDVeterinario = ? AND IDStato = ?";
+
+        try (Database dbWrapper = DAOUtils.getConnection();
+                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
+
+            statement.setInt(1, vetId);
+            statement.setInt(2, stateId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     appointments.add(mapToAppointment(resultSet));

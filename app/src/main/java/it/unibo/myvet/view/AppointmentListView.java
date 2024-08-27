@@ -42,7 +42,7 @@ public class AppointmentListView extends JPanel {
                 setLayout(new BorderLayout());
 
                 // Nomi delle colonne per la tabella
-                String[] columnNames = { "Animal Name", "Owner Name", "Vet Name", "Date & Time", "Report", "Status" };
+                String[] columnNames = { "Animal Name", "Owner Name", "Vet Name", "Date & Time", "Service", "Status" };
 
                 // Crea il modello della tabella
                 tableModel = new DefaultTableModel(columnNames, 0) {
@@ -68,8 +68,7 @@ public class AppointmentListView extends JPanel {
                                         ownerName,
                                         vetName,
                                         appointment.getDateTime().format(formatter),
-                                        appointment.getReport() != null ? new String(appointment.getReport())
-                                                        : "No Report",
+                                        appointment.getService().getName(),
                                         statusName
                         };
                         tableModel.addRow(rowData);

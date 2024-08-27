@@ -11,6 +11,8 @@ import it.unibo.myvet.model.*;
 public class VetInterfaceView extends JFrame {
     private Vet vet;
     private AppointmentDAO appointmentDAO = new AppointmentDAO();
+    private AppointmentListView requestsListView;
+    private AppointmentListView upcomingListView;
 
     public VetInterfaceView(Vet vet) {
         this.vet = vet;
@@ -22,7 +24,19 @@ public class VetInterfaceView extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        List<Appointment> appointments = appointmentDAO.findByVetId(this.vet.getVetId());
+        refreshAppointmentViews();
+
+        // Aggiungi il pannello inferiore con i pulsanti per aprire VetServicesView e
+        // VetShiftView
+        addBottomPanel();
+
+        // Mostra la finestra
+        setVisible(true);
+    }
+
+    private void refreshAppointmentViews() {
+        List<Appointment> upcomingAppointments = appointmentDAO.findByVetIdAndStateId(this.vet.getVetId(), 2);
+        List<Appointment> pendingAppointments = appointmentDAO.findByVetIdAndStateId(this.vet.getVetId(), 1);
 
         // Pannello per Richieste di Appuntamento
         JPanel requestsPanel = new JPanel();
@@ -30,8 +44,7 @@ public class VetInterfaceView extends JFrame {
         JLabel requestsLabel = new JLabel("Richieste di Appuntamento", SwingConstants.CENTER);
         requestsLabel.setFont(new Font("Arial", Font.BOLD, 16));
 
-        AppointmentListView requestsListView = new AppointmentListView(
-                new AppointmentListController(appointments));
+        requestsListView = new AppointmentListView(new AppointmentListController(pendingAppointments));
 
         requestsPanel.add(requestsLabel, BorderLayout.NORTH);
         requestsPanel.add(requestsListView, BorderLayout.CENTER);
@@ -42,8 +55,7 @@ public class VetInterfaceView extends JFrame {
         JLabel upcomingLabel = new JLabel("Prossimi Appuntamenti", SwingConstants.CENTER);
         upcomingLabel.setFont(new Font("Arial", Font.BOLD, 16));
 
-        AppointmentListView upcomingListView = new AppointmentListView(
-                new AppointmentListController(appointments));
+        upcomingListView = new AppointmentListView(new AppointmentListController(upcomingAppointments));
         upcomingPanel.add(upcomingLabel, BorderLayout.NORTH);
         upcomingPanel.add(upcomingListView, BorderLayout.CENTER);
 
@@ -54,14 +66,12 @@ public class VetInterfaceView extends JFrame {
         mainPanel.add(requestsPanel);
         mainPanel.add(upcomingPanel);
 
+        // Rimuove il vecchio contenuto e aggiunge quello nuovo
+        getContentPane().removeAll();
         add(mainPanel, BorderLayout.CENTER);
-
-        // Aggiungi il pannello inferiore con i pulsanti per aprire VetServicesView e
-        // VetShiftView
-        addBottomPanel();
-
-        // Mostra la finestra
-        setVisible(true);
+        addBottomPanel(); // Riaggiunge il pannello inferiore dopo il refresh
+        revalidate();
+        repaint();
     }
 
     private void addBottomPanel() {
@@ -83,6 +93,11 @@ public class VetInterfaceView extends JFrame {
             new VetShiftView(vet);
         });
         bottomPanel.add(openVetShiftButton);
+
+        // Pulsante per refreshare le view
+        JButton refreshButton = new JButton("Refresh");
+        refreshButton.addActionListener(e -> refreshAppointmentViews());
+        bottomPanel.add(refreshButton);
 
         // Aggiungi il pannello inferiore al frame
         add(bottomPanel, BorderLayout.SOUTH);

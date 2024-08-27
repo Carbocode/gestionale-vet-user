@@ -1,21 +1,24 @@
 package it.unibo.myvet.view;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-
 import it.unibo.myvet.controller.TherapyListController;
+import it.unibo.myvet.dao.AppointmentDAO;
+import it.unibo.myvet.dao.AppointmentStateDAO;
 import it.unibo.myvet.dao.TherapyDAO;
 import it.unibo.myvet.model.*;
 
@@ -24,15 +27,15 @@ public class AppointmentDetailView extends JFrame {
     private List<Therapy> therapies = new ArrayList<>();
     private TherapyListController therapyListController;
     private Appointment appointment;
+    private JTextField durationField;
+    private JPanel imagePanel;
 
     public AppointmentDetailView(Appointment appointment) {
-
         this.therapies = new TherapyDAO().findByAppointmentId(appointment.getAppointmentId());
         this.therapyListController = new TherapyListController(this.therapies);
         this.appointment = appointment;
 
         this.createView();
-
     }
 
     private void createView() {
@@ -46,7 +49,7 @@ public class AppointmentDetailView extends JFrame {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         // Pannello per i dettagli dell'appuntamento
-        JPanel detailsPanel = new JPanel(new GridLayout(6, 2, 10, 10));
+        JPanel detailsPanel = new JPanel(new GridLayout(7, 2, 10, 10));
         detailsPanel.add(new JLabel("Appointment ID:"));
         detailsPanel.add(new JLabel(String.valueOf(appointment.getAppointmentId())));
 
@@ -67,53 +70,43 @@ public class AppointmentDetailView extends JFrame {
         detailsPanel.add(new JLabel("Status:"));
         detailsPanel.add(new JLabel(appointment.getStatus().getStateName()));
 
+        detailsPanel.add(new JLabel("Duration (minutes):"));
+        durationField = new JTextField(String.valueOf(appointment.getDuration()));
+        detailsPanel.add(durationField);
+
         add(detailsPanel, BorderLayout.NORTH);
 
-        // Renderizza l'immagine se presente
-        if (appointment.getReport() != null) {
-            try {
-                BufferedImage img = ImageIO.read(new ByteArrayInputStream(appointment.getReport()));
-                if (img != null) {
-                    // Crea un pannello per l'immagine
-                    JPanel imagePanel = new JPanel(new BorderLayout());
-                    JLabel imageLabel = new JLabel();
-                    imageLabel.setHorizontalAlignment(JLabel.CENTER);
-
-                    // Calcola il dimensionamento dell'immagine
-                    int imageWidth = img.getWidth();
-                    int imageHeight = img.getHeight();
-                    double imageAspect = (double) imageWidth / imageHeight;
-
-                    int panelWidth = 600;
-                    int panelHeight = 400;
-                    double panelAspect = (double) panelWidth / panelHeight;
-
-                    int scaledWidth;
-                    int scaledHeight;
-                    if (imageAspect > panelAspect) {
-                        scaledWidth = panelWidth;
-                        scaledHeight = (int) (panelWidth / imageAspect);
-                    } else {
-                        scaledWidth = (int) (panelHeight * imageAspect);
-                        scaledHeight = panelHeight;
-                    }
-
-                    Image scaledImage = img.getScaledInstance(scaledWidth, scaledHeight,
-                            Image.SCALE_SMOOTH);
-                    imageLabel.setIcon(new ImageIcon(scaledImage));
-
-                    imagePanel.add(imageLabel, BorderLayout.CENTER);
-                    add(imagePanel, BorderLayout.CENTER);
-                } else {
-                    add(new JLabel("No Image Available"), BorderLayout.CENTER);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                add(new JLabel("Error Loading Image"), BorderLayout.CENTER);
-            }
-        } else {
-            add(new JLabel("No Report"), BorderLayout.CENTER);
+        // Verifica se lo stato dell'appuntamento non è 1
+        if (appointment.getStatus().getStateId() != 1) {
+            displayReportAndTherapies();
         }
+
+        // Aggiungi pulsante "Salva" solo se lo stato è ancora 1
+        if (appointment.getStatus().getStateId() == 1) {
+            JButton saveButton = new JButton("Save");
+            saveButton.addActionListener(e -> saveAppointment());
+            JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            buttonPanel.add(saveButton);
+            add(buttonPanel, BorderLayout.SOUTH);
+        } else {
+            durationField.setEditable(false); // Rende il campo di durata non modificabile
+        }
+
+        setVisible(true);
+    }
+
+    private void displayReportAndTherapies() {
+        // Renderizza l'immagine se presente
+        imagePanel = new JPanel(new BorderLayout());
+        if (appointment.getReport() != null) {
+            renderReport();
+        }
+
+        JButton uploadButton = new JButton("Upload Report");
+        uploadButton.addActionListener(e -> uploadReport());
+
+        imagePanel.add(uploadButton, BorderLayout.SOUTH);
+        add(imagePanel, BorderLayout.CENTER);
 
         // Aggiungi il pannello delle terapie
         JPanel therapyPanel = new JPanel(new BorderLayout());
@@ -121,8 +114,98 @@ public class AppointmentDetailView extends JFrame {
         TherapyListView therapyListView = new TherapyListView(appointment, this.therapyListController);
         therapyPanel.add(therapyListView, BorderLayout.CENTER);
         add(therapyPanel, BorderLayout.SOUTH);
+    }
 
-        setVisible(true);
+    private void renderReport() {
+        try {
+            imagePanel.removeAll();
+            byte[] reportData = appointment.getReport();
+
+            BufferedImage img = ImageIO.read(new ByteArrayInputStream(reportData));
+
+            if (img != null) {
+                JLabel imageLabel = new JLabel(new ImageIcon(img));
+                imagePanel.add(new JScrollPane(imageLabel), BorderLayout.CENTER);
+            } else {
+                imagePanel.add(new JLabel("Unsupported file format or no image available."), BorderLayout.CENTER);
+            }
+
+            revalidate();
+            repaint();
+        } catch (IOException e) {
+            e.printStackTrace();
+            imagePanel.add(new JLabel("Error loading report"), BorderLayout.CENTER);
+        }
+    }
+
+    private void uploadReport() {
+        JFileChooser fileChooser = new JFileChooser();
+        int returnValue = fileChooser.showOpenDialog(this);
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            try {
+                String fileName = selectedFile.getName().toLowerCase();
+                if (!fileName.endsWith(".png") && !fileName.endsWith(".jpg") && !fileName.endsWith(".jpeg")) {
+                    JOptionPane.showMessageDialog(this, "Only PNG and JPG files are supported.", "Unsupported File",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                byte[] fileData = loadFileAsByteArray(selectedFile);
+                appointment.setReport(fileData);
+
+                // Salva il report nel database
+                AppointmentDAO appointmentDAO = new AppointmentDAO();
+                appointmentDAO.update(appointment);
+
+                // Aggiorna la vista con il nuovo report
+                renderReport();
+                JOptionPane.showMessageDialog(this, "Report uploaded and saved successfully!");
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error uploading report.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private byte[] loadFileAsByteArray(File file) throws IOException {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                InputStream is = new FileInputStream(file)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = is.read(buffer)) != -1) {
+                baos.write(buffer, 0, bytesRead);
+            }
+            return baos.toByteArray();
+        }
+    }
+
+    private void saveAppointment() {
+        try {
+            int newDuration = Integer.parseInt(durationField.getText());
+            appointment.setDuration(newDuration);
+
+            // Aggiorna lo stato dell'appuntamento a 2
+            AppointmentStateDAO appointmentStateDAO = new AppointmentStateDAO();
+            AppointmentState newState = appointmentStateDAO.findById(2);
+            appointment.setStatus(newState);
+
+            // Usa AppointmentDAO per salvare l'aggiornamento
+            AppointmentDAO appointmentDAO = new AppointmentDAO();
+            appointmentDAO.update(appointment);
+
+            // Una volta salvato, rendi la durata non modificabile e visualizza report e
+            // terapie
+            durationField.setEditable(false);
+            displayReportAndTherapies();
+
+            JOptionPane.showMessageDialog(this, "Appointment updated successfully!");
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Invalid duration format!", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error saving appointment.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     // Metodo main temporaneo per testare la visualizzazione
@@ -143,8 +226,7 @@ public class AppointmentDetailView extends JFrame {
         AppointmentState state = new AppointmentState(1, "Completed");
 
         // Creazione di un esempio di BLOB immagine
-        byte[] imageBytes = loadSampleImage(); // Funzione per caricare un'immagine di esempio come byte
-                                               // array
+        byte[] imageBytes = loadSampleImage(); // Funzione per caricare un'immagine di esempio come byte array
 
         Service service = new Service("General Checkup");
 
@@ -166,7 +248,7 @@ public class AppointmentDetailView extends JFrame {
     private static byte[] loadSampleImage() {
         try {
             BufferedImage bufferedImage = ImageIO.read(new File(
-                    "/Users/ligmaballz/Desktop/uni-projects/db-2024/app/src/main/java/it/unibo/myvet/assets/animal.png"));
+                    "/path/to/your/image.png"));
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(bufferedImage, "png", baos);
             return baos.toByteArray();

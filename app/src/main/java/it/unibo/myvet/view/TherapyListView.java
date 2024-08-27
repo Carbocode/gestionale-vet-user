@@ -52,15 +52,21 @@ public class TherapyListView extends JPanel {
                 setLayout(new BorderLayout());
 
                 // Nomi delle colonne per la tabella
-                String[] columnNames = { "Therapy ID", "Appointment ID", "Therapy Name", "Description",
-                                "Start Date", "End Date" };
+                String[] columnNames = { "Therapy ID", "Appointment ID", "Therapy Name", "Description", "Start Date",
+                                "End Date" };
 
-                // Crea il modello della tabella
-                tableModel = new DefaultTableModel(columnNames, 0);
+                // Crea il modello della tabella e rendi le celle non modificabili
+                tableModel = new DefaultTableModel(columnNames, 0) {
+                        @Override
+                        public boolean isCellEditable(int row, int column) {
+                                return false; // Rendi tutte le celle non modificabili
+                        }
+                };
+
                 therapyTable = new JTable(tableModel);
 
                 // Formatter per le date
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
                 // Popola la tabella con i dati delle terapie
                 for (Therapy therapy : therapies) {
@@ -84,8 +90,7 @@ public class TherapyListView extends JPanel {
                 // Aggiungi un pannello con un pulsante in fondo
                 JPanel buttonPanel = new JPanel();
                 JButton createTherapyButton = new JButton("Create New Therapy");
-                createTherapyButton
-                                .addActionListener(e -> openTherapyCreationFrame());
+                createTherapyButton.addActionListener(e -> openTherapyCreationFrame());
                 buttonPanel.add(createTherapyButton);
                 add(buttonPanel, BorderLayout.SOUTH);
         }
