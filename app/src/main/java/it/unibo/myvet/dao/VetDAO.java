@@ -53,13 +53,16 @@ public class VetDAO {
 
     public void save(Vet vet) {
         accountDAO.save(vet);
-        String sql = "INSERT INTO veterinari (CF) VALUES (?)";
+        String sql = "INSERT INTO veterinari (CF, IDSpecializzazione) VALUES (?, ?)";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql,
                         PreparedStatement.RETURN_GENERATED_KEYS)) {
 
+            System.out.print(vet);
+
             statement.setString(1, vet.getCf());
+            statement.setInt(2, vet.getSpecialization().getSpecializationId());
             statement.executeUpdate();
             // Recupera l'ID generato automaticamente e impostalo sull'oggetto User
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
@@ -75,12 +78,12 @@ public class VetDAO {
 
     public void update(Vet vet) {
         accountDAO.update(vet); // Aggiorna l'Account prima
-        String sql = "UPDATE Veterinari SET CF = ? WHERE IDVeterinario = ?";
+        String sql = "UPDATE Veterinari SET IDSpecializzazione = ? WHERE IDVeterinario = ?";
 
         try (Database dbWrapper = DAOUtils.getConnection();
                 PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
 
-            statement.setString(1, vet.getCf());
+            statement.setInt(1, vet.getSpecialization().getSpecializationId());
             statement.setInt(2, vet.getVetId());
             statement.executeUpdate();
 

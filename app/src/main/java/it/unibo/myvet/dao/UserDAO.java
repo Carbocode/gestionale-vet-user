@@ -67,18 +67,20 @@ public class UserDAO {
 
     public void update(User user) {
         accountDAO.update(user); // Aggiorna l'Account prima
-        String sql = "UPDATE utenti SET CF = ? WHERE IDUtente = ?";
-
-        try (Database dbWrapper = DAOUtils.getConnection();
-                PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
-
-            statement.setString(1, user.getCf());
-            statement.setInt(2, user.getUserId());
-            statement.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        /*
+         * String sql = "UPDATE utenti SET CF = ? WHERE IDUtente = ?";
+         * 
+         * try (Database dbWrapper = DAOUtils.getConnection();
+         * PreparedStatement statement = dbWrapper.prepareStatement(sql)) {
+         * 
+         * statement.setString(1, user.getCf());
+         * statement.setInt(2, user.getUserId());
+         * statement.executeUpdate();
+         * 
+         * } catch (SQLException e) {
+         * e.printStackTrace();
+         * }
+         */
     }
 
     public void delete(int userId) {

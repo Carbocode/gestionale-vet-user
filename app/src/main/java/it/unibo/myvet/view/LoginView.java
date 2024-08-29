@@ -221,8 +221,9 @@ public class LoginView {
         try {
             if (isVeterinarian) {
 
-                this.vet = new Vet(CF, password, nome, cognome, telefono,
-                        new Specialization(String.valueOf(specialization)));
+                SpecializationDAO specializationDAO = new SpecializationDAO();
+
+                this.vet = new Vet(CF, password, nome, cognome, telefono, specializationDAO.findById(specialization));
 
                 veterinarianDAO.save(this.vet);
             } else {
