@@ -203,7 +203,7 @@ public class LoginView {
                 boolean isVeterinarian = isVeterinarianCheckbox.isSelected();
                 int specializationIndex = specializationComboBox.getSelectedIndex() + 1;
 
-                if (registerAccount(CF, nome, cognome, password, telefono, isVeterinarian, specializationIndex)) {
+                if (registerAccount(CF, password, nome, cognome, telefono, isVeterinarian, specializationIndex)) {
                     JOptionPane.showMessageDialog(signupFrame, "Registrazione avvenuta con successo!");
                     signupFrame.dispose();
                 } else {
@@ -215,18 +215,18 @@ public class LoginView {
         signupFrame.setVisible(true);
     }
 
-    private boolean registerAccount(String CF, String nome, String cognome, String password, String telefono,
+    private boolean registerAccount(String CF, String password, String nome, String cognome, String telefono,
             boolean isVeterinarian, int specialization) {
         boolean isRegistered = false;
         try {
             if (isVeterinarian) {
 
-                this.vet = new Vet(CF, nome, cognome, password, telefono,
+                this.vet = new Vet(CF, password, nome, cognome, telefono,
                         new Specialization(String.valueOf(specialization)));
 
                 veterinarianDAO.save(this.vet);
             } else {
-                this.user = new User(CF, nome, cognome, password, telefono);
+                this.user = new User(CF, password, nome, cognome, telefono);
                 userDAO.save(this.user);
             }
             isRegistered = true;
