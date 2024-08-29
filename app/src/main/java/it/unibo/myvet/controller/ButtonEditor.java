@@ -10,6 +10,7 @@ public class ButtonEditor extends DefaultCellEditor {
     private boolean isPushed;
     private JTable table;
     private int row;
+    @SuppressWarnings("unused")
     private int column;
 
     public ButtonEditor(JCheckBox checkBox, JTable table) {
